@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "analyze": "tsc && vite build -m analyze",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -21,6 +22,7 @@
     "autoprefixer": "^10.4.13",
     "less": "^4.1.3",
     "postcss": "^8.4.21",
+    "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.4",
     "unocss": "^0.48.4",
     "vite": "^4.0.4"
