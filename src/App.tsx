@@ -5,7 +5,6 @@ import clsx from 'classnames';
 
 function App() {
   const [count, setCount] = useState(0);
-
   return (
     <div className={clsx(styles.App)}>
       <div>
