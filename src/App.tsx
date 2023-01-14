@@ -1,7 +1,7 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import styles from "./App.module.less";
-import clsx from "classnames";
+import { useState } from 'react';
+import reactLogo from './assets/react.svg';
+import styles from './App.module.less';
+import clsx from 'classnames';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -9,14 +9,14 @@ function App() {
   return (
     <div className={clsx(styles.App)}>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
+        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
           <img
             src="/vite.svg"
-            className={clsx(styles.logo, "w-20")}
+            className={clsx(styles.logo, 'w-20')}
             alt="Vite logo"
           />
         </a>
-        <a href="https://reactjs.org" target="_blank">
+        <a href="https://reactjs.org" target="_blank" rel="noreferrer">
           <img
             src={reactLogo}
             className={clsx(styles.logo, styles.react)}
