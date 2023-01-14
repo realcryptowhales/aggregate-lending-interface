@@ -46,7 +46,7 @@
       "npm run lint",
       "git add ."
     ],
-    "**/*.{less}": [
+    "**/*.less": [
       "npm run lint",
       "git add ."
     ]
