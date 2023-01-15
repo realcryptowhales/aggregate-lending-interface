@@ -8,4 +8,10 @@
 
 4. use 'less', css modules , unocss(atomic css).
 
+### react-router v6
 
+[examples](https://github.com/remix-run/react-router/tree/main/examples)
+[docs](https://reactrouter.com/en/main)
+
+### vite
+[docs](https://cn.vitejs.dev/guide/)

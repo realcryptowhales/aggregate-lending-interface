@@ -2,7 +2,7 @@ import * as React from 'react';
 import type { RouteObject } from 'react-router-dom';
 import { Outlet, Link, useRoutes, useParams } from 'react-router-dom';
 import { useState } from 'react';
-import reactLogo from './assets/react.svg';
+import reactLogo from '@assets/react.svg';
 import styles from './App.module.less';
 import clsx from 'classnames';
 
@@ -51,14 +51,10 @@ export default function App() {
             />
           </a>
         </div>
-        <h1>Vite + React</h1>
         <div className={clsx(styles.card)}>
           <button onClick={() => setCount((count) => count + 1)}>
             count is {count}
           </button>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test HMR
-          </p>
         </div>
         <p className={clsx(styles.readTheDocs)}>
           Click on the Vite and React logos to learn more
