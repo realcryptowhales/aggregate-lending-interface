@@ -13,8 +13,18 @@ export default defineConfig(({ mode }) => {
     resolve: {
       // 别名配置
       alias: {
-        '@src': path.join(__dirname, 'src'),
-        '@assets': path.join(__dirname, 'src/assets')
+        '@': path.join(__dirname, 'src'),
+        '@assets': path.join(__dirname, 'src/assets'),
+        '@styles': path.join(__dirname, 'src/styles'),
+        '@components': path.join(__dirname, 'src/components'),
+        '@hooks': path.join(__dirname, 'src/hooks'),
+        '@utils': path.join(__dirname, 'src/utils'),
+        '@api': path.join(__dirname, 'src/api'),
+        '@constant': path.join(__dirname, 'src/constant'),
+        '@types': path.join(__dirname, 'src/types'),
+        '@locale': path.join(__dirname, 'src/locale'),
+        '@container': path.join(__dirname, 'src/container'),
+        '@stores': path.join(__dirname, 'src/stores')
       }
     },
     plugins: [

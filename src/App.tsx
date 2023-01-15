@@ -1,13 +1,9 @@
 import * as React from 'react';
 import type { RouteObject } from 'react-router-dom';
 import { Outlet, Link, useRoutes, useParams } from 'react-router-dom';
-import { useState } from 'react';
-import reactLogo from '@assets/react.svg';
-import styles from './App.module.less';
-import clsx from 'classnames';
+import TestBanner from '@components/TestBanner';
 
 export default function App() {
-  const [count, setCount] = useState(0);
   const routes: RouteObject[] = [
     {
       path: '/',
@@ -34,34 +30,8 @@ export default function App() {
 
   return (
     <div>
-      <div className={clsx(styles.App)}>
-        <div>
-          <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-            <img
-              src="/vite.svg"
-              className={clsx(styles.logo, 'w-20')}
-              alt="Vite logo"
-            />
-          </a>
-          <a href="https://reactjs.org" target="_blank" rel="noreferrer">
-            <img
-              src={reactLogo}
-              className={clsx(styles.logo, styles.react)}
-              alt="React logo"
-            />
-          </a>
-        </div>
-        <div className={clsx(styles.card)}>
-          <button onClick={() => setCount((count) => count + 1)}>
-            count is {count}
-          </button>
-        </div>
-        <p className={clsx(styles.readTheDocs)}>
-          Click on the Vite and React logos to learn more
-        </p>
-      </div>
       <h1>Route Objects Example</h1>
-
+      <TestBanner />
       <p>
         This example demonstrates how to use React Router
         <code>&lt;Route&gt;</code>
