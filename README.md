@@ -29,6 +29,8 @@ https://swr.vercel.app/zh-CN/docs/getting-started
 
 https://uno.antfu.me/
 
+recomment to install unocss vscode plugin which can show style results when hover
+
 ## preview
 
 https://visionary-pothos-e33339.netlify.app
