@@ -10,7 +10,7 @@
 		"analyze": "tsc && vite build -m analyze",
 		"lint:script": "eslint --ext .js,.jsx,.ts,.tsx --fix --quiet ./",
 		"lint:style": "stylelint --fix \"src/**/*.{css,less}\"",
-		"lint": "npm run lint:script && npm run lint:style",
+		"lint": "tsc && npm run lint:script && npm run lint:style",
 		"preview": "vite preview"
 	},
 	"dependencies": {
