@@ -1,10 +1,10 @@
 import { createContext, useContext } from 'react';
-import TestStore from './TestStore';
+import testStore from './testStore';
 
 export class RootStore {
-  public testStore: TestStore;
+  public testStore: testStore;
   constructor() {
-    this.testStore = new TestStore();
+    this.testStore = new testStore();
   }
 }
 

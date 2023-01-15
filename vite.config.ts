@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
       }),
       // 分析打包
       mode === 'analyze' ? visualizer({ open: true, gzipSize: true }) : [],
-      // 分离资源
+      // // 分离资源
       chunkSplitPlugin({
         // 指定拆包策略
         customSplitting: {
@@ -45,17 +45,17 @@ export default defineConfig(({ mode }) => {
           // 2. 支持填正则表达式。src 中 components 和 utils 下的所有文件被会被打包为`component-util`的 chunk 中
           // 'components-util': [/src\/components/, /src\/utils/]
         }
-      }),
-      // 设置js降级处理的目标浏览器
-      legacy({
-        targets: [
-          'Chrome >= 45',
-          'Safari >= 10',
-          'iOS >= 10',
-          'Firefox >= 40',
-          'Edge >= 15'
-        ]
       })
+      // // 设置js降级处理的目标浏览器
+      // legacy({
+      //   targets: [
+      //     'Chrome >= 45',
+      //     'Safari >= 10',
+      //     'iOS >= 10',
+      //     'Firefox >= 40',
+      //     'Edge >= 15'
+      //   ]
+      // })
     ],
     css: {
       // css modules

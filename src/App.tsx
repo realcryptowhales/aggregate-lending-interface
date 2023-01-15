@@ -3,6 +3,7 @@ import type { RouteObject } from 'react-router-dom';
 import { Outlet, Link, useRoutes, useParams } from 'react-router-dom';
 import TestBanner from '@components/TestBanner';
 import { useStore } from '@stores/index';
+import Button from '@mui/material/Button';
 
 export default function App() {
   const { testStore } = useStore();
@@ -37,6 +38,7 @@ export default function App() {
     <div>
       <h1>Route Objects Example</h1>
       <TestBanner />
+      <Button variant="contained">Hello World</Button>
       <p>
         This example demonstrates how to use React Router
         <code>&lt;Route&gt;</code>
