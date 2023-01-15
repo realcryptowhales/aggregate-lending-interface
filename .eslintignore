@@ -2,7 +2,7 @@
 **/node_modules/**
 package.json
 *.d.ts
-.eslintrc.js
+.eslintrc.cjs
 tsconfig.json
 tsconfig.node.json
 README.md
