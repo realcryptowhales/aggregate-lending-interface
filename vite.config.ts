@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import autoprefixer from 'autoprefixer';
 import UnoCSS from 'unocss/vite';
 import { visualizer } from 'rollup-plugin-visualizer';
+// import createExternal from 'vite-plugin-external';
+
 import path from 'path';
 // chunksplit 在vite4有bug，先不用
 // import { chunkSplitPlugin } from 'vite-plugin-chunk-split';
@@ -36,6 +38,17 @@ export default defineConfig(({ mode }) => {
       }),
       // 分析打包
       mode === 'analyze' ? visualizer({ open: true, gzipSize: true }) : []
+      // // external plugin
+      // createExternal({
+      //   externals: {
+      //     react: 'React',
+      //     'react-dom': 'ReactDOM',
+      //     'react-router-dom': 'ReactRouterDOM',
+      //     mobx: 'mobx',
+      //     'mobx-react-lite': 'mobxReactLite',
+      //     ethers: 'ethers'
+      //   }
+      // })
       // // split chunk
       // chunkSplitPlugin({
       //   customSplitting: {
