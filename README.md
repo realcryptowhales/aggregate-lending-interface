@@ -25,6 +25,24 @@
 
 https://swr.vercel.app/zh-CN/docs/getting-started
 
+### unocss
+
+https://uno.antfu.me/
+
+recomment to install unocss vscode plugin which can show style results when hover
+
+### external
+
+https://github.com/fengxinming/vite-plugins/tree/main/packages/vite-plugin-external
+
+### split
+
+https://github.com/sanyuan0704/vite-plugin-chunk-split/blob/HEAD/README-CN.md
+
+### legacy
+
+https://www.npmjs.com/package/@vitejs/plugin-legacy
+
 ## preview
 
 https://visionary-pothos-e33339.netlify.app
