@@ -3,6 +3,7 @@ import clsx from 'classnames';
 import reactLogo from '@assets/react.svg';
 import styles from './index.module.less';
 import { useState } from 'react';
+import { t } from '@locale/index';
 
 const TestBanner = () => {
   const [count, setCount] = useState(0);
@@ -31,7 +32,7 @@ const TestBanner = () => {
         </button>
       </div>
       <p className={clsx(styles.readTheDocs)}>
-        Click on the Vite and React logos to learn more
+        {t('okc_home_banner_slogan_desc')}
       </p>
     </div>
   );
