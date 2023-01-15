@@ -2,8 +2,13 @@ import * as React from 'react';
 import type { RouteObject } from 'react-router-dom';
 import { Outlet, Link, useRoutes, useParams } from 'react-router-dom';
 import TestBanner from '@components/TestBanner';
+import { useStore } from '@stores/index';
 
 export default function App() {
+  const { testStore } = useStore();
+  const { loading, contractInfo } = testStore;
+  console.log(loading, contractInfo, 'testStore');
+
   const routes: RouteObject[] = [
     {
       path: '/',
