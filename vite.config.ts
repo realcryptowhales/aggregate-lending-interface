@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => {
         '@constant': path.join(__dirname, 'src/constant'),
         '@types': path.join(__dirname, 'src/types'),
         '@locale': path.join(__dirname, 'src/locale'),
-        '@container': path.join(__dirname, 'src/container'),
+        '@containers': path.join(__dirname, 'src/containers'),
         '@stores': path.join(__dirname, 'src/stores')
       }
     },
