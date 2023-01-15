@@ -5,3 +5,4 @@ package.json
 .eslintrc.js
 tsconfig.json
 tsconfig.node.json
+README.md
