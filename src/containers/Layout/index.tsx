@@ -23,7 +23,7 @@ function Layout() {
 
   return (
     <div>
-      <h2>{`ETH Balance of vitalik: ${ethers.utils.formatEther(
+      <h2>{`ETH Balance of vitalik is ${ethers.utils.formatEther(
         balance
       )} ETH`}</h2>
       <nav>
