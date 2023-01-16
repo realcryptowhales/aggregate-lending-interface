@@ -47,4 +47,4 @@ https://www.npmjs.com/package/@vitejs/plugin-legacy
 
 ## preview
 
-https://visionary-pothos-e33339.netlify.app
+https://aggregate-lending-interface.netlify.app
