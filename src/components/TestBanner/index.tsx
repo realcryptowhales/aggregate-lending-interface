@@ -28,7 +28,7 @@ const TestBanner = () => {
       </div>
       <div className={clsx(styles.card)}>
         <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+          count is: {count}
         </button>
       </div>
       <p className={clsx(styles.readTheDocs)}>
