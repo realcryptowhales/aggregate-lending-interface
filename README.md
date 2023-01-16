@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/09f7a550-fbbd-4f38-b9d3-c1d62f54e8fe/deploy-status)](https://app.netlify.com/sites/aggregate-lending-interface/deploys)
+
 ### Requirement
 
 1. recommend to use nodejs v16+.
