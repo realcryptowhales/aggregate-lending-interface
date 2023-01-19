@@ -8,6 +8,7 @@ import NoMatch from '@containers/NoMatch';
 import type { RouteObject } from 'react-router-dom';
 import { useRoutes } from 'react-router-dom';
 import TestBanner from '@components/TestBanner';
+import ScrollTab from '@components/ScrollTab';
 import Button from '@mui/material/Button';
 
 const routes: RouteObject[] = [
@@ -35,6 +36,7 @@ export const Routes = () => {
   return (
     <>
       <TestBanner />
+      <ScrollTab />
       <Button variant="contained">Material Button</Button>
       {element}
     </>

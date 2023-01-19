@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import autoprefixer from 'autoprefixer';
 import UnoCSS from 'unocss/vite';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { presetAttributify, presetUno } from 'unocss';
+import presetRemToPx from '@unocss/preset-rem-to-px';
 // import createExternal from 'vite-plugin-external';
 
 import path from 'path';
@@ -34,7 +36,13 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       UnoCSS({
-        /* options */
+        presets: [
+          presetAttributify({
+            /* preset options */
+          }),
+          presetUno(),
+          presetRemToPx()
+        ]
       }),
       // 分析打包
       mode === 'analyze' ? visualizer({ open: true, gzipSize: true }) : []

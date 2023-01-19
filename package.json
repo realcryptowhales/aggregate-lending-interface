@@ -33,6 +33,7 @@
 		"@types/react-dom": "^18.0.9",
 		"@typescript-eslint/eslint-plugin": "^5.48.1",
 		"@typescript-eslint/parser": "^5.48.1",
+		"@unocss/preset-rem-to-px": "^0.48.4",
 		"@vitejs/plugin-legacy": "^3.0.1",
 		"@vitejs/plugin-react": "^3.0.1",
 		"autoprefixer": "^10.4.13",
