@@ -4,6 +4,7 @@ import Martket from '@containers/Market';
 import MarketItem from '@containers/Market/MarketItem';
 import Porfolio from './containers/Porfolio';
 import PorfolioItem from './containers/Porfolio/PorfolioItem';
+import Liquidation from './containers/Liquidation';
 import NoMatch from '@containers/NoMatch';
 import Redirect from '@containers/Redirect';
 import type { RouteObject } from 'react-router-dom';
@@ -26,6 +27,7 @@ const routes: RouteObject[] = [
         path: '/porfolio',
         children: [
           { index: true, element: <Porfolio /> },
+          { path: '/porfolio/liquidation', element: <Liquidation /> },
           { path: '/porfolio/:id', element: <PorfolioItem /> }
         ]
       },

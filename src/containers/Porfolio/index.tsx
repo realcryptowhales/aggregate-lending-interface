@@ -5,6 +5,7 @@ function Porfolio() {
   return (
     <div className="w-full">
       <h1>This is porfolio page</h1>
+      <Link to="liquidation">go to asset liquidation</Link>
       <ul>
         <li>
           <Link to="item1">go item1</Link>
