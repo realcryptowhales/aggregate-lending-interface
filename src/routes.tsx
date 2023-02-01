@@ -6,10 +6,7 @@ import Layout from '@containers/Layout';
 import CoursesIndex from '@containers/CoursesIndex';
 import NoMatch from '@containers/NoMatch';
 import type { RouteObject } from 'react-router-dom';
-import { useRoutes } from 'react-router-dom';
-import TestBanner from '@components/TestBanner';
-import ScrollTab from '@components/ScrollTab';
-import Button from '@mui/material/Button';
+import { createBrowserRouter } from 'react-router-dom';
 
 const routes: RouteObject[] = [
   {
@@ -18,11 +15,19 @@ const routes: RouteObject[] = [
     children: [
       { index: true, element: <Home /> },
       {
-        path: '/courses',
+        path: '/markets',
         element: <Courses />,
         children: [
           { index: true, element: <CoursesIndex /> },
-          { path: '/courses/:id', element: <Course /> }
+          { path: '/markets/:id', element: <Course /> }
+        ]
+      },
+      {
+        path: '/porfolio',
+        element: <Courses />,
+        children: [
+          { index: true, element: <CoursesIndex /> },
+          { path: '/porfolio/:id', element: <Course /> }
         ]
       },
       { path: '*', element: <NoMatch /> }
@@ -30,17 +35,6 @@ const routes: RouteObject[] = [
   }
 ];
 
-export const Routes = () => {
-  const element = useRoutes(routes);
+const router = createBrowserRouter(routes);
 
-  return (
-    <>
-      <TestBanner />
-      <ScrollTab />
-      <Button variant="contained">Material Button</Button>
-      {element}
-    </>
-  );
-};
-
-export default Routes;
+export default router;
