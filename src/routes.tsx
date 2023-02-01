@@ -1,9 +1,10 @@
 import * as React from 'react';
 import Home from '@containers/Home';
-import Courses from '@/containers/Courses';
-import Course from '@/containers/Course';
 import Layout from '@containers/Layout';
-import CoursesIndex from '@containers/CoursesIndex';
+import Martket from '@containers/Market';
+import MarketItem from '@containers/Market/MarketItem';
+import Porfolio from './containers/Porfolio';
+import PorfolioItem from './containers/Porfolio/PorfolioItem';
 import NoMatch from '@containers/NoMatch';
 import type { RouteObject } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
@@ -16,18 +17,16 @@ const routes: RouteObject[] = [
       { index: true, element: <Home /> },
       {
         path: '/markets',
-        element: <Courses />,
         children: [
-          { index: true, element: <CoursesIndex /> },
-          { path: '/markets/:id', element: <Course /> }
+          { index: true, element: <Martket /> },
+          { path: '/markets/:id', element: <MarketItem /> }
         ]
       },
       {
         path: '/porfolio',
-        element: <Courses />,
         children: [
-          { index: true, element: <CoursesIndex /> },
-          { path: '/porfolio/:id', element: <Course /> }
+          { index: true, element: <Porfolio /> },
+          { path: '/porfolio/:id', element: <PorfolioItem /> }
         ]
       },
       { path: '*', element: <NoMatch /> }

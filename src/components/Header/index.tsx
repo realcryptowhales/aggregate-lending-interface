@@ -25,7 +25,7 @@ const Header: React.FC = () => {
               className={clsx(
                 styles.tab,
                 {
-                  [styles.active]: pathname === path
+                  [styles.active]: pathname.includes(path)
                 },
                 'decoration-none'
               )}
