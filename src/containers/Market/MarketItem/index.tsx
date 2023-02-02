@@ -8,10 +8,6 @@ import styles from './index.module.less';
 import Avatar from '@mui/material/Avatar';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
-function capitalizeString(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
 function MarketItem() {
   const { id } = useParams<'id'>();
   const chartNodeRef = useRef<any>(null);

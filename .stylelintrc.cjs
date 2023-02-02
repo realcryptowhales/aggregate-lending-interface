@@ -73,7 +73,9 @@ module.exports = {
     'length-zero-no-unit': true,
     'declaration-block-trailing-semicolon': 'always',
     'no-extra-semicolons': true,
-    'declaration-no-important': true
+    'declaration-no-important': true,
+    'selector-class-pattern': null,
+    'selector-pseudo-class-no-unknown': null
   },
   overrides: [
     {

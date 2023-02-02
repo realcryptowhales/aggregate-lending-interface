@@ -8,10 +8,6 @@ import { echarts } from '@utils/echart';
 import Avatar from '@mui/material/Avatar';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
-function capitalizeString(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
 function PorfolioItem() {
   const { id } = useParams<'id'>();
   const chartNodeRef = useRef<any>(null);
