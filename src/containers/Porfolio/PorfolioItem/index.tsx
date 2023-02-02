@@ -1,16 +1,14 @@
 import * as React from 'react';
-import { useRef, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Summary from '@components/Summary';
 import clsx from 'classnames';
 import styles from './index.module.less';
-import { echarts } from '@utils/echart';
 import Avatar from '@mui/material/Avatar';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import Detail from '@/components/Detail';
 
 function PorfolioItem() {
   const { id } = useParams<'id'>();
-  const chartNodeRef = useRef<any>(null);
   const currencyList = [
     {
       icon: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
@@ -84,26 +82,6 @@ function PorfolioItem() {
       text: '89.37%'
     }
   ];
-  useEffect(() => {
-    console.log('do echart');
-    const myChart = echarts.init(chartNodeRef.current);
-    const option = {
-      xAxis: {
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-      },
-      yAxis: {},
-      series: [
-        {
-          type: 'bar',
-          data: [23, 24, 18, 25, 27, 28, 25]
-        }
-      ]
-    };
-    myChart.setOption(option);
-    return () => {
-      myChart.dispose();
-    };
-  }, []);
 
   return (
     <div className={clsx('w-full box-border', styles.item)}>
@@ -112,7 +90,7 @@ function PorfolioItem() {
         currencyList={currencyList}
         dataList={dataList}
       />
-      <div ref={chartNodeRef} style={{ width: '500px', height: '500px' }}></div>
+      <Detail />
       <Link to="/porfolio">back to porfolio</Link>
     </div>
   );

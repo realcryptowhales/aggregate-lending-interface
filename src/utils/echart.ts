@@ -1,11 +1,12 @@
-import { BarChart } from 'echarts/charts';
+import { LineChart, PieChart } from 'echarts/charts';
 
 import {
   TitleComponent,
   TooltipComponent,
   GridComponent,
   DatasetComponent,
-  TransformComponent
+  TransformComponent,
+  LegendComponent
 } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { LabelLayout, UniversalTransition } from 'echarts/features';
@@ -18,9 +19,11 @@ echarts.use([
   GridComponent,
   DatasetComponent,
   TransformComponent,
-  BarChart,
+  LineChart,
+  PieChart,
   LabelLayout,
   UniversalTransition,
+  LegendComponent,
   CanvasRenderer
 ]);
 

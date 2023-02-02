@@ -6,7 +6,7 @@ import Porfolio from './containers/Porfolio';
 import PorfolioItem from './containers/Porfolio/PorfolioItem';
 import Liquidation from './containers/Liquidation';
 import NoMatch from '@containers/NoMatch';
-import Redirect from '@containers/Redirect';
+import Redirect from '@/components/Redirect';
 import type { RouteObject } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
 

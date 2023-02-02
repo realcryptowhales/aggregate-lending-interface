@@ -1,16 +1,14 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { echarts } from '@utils/echart';
 import Summary from '@components/Summary';
 import clsx from 'classnames';
 import styles from './index.module.less';
 import Avatar from '@mui/material/Avatar';
+import Detail from '@components/Detail';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
 function MarketItem() {
   const { id } = useParams<'id'>();
-  const chartNodeRef = useRef<any>(null);
   const currencyList = [
     {
       icon: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
@@ -85,27 +83,6 @@ function MarketItem() {
     }
   ];
 
-  useEffect(() => {
-    console.log('do echart');
-    const myChart = echarts.init(chartNodeRef.current);
-    const option = {
-      xAxis: {
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-      },
-      yAxis: {},
-      series: [
-        {
-          type: 'bar',
-          data: [23, 24, 18, 25, 27, 28, 25]
-        }
-      ]
-    };
-    myChart.setOption(option);
-    return () => {
-      myChart.dispose();
-    };
-  }, []);
-
   return (
     <div className={clsx('w-full box-border', styles.item)}>
       <Summary
@@ -113,7 +90,7 @@ function MarketItem() {
         currencyList={currencyList}
         dataList={dataList}
       />
-      <div ref={chartNodeRef} style={{ width: '500px', height: '500px' }}></div>
+      <Detail />
       <Link to="/markets">back to markets</Link>
     </div>
   );
