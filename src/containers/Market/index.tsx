@@ -9,13 +9,13 @@ function Market() {
       <h1>This is market page</h1>
       <ul>
         <li>
-          <Link to="item1">go item1</Link>
+          <Link to="BTC">go BTC</Link>
         </li>
         <li>
-          <Link to="item2">go item2</Link>
+          <Link to="ETH">go ETH</Link>
         </li>
         <li>
-          <Link to="item3">go item3</Link>
+          <Link to="OKB">go OKB</Link>
         </li>
       </ul>
     </div>
