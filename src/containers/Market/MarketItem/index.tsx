@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Line } from '@antv/g2plot';
+import { echarts } from '@utils/echart';
 
 function capitalizeString(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -9,70 +9,25 @@ function capitalizeString(s: string): string {
 
 function MarketItem() {
   const { id } = useParams<'id'>();
-  const chartNodeRef = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<any>(null);
+  const chartNodeRef = useRef<any>(null);
   useEffect(() => {
-    console.log(chartNodeRef.current, chartRef, 'what is');
-    if (!chartNodeRef.current) {
-      return;
-    }
-    if (chartRef.current) return;
-    const data = [
-      {
-        Date: '2010-01',
-        scales: 1998
+    console.log('do echart');
+    const myChart = echarts.init(chartNodeRef.current);
+    const option = {
+      xAxis: {
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
       },
-      {
-        Date: '2010-02',
-        scales: 1850
-      },
-      {
-        Date: '2010-03',
-        scales: 1720
-      },
-      {
-        Date: '2010-04',
-        scales: 1818
-      },
-      {
-        Date: '2010-05',
-        scales: 1920
-      },
-      {
-        Date: '2010-06',
-        scales: 1802
-      },
-      {
-        Date: '2010-07',
-        scales: 1945
-      },
-      {
-        Date: '2010-08',
-        scales: 1856
-      },
-      {
-        Date: '2010-09',
-        scales: 2107
-      },
-      {
-        Date: '2010-10',
-        scales: 2140
-      }
-    ];
-    const line = new Line(chartNodeRef.current, {
-      data,
-      xField: 'Date',
-      yField: 'scales'
-    });
-
-    line.render();
-    chartRef.current = line;
-    console.log('do first');
-
+      yAxis: {},
+      series: [
+        {
+          type: 'bar',
+          data: [23, 24, 18, 25, 27, 28, 25]
+        }
+      ]
+    };
+    myChart.setOption(option);
     return () => {
-      if (chartRef.current) {
-        // chartRef.current.destroy();
-      }
+      myChart.dispose();
     };
   }, []);
 
@@ -82,7 +37,7 @@ function MarketItem() {
       <h2>
         Welcome to the {id!.split('-').map(capitalizeString).join(' ')} course!
       </h2>
-      <div ref={chartNodeRef}></div>
+      <div ref={chartNodeRef} style={{ width: '500px', height: '500px' }}></div>
       <Link to="/markets">back to markets</Link>
     </div>
   );
