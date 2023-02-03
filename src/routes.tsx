@@ -10,37 +10,23 @@ import { useRoutes } from 'react-router-dom';
 import TestBanner from '@components/TestBanner';
 import ScrollTab from '@components/ScrollTab';
 import Button from '@mui/material/Button';
+import Porfolio from './containers/Porfolio';
 
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <Layout />,
-    children: [
-      { index: true, element: <Home /> },
-      {
-        path: '/courses',
-        element: <Courses />,
-        children: [
-          { index: true, element: <CoursesIndex /> },
-          { path: '/courses/:id', element: <Course /> }
-        ]
-      },
-      { path: '*', element: <NoMatch /> }
-    ]
+    element: <Home />
+  },
+  {
+    path: '/test',
+    element: <Porfolio />
   }
 ];
 
 export const Routes = () => {
   const element = useRoutes(routes);
-
-  return (
-    <>
-      <TestBanner />
-      <ScrollTab />
-      <Button variant="contained">Material Button</Button>
-      {element}
-    </>
-  );
+  console.log('element', element);
+  return <>{element}</>;
 };
 
 export default Routes;
