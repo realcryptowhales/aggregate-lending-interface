@@ -1,6 +1,4 @@
 import * as React from 'react';
-import clsx from 'classnames';
-import styles from './index.module.less';
 
 interface ItemProps {
   title: any;
@@ -9,9 +7,11 @@ interface ItemProps {
 
 const Item: React.FC<ItemProps> = ({ title, text }) => {
   return (
-    <div className={clsx(styles.item, 'flex-col items-start')}>
-      <div className={clsx(styles.title)}>{title}</div>
-      <div className={clsx(styles.text)}>{text}</div>
+    <div className="flex-col items-start ml-16">
+      <div className="color-#929292 text-3.5 leading-5.5 font-400">{title}</div>
+      <div className="color-#000000 leading-6 mt-2.5 font-500 text-4.5">
+        {text}
+      </div>
     </div>
   );
 };

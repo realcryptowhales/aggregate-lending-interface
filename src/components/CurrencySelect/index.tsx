@@ -4,9 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Avatar from '@mui/material/Avatar';
-
 import clsx from 'classnames';
-import styles from './index.module.less';
 
 interface CurrencySelectProps {
   list: any[];
@@ -39,7 +37,9 @@ const CurrencySelect: React.FC<CurrencySelectProps> = ({
                     alt="Remy Sharp"
                     src={icon}
                   />
-                  <span className={clsx(styles.text)}>{symbol}</span>
+                  <span className={clsx('ml-1.5 font-700 text-4 leading-5')}>
+                    {symbol}
+                  </span>
                 </div>
               </MenuItem>
             );

@@ -30,3 +30,8 @@ body {
     background-color: #fff;
   }
 }
+
+/* mui select去掉边框  */
+.MuiInputBase-root .MuiOutlinedInput-notchedOutline {
+  border: none;
+}

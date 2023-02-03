@@ -1,6 +1,5 @@
 import * as React from 'react';
 import clsx from 'classnames';
-import styles from './index.module.less';
 import CurrencySelect from '@components/CurrencySelect';
 import Item from './Item';
 
@@ -16,7 +15,13 @@ const Summary: React.FC<SummaryProps> = ({
   selectValue
 }) => {
   return (
-    <div className={clsx('w-full', 'flex', 'items-center', styles.summary)}>
+    <div
+      className={clsx(
+        'w-full',
+        'flex',
+        'items-center bg-#ffffff rd-4 shadow-[0_4px_12px_rgb(137,137,137,0.25)]'
+      )}
+    >
       <CurrencySelect defaultValue={selectValue} list={currencyList} />
       {dataList.map(({ key, title, text }) => {
         return <Item key={key} title={title} text={text} />;

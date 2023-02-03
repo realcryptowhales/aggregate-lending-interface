@@ -1,80 +1,171 @@
 import * as React from 'react';
 import clsx from 'classnames';
-import styles from './index.module.less';
 import { useState, useEffect, useRef } from 'react';
 import { echarts } from '@utils/echart';
+import Tab from './Tab';
+import Button from '@mui/material/Button';
 
 interface DetailProps {
-  option?: any;
+  test?: any;
 }
 
 const Detail: React.FC<DetailProps> = () => {
+  const summary = {
+    title: '存款总数',
+    text: 290.45612378,
+    desc: '$ 19,290.49'
+  };
+
+  const detail = {
+    text1: '三平台存款APR实时数据 {YY MM DD}',
+    text2: (
+      <>
+        <span>平台 </span>
+        <span className="color-#F98A6B">6%</span>
+        <span>（20%撮合+80%AAVE）、AAVE </span>
+        <span className="color-#F98A6B">5%</span>
+        <span>、Compound </span>
+        <span className="color-#F98A6B">4%</span>
+      </>
+    ),
+    desc: '这是desc内容'
+  };
+  const middleTitle = '存款APR折线图';
+  const [options, setOptions] = useState([
+    {
+      name: '存款市场',
+      select: true
+    },
+    {
+      name: '借款市场',
+      select: false
+    }
+  ]);
   const lineChartNodeRef = useRef<any>(null);
   const pieChartNodeRef = useRef<any>(null);
 
   useEffect(() => {
     const lineOption = {
+      // 右上角图例
       legend: {
-        data: [
-          {
-            names: '平台'
-          },
-          {
-            names: 'AAVE'
-          },
-          {
-            names: 'compound'
-          }
-        ],
-        backgroundColor: '#ccc'
+        orient: 'horizontal',
+        right: 60,
+        padding: [15, 10, 5, 10]
+      },
+      // 图的边距
+      grid: {
+        x: 40, //默认是80px
+        y: 60, //默认是60px
+        x2: 80, //默认80px
+        y2: 60 //默认60px
       },
       xAxis: {
-        type: 'category',
-        data: ['A', 'B', 'C']
+        type: 'time',
+        splitLine: {
+          show: false
+        }
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        name: 'APR',
+        axisLabel: {
+          formatter: '{value}%'
+        },
+        nameTextStyle: {
+          fontWeight: 400,
+          fontSize: 14,
+          lineHeight: 25,
+          align: 'right',
+          padding: [0, 7, 5, 0] // 上右下左
+        }
       },
       series: [
         {
-          names: '平台',
-          data: [120, 200, 150],
+          name: '平台',
+          data: [
+            // data格式[时间戳，数据]
+            [1675392178742, 5],
+            [1675393178742, 10],
+            [1675394178742, 30]
+          ],
           type: 'line'
         },
         {
-          names: 'AAVE',
-          data: [50, 100, 120],
+          name: 'AAVE',
+          data: [
+            [1675392178742, 7],
+            [1675393178742, 15],
+            [1675394178742, 10]
+          ],
           type: 'line'
         },
         {
-          names: 'compound',
-          data: [80, 150, 230],
+          name: 'compound',
+          data: [
+            [1675392178742, 3],
+            [1675393178742, 5],
+            [1675394178742, 15]
+          ],
           type: 'line'
         }
+      ],
+      // tooltip: {
+      //   formatter: function (param) {
+      //     const time = param.value[0];
+      //     const value = param.value[1] + '%';
+      //     return value;
+      //   }
+      // },
+      // default ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc']
+      color: [
+        '#000000',
+        '#7B7B7B',
+        '#CECECE',
+        '#ee6666',
+        '#73c0de',
+        '#3ba272',
+        '#fc8452',
+        '#9a60b4',
+        '#ea7ccc'
       ]
     };
     const lineChart = echarts.init(lineChartNodeRef.current);
     lineChart.setOption(lineOption);
 
     const pieOption = {
-      series: [
-        {
-          type: 'pie',
-          data: [
-            {
-              value: 335,
-              name: '直接访问'
-            },
-            {
-              value: 234,
-              name: '联盟广告'
-            },
-            {
-              value: 1548,
-              name: '搜索引擎'
-            }
-          ]
+      series: {
+        type: 'pie',
+        data: [
+          {
+            value: 335,
+            name: 'a'
+          },
+          {
+            value: 234,
+            name: 'b'
+          },
+          {
+            value: 1548,
+            name: 'c'
+          }
+        ],
+        // 隐藏饼图的引导线
+        label: {
+          normal: {
+            show: false
+          }
         }
+      },
+      color: [
+        '#000000',
+        '#7B7B7B',
+        '#CECECE',
+        '#ee6666',
+        '#73c0de',
+        '#3ba272',
+        '#fc8452',
+        '#9a60b4',
+        '#ea7ccc'
       ]
     };
     const pieChart = echarts.init(pieChartNodeRef.current);
@@ -84,23 +175,74 @@ const Detail: React.FC<DetailProps> = () => {
       pieChart.dispose();
     };
   }, []);
-
   return (
-    <div className={clsx(styles.detail)}>
-      <div className={clsx(styles.tab)}>存款</div>
-      <div className="flex">
+    <div
+      className={clsx(
+        'bg-#ffffff mt-6 rd-4 shadow-[0_4px_12px_rgb(137,137,137,0.25)] )'
+      )}
+    >
+      <Tab
+        options={options}
+        onChange={(index) => {
+          setOptions(
+            options.map((option, i) => {
+              option.select = index === i;
+              return option;
+            })
+          );
+          console.log(`switch to ${options[index].name}`);
+        }}
+      />
+      <div className="flex justify-between pl-8 pr-25">
         <div>
-          <div>借款</div>
+          <div className="flex font-400 color-#929292 mb-12">
+            <div>
+              <div className="text-3.5 leading-5.5">{summary.title}</div>
+              <div className="color-#000000 font-500 text-5 leading-6 mt-1.5">
+                {summary.text}
+              </div>
+              <div className=" text-3.5 leading-4 mt-1.5">{summary.desc}</div>
+            </div>
+            <div className="bg-#f9f9f9 rd-1 ml-8 px-4 py-4.5 color-#000000 text-3.5 leading-4 w-118.75">
+              {detail.text1}
+              <br />
+              {detail.text2}
+            </div>
+          </div>
+          <div className="color-#000000 text-4 leading-6.25">{middleTitle}</div>
           <div
             ref={lineChartNodeRef}
-            style={{ width: '700px', height: '500px' }}
+            style={{ width: '800px', height: '350px' }}
           ></div>
         </div>
         <div>
-          <div>按钮</div>
+          <div className="mt-3 mb-19.5">
+            <Button
+              variant="contained"
+              sx={{
+                width: '86px',
+                background: '#F98A6B',
+                color: 'white',
+                '&:hover': { background: '#ff9800' }
+              }}
+            >
+              存款
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                width: '86px',
+                marginLeft: '13px',
+                color: '#000',
+                borderColor: '#000'
+              }}
+            >
+              取款
+            </Button>
+          </div>
           <div
             ref={pieChartNodeRef}
-            style={{ width: '500px', height: '500px' }}
+            style={{ width: '170px', height: '170px' }}
           ></div>
         </div>
       </div>
