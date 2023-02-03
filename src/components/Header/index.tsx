@@ -14,8 +14,8 @@ const Header: React.FC = () => {
 
   const { pathname } = useLocation();
   const pathList = [
-    { path: '/markets', name: 'markets' },
-    { path: '/porfolio', name: 'porfolio' }
+    { path: '/markets', name: 'Markets' },
+    { path: '/porfolio', name: 'Porfolio' }
   ];
   return (
     <div
@@ -24,16 +24,19 @@ const Header: React.FC = () => {
       )}
     >
       <div className="flex items-center">
-        {pathList.map(({ path, name }) => {
+        {pathList.map(({ path, name }, index) => {
           return (
             <Link
               key={path}
               to={path}
               className={clsx(
-                'color-#ffffff text-3.5 font-400 ml-8 leading-4 decoration-none',
+                'color-#ffffff text-3.5 font-400 leading-4 decoration-none',
                 {
                   'font-700 pb-1 mb-[-4px] border-b-2 border-b-#ffffff border-b-solid':
                     pathname.includes(path)
+                },
+                {
+                  'ml-8': index > 0
                 }
               )}
             >
