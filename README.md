@@ -33,9 +33,11 @@ https://uno.antfu.me/
 
 recomment to install unocss vscode plugin which can show style results when hover
 
+extend tailwind, so you can use any tailwind rules
+
 ### external
 
-https://github.com/fengxinming/vite-plugins/tree/main/packages/vite-plugin-external
+https://github.com/crcong/vite-plugin-externals
 
 ### split
 

@@ -5,7 +5,7 @@ import UnoCSS from 'unocss/vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { presetAttributify, presetUno } from 'unocss';
 import presetRemToPx from '@unocss/preset-rem-to-px';
-// import createExternal from 'vite-plugin-external';
+// import { viteExternalsPlugin } from 'vite-plugin-externals';
 
 import path from 'path';
 // chunksplit 在vite4有bug，先不用
@@ -47,16 +47,18 @@ export default defineConfig(({ mode }) => {
       // 分析打包
       mode === 'analyze' ? visualizer({ open: true, gzipSize: true }) : []
       // // external plugin
-      // createExternal({
-      //   externals: {
+      // viteExternalsPlugin(
+      //   {
       //     react: 'React',
       //     'react-dom': 'ReactDOM',
-      //     'react-router-dom': 'ReactRouterDOM',
-      //     mobx: 'mobx',
-      //     'mobx-react-lite': 'mobxReactLite',
-      //     ethers: 'ethers'
-      //   }
-      // })
+      //     // 'react-router-dom': 'ReactRouterDOM',
+      //     // mobx: 'mobx',
+      //     // 'mobx-react-lite': 'mobxReactLite',
+      //     // ethers: 'ethers'
+      //   },
+      //  // 开发环境不external
+      //   { disableInServe: true }
+      // )
       // // split chunk
       // chunkSplitPlugin({
       //   customSplitting: {

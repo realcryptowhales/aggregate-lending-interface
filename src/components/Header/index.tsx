@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
 import clsx from 'classnames';
-import styles from './index.module.less';
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { useLocation } from 'react-router-dom';
@@ -15,25 +14,30 @@ const Header: React.FC = () => {
 
   const { pathname } = useLocation();
   const pathList = [
-    { path: '/markets', name: 'markets' },
-    { path: '/porfolio', name: 'porfolio' }
+    { path: '/markets', name: 'Markets' },
+    { path: '/porfolio', name: 'Porfolio' }
   ];
   return (
     <div
-      className={clsx(styles.header, 'w-full flex justify-between box-border')}
+      className={clsx(
+        'bg-#1b1c30 w-full flex justify-between box-border py-4.5 px-27'
+      )}
     >
       <div className="flex items-center">
-        {pathList.map(({ path, name }) => {
+        {pathList.map(({ path, name }, index) => {
           return (
             <Link
               key={path}
               to={path}
               className={clsx(
-                styles.tab,
+                'color-#ffffff text-3.5 font-400 leading-4 decoration-none',
                 {
-                  [styles.active]: pathname.includes(path)
+                  'font-700 pb-1 mb-[-4px] border-b-2 border-b-#ffffff border-b-solid':
+                    pathname.includes(path)
                 },
-                'decoration-none'
+                {
+                  'ml-8': index > 0
+                }
               )}
             >
               {name}
@@ -44,13 +48,30 @@ const Header: React.FC = () => {
       <div>
         <Button
           variant="contained"
-          className={clsx(styles.button, styles.contained)}
+          sx={{
+            height: '26px',
+            backgroundColor: 'white'
+          }}
           onClick={() => setOpen(true)}
         >
           挖矿奖励
         </Button>
-        <Button className={clsx(styles.button, styles.white)}>钱包</Button>
-        <Button className={clsx(styles.button, styles.white)}>英语</Button>
+        <Button
+          sx={{
+            height: '26px',
+            color: 'white'
+          }}
+        >
+          钱包
+        </Button>
+        <Button
+          sx={{
+            height: '26px',
+            color: 'white'
+          }}
+        >
+          英语
+        </Button>
         <SmallModal open={open} handleClose={handleClose} />
       </div>
     </div>

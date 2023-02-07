@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Summary from '@components/Summary';
-import clsx from 'classnames';
-import styles from './index.module.less';
 import Avatar from '@mui/material/Avatar';
 import Detail from '@components/Detail';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
@@ -41,13 +39,13 @@ function MarketItem() {
       key: 'index2',
       title: '价格来源',
       text: (
-        <div className={clsx('flex items-center')}>
+        <div className="flex items-center">
           <Avatar
             sx={{ width: '18px', height: '18px' }}
             alt="Remy Sharp"
             src="https://static.okx.com/cdn/announce/20220119/1642588815382f0fd4a29-ba95-4ba9-ab33-23c1258ce96a.png"
           />
-          <span className={clsx(styles.sourceText)}>OKC</span>
+          <span className="font-500 text-3.5 leading-4 ml-2">OKC</span>
         </div>
       )
     },
@@ -65,7 +63,7 @@ function MarketItem() {
       key: 'index5',
       title: (
         <div className="flex items-center">
-          <span className={clsx(styles.mortgage)}>最高抵押率</span>
+          <span className="mr-1">最高抵押率</span>
           <ErrorOutlineOutlinedIcon sx={{ width: '16px', height: '16px' }} />
         </div>
       ),
@@ -75,7 +73,7 @@ function MarketItem() {
       key: 'index6',
       title: (
         <div className="flex items-center">
-          <span className={clsx(styles.liquidate)}>清算阈值</span>
+          <span className="mr-1">清算阈值</span>
           <ErrorOutlineOutlinedIcon sx={{ width: '16px', height: '16px' }} />
         </div>
       ),
@@ -84,7 +82,7 @@ function MarketItem() {
   ];
 
   return (
-    <div className={clsx('w-full box-border', styles.item)}>
+    <div className="w-full box-border px-27 py-6">
       <Summary
         selectValue={id}
         currencyList={currencyList}

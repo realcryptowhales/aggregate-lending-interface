@@ -3,7 +3,7 @@ import useSWR from 'swr';
 import { fetcher } from '@api/index';
 import style from './index.module.less';
 import cls from 'classnames';
-import { Box, LinearProgress } from '@mui/material';
+import { Box, LinearProgress, Tooltip } from '@mui/material';
 // interface Props {
 // title: React.ReactNode;
 // secondTitle?: string;
@@ -12,17 +12,28 @@ import { Box, LinearProgress } from '@mui/material';
 const InfoItem: React.FC<{
   title: string;
   amount: number;
-  percentText?: string;
+  percentText?: React.ReactNode;
   percent?: number;
-}> = ({ title, amount, percentText, percent }) => {
+  hasTips?: boolean;
+}> = ({ title, amount, percentText, percent, hasTips }) => {
   return (
     <div style={{ marginRight: 59, minWidth: 180 }}>
       <div className={style.title}>{title}</div>
       <div className={style.amount}>{amount}</div>
       {percentText && (
-        <div className={style.percent}>
+        <div className={cls('flex items-center', style.percent)}>
           <span className={style.percentText}>{percentText}</span>
           <span className={style.percentNumber}>{percent}</span>
+          {hasTips && (
+            <Tooltip style={{ marginLeft: 6 }} title="Add" arrow>
+              <i
+                className={cls(
+                  'iconfont icon-exclamation-circle-o cursor-pointer'
+                )}
+                style={{ color: '#000000', fontSize: 15, marginLeft: 6 }}
+              />
+            </Tooltip>
+          )}
         </div>
       )}
     </div>
@@ -47,13 +58,14 @@ const AssetInfo: React.FC = ({}) => {
       <InfoItem
         title={'今日预估总收益'}
         amount={0}
-        percentText={'净收益率'}
+        percentText="净收益率"
         percent={0}
+        hasTips
       />
       <InfoItem title={'总抵押品价值'} amount={0} />
       <div className={style.limit}>
         <div className={style.title}>借款限额</div>
-        <div className={cls('flex justify-between')}>
+        <div className={cls('flex justify-between', style.percent)}>
           <span>已用比例</span>
           <span>{1231}</span>
         </div>
@@ -79,7 +91,7 @@ const AssetInfo: React.FC = ({}) => {
             }}
           ></div> */}
         </div>
-        <div className={cls('flex justify-between')}>
+        <div className={cls('flex justify-between', style.percent)}>
           <span>最多可借</span>
           <span>{2322}</span>
         </div>

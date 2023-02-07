@@ -28,7 +28,6 @@ const StyledTableRow = styled(TableRow)(() => ({
 }));
 
 export const MarketTableRows: React.FC = ({ row }: any) => {
-  console.log('row', row);
   return (
     <StyledTableRow
       sx={{

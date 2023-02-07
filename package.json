@@ -36,8 +36,8 @@
 		"@typescript-eslint/eslint-plugin": "^5.48.1",
 		"@typescript-eslint/parser": "^5.48.1",
 		"@unocss/preset-rem-to-px": "^0.48.4",
-		"@vitejs/plugin-legacy": "^3.0.1",
-		"@vitejs/plugin-react": "^3.0.1",
+		"@vitejs/plugin-legacy": "^4.0.1",
+		"@vitejs/plugin-react": "^3.1.0",
 		"autoprefixer": "^10.4.13",
 		"eslint": "^8.31.0",
 		"eslint-config-prettier": "^8.6.0",
@@ -59,10 +59,10 @@
 		"stylelint-prettier": "^2.0.0",
 		"terser": "^5.16.1",
 		"typescript": "^4.9.4",
-		"unocss": "^0.48.4",
-		"vite": "^4.0.4",
+		"unocss": "^0.49.4",
+		"vite": "^4.1.1",
 		"vite-plugin-chunk-split": "^0.4.7",
-		"vite-plugin-external": "^1.2.7"
+		"vite-plugin-externals": "^0.6.2"
 	},
 	"engines": {
 		"node": ">=16.0.0"

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import '@styles/index.less';
+import '@styles/index.css';
 import 'uno.css';
 import { StoreContext, store } from '@stores/index';
 import { RouterProvider } from 'react-router-dom';
