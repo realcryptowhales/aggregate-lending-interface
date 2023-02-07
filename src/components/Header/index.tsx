@@ -52,7 +52,8 @@ const Header: React.FC = () => {
           variant="contained"
           sx={{
             height: '26px',
-            backgroundColor: 'white'
+            backgroundColor: 'white',
+            marginRight: '20px'
           }}
           onClick={() => setOpen(true)}
         >
@@ -64,16 +65,16 @@ const Header: React.FC = () => {
             color: 'white'
           }}
         >
-          钱包
+          连接钱包
         </Button>
-        <Button
+        {/* <Button
           sx={{
             height: '26px',
             color: 'white'
           }}
         >
           英语
-        </Button>
+        </Button> */}
         <SmallDialog
           open={open}
           handleClose={handleClose}
