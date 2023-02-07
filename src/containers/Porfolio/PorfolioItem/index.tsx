@@ -89,7 +89,6 @@ function PorfolioItem() {
         dataList={dataList}
       />
       <Detail />
-      <Link to="/porfolio">back to porfolio</Link>
     </div>
   );
 }

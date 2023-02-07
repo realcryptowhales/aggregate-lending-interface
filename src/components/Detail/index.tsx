@@ -15,7 +15,10 @@ const Detail: React.FC<DetailProps> = () => {
     text: 290.45612378,
     desc: '$ 19,290.49'
   };
-
+  const pieTextList = [
+    { title: '内部撮合', data: '65%' },
+    { title: 'AAVE', data: '35%' }
+  ];
   const detail = {
     text1: '三平台存款APR实时数据 {YY MM DD}',
     text2: (
@@ -193,9 +196,9 @@ const Detail: React.FC<DetailProps> = () => {
           console.log(`switch to ${options[index].name}`);
         }}
       />
-      <div className="flex justify-between pl-8 pr-25">
-        <div>
-          <div className="flex font-400 color-#929292 mb-12">
+      <div className=" pl-8 pr-25">
+        <div className="flex justify-between items-center mb-12">
+          <div className="flex font-400 color-#929292">
             <div>
               <div className="text-3.5 leading-5.5">{summary.title}</div>
               <div className="color-#000000 font-500 text-5 leading-6 mt-1.5">
@@ -209,14 +212,7 @@ const Detail: React.FC<DetailProps> = () => {
               {detail.text2}
             </div>
           </div>
-          <div className="color-#000000 text-4 leading-6.25">{middleTitle}</div>
-          <div
-            ref={lineChartNodeRef}
-            style={{ width: '800px', height: '350px' }}
-          ></div>
-        </div>
-        <div>
-          <div className="mt-3 mb-19.5">
+          <div>
             <Button
               variant="contained"
               sx={{
@@ -240,10 +236,42 @@ const Detail: React.FC<DetailProps> = () => {
               取款
             </Button>
           </div>
-          <div
-            ref={pieChartNodeRef}
-            style={{ width: '170px', height: '170px' }}
-          ></div>
+        </div>
+        <div className="flex justify-between">
+          <div>
+            <div className="color-#000000 text-4 leading-6.25">
+              {middleTitle}
+            </div>
+            <div
+              ref={lineChartNodeRef}
+              style={{ width: '800px', height: '350px' }}
+            ></div>
+          </div>
+          <div className="min-w-46.25">
+            <div>
+              <div className="text-4 leading-6.25 mb-5.25 font-400 color-#000000">
+                存款分布图
+              </div>
+              <div className="text-3.5 leading-5.5 color-#000000 font-400">
+                <div className="flex justify-between mt-1">
+                  <span>平台</span>
+                  <span>存款占比</span>
+                </div>
+                {pieTextList.map(({ title, data }) => {
+                  return (
+                    <div className="flex justify-between mt-1" key={title}>
+                      <span className="color-#929292">{title}</span>
+                      <span className="font-500">{data}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div
+              ref={pieChartNodeRef}
+              style={{ width: '170px', height: '170px' }}
+            ></div>
+          </div>
         </div>
       </div>
     </div>

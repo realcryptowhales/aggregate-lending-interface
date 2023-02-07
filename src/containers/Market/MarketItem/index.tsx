@@ -89,7 +89,6 @@ function MarketItem() {
         dataList={dataList}
       />
       <Detail />
-      <Link to="/markets">back to markets</Link>
     </div>
   );
 }
