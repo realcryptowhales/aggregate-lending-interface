@@ -18,6 +18,11 @@ function Market() {
           <Link to="OKB">go OKB</Link>
         </li>
       </ul>
+      <div>
+        <li>
+          <Link to="/markets/plat-form">plat-form</Link>
+        </li>
+      </div>
     </div>
   );
 }

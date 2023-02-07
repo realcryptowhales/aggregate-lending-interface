@@ -50,7 +50,7 @@ export const MarketTableRows: React.FC = ({ row }: any) => {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img
             style={{ width: 30, height: 30, marginRight: 8 }}
-            src="https://static.okx.com/cdn/wallet/logo/okt.png"
+            src={row.asset.logo}
           ></img>
           <div>
             <div className={style.name}> {row.asset.name}</div>

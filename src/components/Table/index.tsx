@@ -75,9 +75,9 @@ export const rows = [
   ),
   createData(
     {
-      logo: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
-      symbol: 'BTC',
-      name: 'btc'
+      logo: 'https://static.okx.com/cdn/assets/imgs/221/5F33E3F751873296.png',
+      symbol: 'ETH',
+      name: 'eth'
     },
     452,
     25.0,
@@ -88,9 +88,9 @@ export const rows = [
   ),
   createData(
     {
-      logo: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
-      symbol: 'BTC',
-      name: 'btc'
+      logo: 'https://static.okx.com/cdn/assets/imgs/221/5F74EB20302D7761.png',
+      symbol: 'USDT',
+      name: 'usdt'
     },
     262,
     16.0,
@@ -101,40 +101,14 @@ export const rows = [
   ),
   createData(
     {
-      logo: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
-      symbol: 'BTC',
-      name: 'btc'
+      logo: 'https://static.okx.com/cdn/announce/20220119/1642588815382f0fd4a29-ba95-4ba9-ab33-23c1258ce96a.png',
+      symbol: 'OKT',
+      name: 'okt'
     },
     159,
     6.0,
     24,
     4.0,
-    100,
-    <div>123</div>
-  ),
-  createData(
-    {
-      logo: 'https://static.okx.com/cdn/assets/imgs/221/5F33E3F751873296.png',
-      symbol: 'ETH',
-      name: 'eth'
-    },
-    356,
-    16.0,
-    49,
-    3.9,
-    100,
-    <div>123</div>
-  ),
-  createData(
-    {
-      logo: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
-      symbol: 'BTC',
-      name: 'btc'
-    },
-    408,
-    3.2,
-    87,
-    6.5,
     100,
     <div>123</div>
   )
