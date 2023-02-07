@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import Summary from '@components/Summary';
 import Avatar from '@mui/material/Avatar';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import Tooltip from '@mui/material/Tooltip';
 import Detail from '@/components/Detail';
 
 function PorfolioItem() {
@@ -64,7 +65,9 @@ function PorfolioItem() {
       title: (
         <div className="flex items-center">
           <span className="mr-4">最高抵押率</span>
-          <ErrorOutlineOutlinedIcon sx={{ width: '16px', height: '16px' }} />
+          <Tooltip title="hover的内容">
+            <ErrorOutlineOutlinedIcon sx={{ width: '17px', height: '17px' }} />
+          </Tooltip>
         </div>
       ),
       text: '84.37%'
@@ -74,7 +77,9 @@ function PorfolioItem() {
       title: (
         <div className="flex items-center">
           <span className="mr-4">清算阈值</span>
-          <ErrorOutlineOutlinedIcon sx={{ width: '16px', height: '16px' }} />
+          <Tooltip title="hover的内容">
+            <ErrorOutlineOutlinedIcon sx={{ width: '17px', height: '17px' }} />
+          </Tooltip>
         </div>
       ),
       text: '89.37%'
@@ -89,7 +94,6 @@ function PorfolioItem() {
         dataList={dataList}
       />
       <Detail />
-      <Link to="/porfolio">back to porfolio</Link>
     </div>
   );
 }
