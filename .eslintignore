@@ -6,3 +6,4 @@ package.json
 tsconfig.json
 tsconfig.node.json
 README.md
+src/font/**

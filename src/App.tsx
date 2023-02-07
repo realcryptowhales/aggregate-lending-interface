@@ -6,6 +6,8 @@ import { StoreContext, store } from '@stores/index';
 import { RouterProvider } from 'react-router-dom';
 import router from './routes';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import '@/font/iconfont.css';
+import '@/font/iconfont.js';
 
 const theme = createTheme({
   palette: {

@@ -17,7 +17,11 @@ const Summary: React.FC<SummaryProps> = ({
 }) => {
   return (
     <div className={clsx('w-full', 'flex', 'items-center', styles.summary)}>
-      <CurrencySelect defaultValue={selectValue} list={currencyList} />
+      <CurrencySelect
+        defaultValue={selectValue}
+        list={currencyList}
+        showImage
+      />
       {dataList.map(({ key, title, text }) => {
         return <Item key={key} title={title} text={text} />;
       })}

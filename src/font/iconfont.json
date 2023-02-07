@@ -1,0 +1,37 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "14748542",
+      "name": "exclamation-circle-o",
+      "font_class": "exclamation-circle-o",
+      "unicode": "e67c",
+      "unicode_decimal": 59004
+    },
+    {
+      "icon_id": "80157358",
+      "name": "arrow",
+      "font_class": "arrow1",
+      "unicode": "ec5a",
+      "unicode_decimal": 60506
+    },
+    {
+      "icon_id": "81164136",
+      "name": "icon_wallet",
+      "font_class": "icon_wallet",
+      "unicode": "ec6c",
+      "unicode_decimal": 60524
+    },
+    {
+      "icon_id": "81996653",
+      "name": "Records",
+      "font_class": "Records",
+      "unicode": "ec75",
+      "unicode_decimal": 60533
+    }
+  ]
+}

@@ -9,6 +9,8 @@ import NoMatch from '@containers/NoMatch';
 import Redirect from '@/components/Redirect';
 import type { RouteObject } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
+import MyAsset from './containers/MyAsset';
+import Home from './containers/Home';
 
 const routes: RouteObject[] = [
   {
@@ -20,7 +22,8 @@ const routes: RouteObject[] = [
         path: '/markets',
         children: [
           { index: true, element: <Martket /> },
-          { path: '/markets/:id', element: <MarketItem /> }
+          { path: '/markets/:id', element: <MarketItem /> },
+          { path: '/markets/plat-form', element: <Home /> }
         ]
       },
       {
@@ -28,7 +31,8 @@ const routes: RouteObject[] = [
         children: [
           { index: true, element: <Porfolio /> },
           { path: '/porfolio/liquidation', element: <Liquidation /> },
-          { path: '/porfolio/:id', element: <PorfolioItem /> }
+          { path: '/porfolio/:id', element: <PorfolioItem /> },
+          { path: '/porfolio/my-asset', element: <MyAsset /> }
         ]
       },
       { path: '*', element: <NoMatch /> }

@@ -1,0 +1,28 @@
+@font-face {
+  font-family: iconfont; /* Project id  */
+  src: url('iconfont.ttf?t=1675752178766') format('truetype');
+}
+
+.iconfont {
+  font-family: iconfont !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-exclamation-circle-o::before {
+  content: '\e67c';
+}
+
+.icon-arrow1::before {
+  content: '\ec5a';
+}
+
+.icon-icon_wallet::before {
+  content: '\ec6c';
+}
+
+.icon-Records::before {
+  content: '\ec75';
+}
