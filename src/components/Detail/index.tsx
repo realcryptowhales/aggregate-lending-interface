@@ -209,7 +209,7 @@ const Detail: React.FC<DetailProps> = () => {
               <div className=" text-3.5 leading-4 mt-1.5">{summary.desc}</div>
             </div>
             <div className="bg-#f9f9f9 rd-1 ml-8 px-4 py-4.5 color-#000000 text-3.5 leading-4 w-118.75 flex">
-              <Tooltip title="hover的内容">
+              <Tooltip title="hover的内容" arrow>
                 <ErrorOutlineOutlinedIcon
                   sx={{ width: '14px', height: '14px', marginRight: '10px' }}
                 />
