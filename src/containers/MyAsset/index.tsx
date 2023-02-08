@@ -41,7 +41,7 @@ const DepositHeadCells: HeadCell<DepositData>[] = [
   {
     id: 'availableBalance',
 
-    label: '钱包可用余额',
+    label: '钱包余额',
     needSort: true
   },
   {

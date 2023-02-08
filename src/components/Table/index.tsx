@@ -183,9 +183,11 @@ function EnhancedTableHead<T>(props: EnhancedTableProps<T>) {
         {headCells.map((headCell, index) => (
           <TableCell
             sx={{
-              border: 'none'
+              border: 'none',
+              paddingLeft: index === 0 ? '16px' : '0px'
             }}
-            padding={index === 0 ? 'normal' : 'none'}
+            // padding={index === 0 ? 'normal' : 'none'}
+            padding="none"
             key={headCell.id as any}
             align="left"
             sortDirection={orderBy === headCell.id ? order : false}

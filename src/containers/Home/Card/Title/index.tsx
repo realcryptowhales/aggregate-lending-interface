@@ -8,49 +8,74 @@ import {
   MenuItem,
   SelectChangeEvent,
   InputLabel,
-  FormControl
+  FormControl,
+  Box,
+  listClasses
 } from '@mui/material';
 import { height } from '@mui/system';
 import CurrencySelect from '@/components/CurrencySelect';
+import styled from '@emotion/styled';
+import { useState } from 'react';
 interface Props {
   title: React.ReactNode;
   // selectLabel: string;
   // defaultSelect: string;
   // selectOption: string[];
   defaultValue: string;
-  currencyList: any[];
+  currencyList: { icon: string; symbol: string }[];
 }
-const currencyList = [
-  {
-    icon: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
-    symbol: 'BTC'
+
+const BootstrapSelect = styled(Select)(({ theme }) => ({
+  '&': {
+    fontWeight: 400,
+    fontSize: '10px',
+    lineHeight: '16px',
+    color: '#000000'
   },
-  {
-    icon: 'https://static.okx.com/cdn/assets/imgs/221/5F33E3F751873296.png',
-    symbol: 'ETH'
-  },
-  {
-    icon: 'https://static.okx.com/cdn/announce/20220119/1642588815382f0fd4a29-ba95-4ba9-ab33-23c1258ce96a.png',
-    symbol: 'OKB'
-  },
-  {
-    icon: 'https://static.okx.com/cdn/assets/imgs/221/8EC634AF717771B6.png',
-    symbol: 'LTC'
-  },
-  {
-    icon: 'https://static.okx.com/cdn/assets/imgs/221/5F74EB20302D7761.png',
-    symbol: 'USDT'
+  '& .MuiOutlinedInput-input': {
+    padding: '2px 8px !important',
+    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    textOverflow: 'unset'
   }
-];
+}));
 const Title: React.FC<Props> = ({ title, defaultValue, currencyList }) => {
-  const [currentVale, setCurrentValue] = React.useState('');
+  const [currency, setCurrency] = useState(
+    defaultValue || currencyList[0].symbol
+  );
   const handleChange = (event: SelectChangeEvent) => {
-    setCurrentValue(event.target.value as string);
+    setCurrency(event.target.value);
   };
   return (
     <div className={cls(style.container)}>
       <div>{title}</div>
-      <FormControl sx={{ minWidth: 92, height: 24 }} size="small">
+      <Box sx={{ width: 72, height: 20 }}>
+        <FormControl fullWidth>
+          <BootstrapSelect
+            sx={{ padding: 0, height: 22 }}
+            value={currency}
+            onChange={handleChange as any}
+          >
+            {currencyList.map(({ symbol }) => {
+              return (
+                <MenuItem
+                  className={style.font}
+                  sx={{
+                    width: 72,
+                    fontSize: 14,
+                    fontWeight: 400,
+                    lineHeight: '16px'
+                  }}
+                  key={symbol}
+                  value={symbol}
+                >
+                  {symbol}
+                </MenuItem>
+              );
+            })}
+          </BootstrapSelect>
+        </FormControl>
+      </Box>
+      {/* <FormControl sx={{ minWidth: 92, height: 24 }} size="small">
         <CurrencySelect
           defaultValue={defaultValue}
           list={currencyList}
@@ -61,7 +86,7 @@ const Title: React.FC<Props> = ({ title, defaultValue, currencyList }) => {
             backgroundColor: 'rgba(0, 0, 0, 0.04)'
           }}
         />
-      </FormControl>
+      </FormControl> */}
     </div>
   );
 };
