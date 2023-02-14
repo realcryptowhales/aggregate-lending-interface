@@ -2,6 +2,7 @@ import { Button, styled, Switch, TableCell, TableRow } from '@mui/material';
 import style from './index.module.less';
 import cls from 'classnames';
 import { BorrowData } from '..';
+import { useNavigate } from 'react-router-dom';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -44,6 +45,11 @@ export const PurpleButton = styled(Button)({
   }
 });
 export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
+  const {
+    borrowToken: { symbol }
+  } = row;
+  const navigate = useNavigate();
+
   return (
     <StyledTableRow
       sx={{
@@ -51,7 +57,9 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
         background: '#F7F9FA'
       }}
       hover
-      //   onClick={(event) => handleClick(event, row.name)}
+      onClick={(event) => {
+        navigate(`/porfolio/${symbol}`);
+      }}
       tabIndex={-1}
       key={row.borrowToken.symbol}
       className={style.row}

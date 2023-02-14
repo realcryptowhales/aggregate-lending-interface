@@ -21,18 +21,16 @@ const routes: RouteObject[] = [
       {
         path: '/markets',
         children: [
-          { index: true, element: <Martket /> },
-          { path: '/markets/:id', element: <MarketItem /> },
-          { path: '/markets/plat-form', element: <Home /> }
+          { index: true, element: <Home /> },
+          { path: '/markets/:id', element: <MarketItem /> }
         ]
       },
       {
         path: '/porfolio',
         children: [
-          { index: true, element: <Porfolio /> },
+          { index: true, element: <MyAsset /> },
           { path: '/porfolio/liquidation', element: <Liquidation /> },
-          { path: '/porfolio/:id', element: <PorfolioItem /> },
-          { path: '/porfolio/my-asset', element: <MyAsset /> }
+          { path: '/porfolio/:id', element: <PorfolioItem /> }
         ]
       },
       { path: '*', element: <NoMatch /> }

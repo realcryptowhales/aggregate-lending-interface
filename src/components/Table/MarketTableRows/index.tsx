@@ -4,6 +4,7 @@ import cls from 'classnames';
 
 import { PinkButton } from '@/containers/MyAsset/DepositTableRows';
 import { PurpleButton } from '@/containers/MyAsset/BorrowTableRows';
+import { useNavigate } from 'react-router-dom';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -28,6 +29,12 @@ const StyledTableRow = styled(TableRow)(() => ({
 }));
 
 export const MarketTableRows: React.FC = ({ row }: any) => {
+  const {
+    asset: { symbol }
+  } = row;
+  console.log('row', row);
+  const navigate = useNavigate();
+
   return (
     <StyledTableRow
       sx={{
@@ -39,6 +46,9 @@ export const MarketTableRows: React.FC = ({ row }: any) => {
       tabIndex={-1}
       key={row.asset}
       className={style.row}
+      onClick={(event) => {
+        navigate(`/markets/${symbol}`);
+      }}
     >
       <TableCell
         className={style.cell}

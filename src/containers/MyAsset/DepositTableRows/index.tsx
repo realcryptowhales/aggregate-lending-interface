@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { border } from '@mui/system';
 import { DepositData } from '..';
 import { BorderButton } from '../BorrowTableRows';
+import { useNavigate } from 'react-router-dom';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -46,6 +47,10 @@ export const PinkButton = styled(Button)({
 
 export const DepositTableRows = ({ row }: { row: DepositData }) => {
   const [ifChecked, setChecked] = useState(row.collateral);
+  const {
+    depositToken: { symbol }
+  } = row;
+  const navigate = useNavigate();
   return (
     <StyledTableRow
       sx={{
@@ -53,7 +58,9 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
         background: '#F7F9FA'
       }}
       hover
-      //   onClick={(event) => handleClick(event, row.name)}
+      onClick={(event) => {
+        navigate(`/porfolio/${symbol}`);
+      }}
       tabIndex={-1}
       key={row.depositToken.symbol}
       className={style.row}
@@ -100,11 +107,7 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
           }}
         ></BlueSwitch>
       </TableCell>
-      <TableCell
-        padding="none"
-        align="right"
-        // style={{ paddingLeft: 100, boxSizing: 'border-box' }}
-      >
+      <TableCell padding="none" align="right">
         <div style={{ paddingRight: 16 }}>
           <PinkButton
             variant="contained"

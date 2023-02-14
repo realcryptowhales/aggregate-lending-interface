@@ -102,8 +102,8 @@ export const rows = [
   createData(
     {
       logo: 'https://static.okx.com/cdn/announce/20220119/1642588815382f0fd4a29-ba95-4ba9-ab33-23c1258ce96a.png',
-      symbol: 'OKT',
-      name: 'okt'
+      symbol: 'OKB',
+      name: 'okb'
     },
     159,
     6.0,
