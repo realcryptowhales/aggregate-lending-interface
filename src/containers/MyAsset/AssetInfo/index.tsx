@@ -4,6 +4,7 @@ import { fetcher } from '@api/index';
 import style from './index.module.less';
 import cls from 'classnames';
 import { Box, LinearProgress, Tooltip } from '@mui/material';
+import { ClassSharp } from '@mui/icons-material';
 // interface Props {
 // title: React.ReactNode;
 // secondTitle?: string;
@@ -74,22 +75,22 @@ const AssetInfo: React.FC = ({}) => {
             backgroundColor: '#EBEBEB',
             height: 4,
             position: 'relative',
-            margin: '6px 0px'
+            margin: '6px 0px',
+            borderRadius: '2px'
           }}
         >
           <div
-            style={{ backgroundColor: '#424242', width: '50%', height: 4 }}
-          ></div>
-          {/* <div
             style={{
               backgroundColor: '#424242',
+              width: '50%',
               height: 4,
-              width: 4,
-              position: 'absolute',
-              left: '50%',
-              top: -4
+              borderRadius: '2px'
             }}
-          ></div> */}
+          ></div>
+          <div
+            className={style.arrow}
+            style={{ left: 'calc(50% - 3px)', top: '-6px' }}
+          ></div>
         </div>
         <div className={cls('flex justify-between', style.percent)}>
           <span>最多可借</span>

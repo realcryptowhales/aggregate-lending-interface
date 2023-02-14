@@ -4,6 +4,8 @@ import { fetcher } from '@api/index';
 import style from './index.module.less';
 import cls from 'classnames';
 import { styled, Tooltip, tooltipClasses, TooltipProps } from '@mui/material';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+
 const renderTips = ({ children }: any) => {
   return (
     <div
@@ -46,10 +48,9 @@ const MoneyDataDisplay: React.FC<Props> = ({
         <div>{totalMarket}</div>
       </div>
       <div>
-        <div className={cls('flex', style['container-title'])}>
+        <div className={cls('flex items-center', style['container-title'])}>
           <span>内部撮合总金额</span>
           <MyTooltip
-            PopperProps={{ sx: { color: 'red' } }}
             style={{ marginLeft: 6 }}
             title={
               <div className={style['font-14']}>
@@ -61,11 +62,13 @@ const MoneyDataDisplay: React.FC<Props> = ({
             }
             arrow
           >
-            <i
-              className={cls(
-                'iconfont icon-exclamation-circle-o cursor-pointer'
-              )}
-              style={{ color: '#000000', fontSize: 12, marginLeft: 7 }}
+            <ErrorOutlineOutlinedIcon
+              sx={{
+                width: '16px',
+                height: '16px',
+                color: '#929292',
+                marginLeft: 7
+              }}
             />
           </MyTooltip>
         </div>
