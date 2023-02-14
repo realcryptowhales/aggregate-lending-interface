@@ -1,9 +1,7 @@
 import * as React from 'react';
 import Layout from '@containers/Layout';
-import Martket from '@containers/Market';
-import MarketItem from '@containers/Market/MarketItem';
-import Porfolio from './containers/Porfolio';
-import PorfolioItem from './containers/Porfolio/PorfolioItem';
+import MarketItem from '@/containers/Home/MarketItem';
+import PorfolioItem from './containers/MyAsset/PorfolioItem';
 import Liquidation from './containers/Liquidation';
 import NoMatch from '@containers/NoMatch';
 import Redirect from '@/components/Redirect';
