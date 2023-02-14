@@ -62,7 +62,7 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
       }}
       tabIndex={-1}
       key={row.borrowToken.symbol}
-      className={style.row}
+      className={cls('cursor-pointer', style.row)}
     >
       <TableCell
         className={style.cell}

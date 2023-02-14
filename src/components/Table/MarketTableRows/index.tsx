@@ -46,7 +46,7 @@ export const MarketTableRows: React.FC = ({ row }: any) => {
       //   onClick={(event) => handleClick(event, row.name)}
       tabIndex={-1}
       key={row.asset}
-      className={style.row}
+      className={cls('cursor-pointer', style.row)}
       onClick={() => {
         navigate(`/markets/${symbol}`);
       }}

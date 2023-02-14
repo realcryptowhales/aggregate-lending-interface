@@ -27,7 +27,7 @@ export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
       hover
       tabIndex={-1}
       key={row.liquidatorAddr}
-      className={style.row}
+      className={cls('cursor-pointer', style.row)}
     >
       <TableCell
         padding="normal"

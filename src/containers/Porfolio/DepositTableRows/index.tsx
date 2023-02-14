@@ -63,7 +63,7 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
       }}
       tabIndex={-1}
       key={row.depositToken.symbol}
-      className={style.row}
+      className={cls('cursor-pointer', style.row)}
     >
       <TableCell
         className={style.cell}
