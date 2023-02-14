@@ -276,7 +276,7 @@ const BorrowRows = [
     4123.0
   )
 ];
-const MyAsset = () => {
+const Porfolio = () => {
   const [curTab, setCurTab] = useState(Tabs.DEPOSIT);
   const options = [
     { value: Tabs.DEPOSIT, label: '我的存款' },
@@ -327,4 +327,4 @@ const MyAsset = () => {
   );
 };
 
-export default MyAsset;
+export default Porfolio;
