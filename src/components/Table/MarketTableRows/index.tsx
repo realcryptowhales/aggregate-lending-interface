@@ -2,8 +2,8 @@ import { styled, TableCell, TableRow } from '@mui/material';
 import style from './index.module.less';
 import cls from 'classnames';
 
-import { PinkButton } from '@/containers/MyAsset/DepositTableRows';
-import { PurpleButton } from '@/containers/MyAsset/BorrowTableRows';
+import { PinkButton } from '@/containers/Porfolio/DepositTableRows';
+import { PurpleButton } from '@/containers/Porfolio/BorrowTableRows';
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
 const StyledTableRow = styled(TableRow)(() => ({

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import Layout from '@containers/Layout';
-import MarketItem from '@/containers/Home/MarketItem';
-import PorfolioItem from './containers/MyAsset/PorfolioItem';
+import MarketItem from '@/containers/Markets/MarketItem';
+import PorfolioItem from './containers/Porfolio/PorfolioItem';
 import Liquidation from './containers/Liquidation';
-import NoMatch from '@containers/NoMatch';
+import NoMatch from '@/components/NoMatch';
 import Redirect from '@/components/Redirect';
 import type { RouteObject } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
-import MyAsset from './containers/MyAsset';
-import Home from './containers/Home';
+import MyAsset from './containers/Porfolio';
+import Home from './containers/Markets';
 
 const routes: RouteObject[] = [
   {
