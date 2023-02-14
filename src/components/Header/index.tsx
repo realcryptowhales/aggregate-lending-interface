@@ -97,7 +97,7 @@ const Header: React.FC = () => {
                 <span className="mr-1.5">
                   在平台中存款、借款会得到 COMP 奖励
                 </span>
-                <Tooltip title="hover的内容">
+                <Tooltip title="hover的内容" arrow>
                   <ErrorOutlineOutlinedIcon
                     sx={{ width: '16px', height: '16px' }}
                   />

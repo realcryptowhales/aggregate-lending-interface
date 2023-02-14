@@ -23,7 +23,7 @@ const StyledTableRow = styled(TableRow)(() => ({
     lineHeight: '20px'
   }
 }));
-const BlueSwitch = styled(Switch)(({ theme }) => ({
+const BlueSwitch = styled(Switch)(({ theme }: any) => ({
   '& .MuiSwitch-switchBase.Mui-checked': {
     color: '#51459D'
   },

@@ -65,7 +65,7 @@ function MarketItem() {
       title: (
         <div className="flex items-center">
           <span className="mr-1">最高抵押率</span>
-          <Tooltip title="hover的内容">
+          <Tooltip title="hover的内容" arrow>
             <ErrorOutlineOutlinedIcon sx={{ width: '17px', height: '17px' }} />
           </Tooltip>
         </div>
@@ -77,7 +77,7 @@ function MarketItem() {
       title: (
         <div className="flex items-center">
           <span className="mr-1">清算阈值</span>
-          <Tooltip title="hover的内容">
+          <Tooltip title="hover的内容" arrow>
             <ErrorOutlineOutlinedIcon sx={{ width: '17px', height: '17px' }} />
           </Tooltip>
         </div>

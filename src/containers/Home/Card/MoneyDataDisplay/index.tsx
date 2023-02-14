@@ -19,7 +19,7 @@ const renderTips = ({ children }: any) => {
 };
 const MyTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
+))(({ theme }: any) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: '#424242',
     padding: '8px 12px',

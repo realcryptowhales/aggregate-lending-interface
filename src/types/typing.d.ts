@@ -10,3 +10,6 @@ declare interface Window {
   okexchain: any;
   ethereum: any;
 }
+
+declare module '@mui/system';
+declare module '@mui/utils';

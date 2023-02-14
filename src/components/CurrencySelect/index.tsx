@@ -13,7 +13,7 @@ interface CurrencySelectProps {
   defaultValue?: any;
   showImage: boolean;
   height?: number;
-  sx?: SxProps<Theme>;
+  sx?: any;
 }
 
 const CurrencySelect: React.FC<CurrencySelectProps> = ({
