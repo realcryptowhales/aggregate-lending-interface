@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Layout from '@containers/Layout';
+import Layout from '@/containers';
 import MarketItem from '@/containers/Markets/MarketItem';
 import PorfolioItem from './containers/Porfolio/PorfolioItem';
 import Liquidation from './containers/Liquidation';
