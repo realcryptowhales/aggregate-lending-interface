@@ -5,16 +5,16 @@ import { Link } from 'react-router-dom';
 import { liquidationTableRows } from './LiquidationTableRows';
 import style from './index.module.less';
 export interface LiquidationData {
-  key: string;
+  key: any;
   time: string;
   event: string;
-  liquidationValue: number;
+  liquidationAsset: Asset;
+  liquidationAmount: number;
   repaidDebt: number;
-  liquidationThreshold: React.ReactNode;
+  liquidationThreshold: number;
   liquidationPenalty: number;
-  remainingCollateralValue: number;
   liquidatorAddr: string;
-  viewDetails: string[];
+  hash: string;
 }
 
 const liquidationHeadCells: HeadCell<LiquidationData>[] = [
@@ -30,8 +30,14 @@ const liquidationHeadCells: HeadCell<LiquidationData>[] = [
     needSort: false
   },
   {
-    id: 'liquidationValue',
-    label: '清算抵押品价值',
+    id: 'liquidationAsset',
+    label: '资产',
+    needSort: false
+  },
+  {
+    id: 'liquidationAmount',
+
+    label: '数量',
     needSort: false
   },
   {
@@ -43,7 +49,7 @@ const liquidationHeadCells: HeadCell<LiquidationData>[] = [
   {
     id: 'liquidationThreshold',
 
-    label: '仓位抵押率/清算线',
+    label: '清算线',
     needSort: false
   },
   {
@@ -52,12 +58,7 @@ const liquidationHeadCells: HeadCell<LiquidationData>[] = [
     label: '清算惩罚',
     needSort: false
   },
-  {
-    id: 'remainingCollateralValue',
 
-    label: '剩余抵押物价值',
-    needSort: false
-  },
   {
     id: 'liquidatorAddr',
 
@@ -65,42 +66,34 @@ const liquidationHeadCells: HeadCell<LiquidationData>[] = [
     needSort: false
   },
   {
-    id: 'viewDetails',
+    id: 'hash',
 
-    label: '查看详情',
+    label: '交易详情',
     needSort: false
   }
 ];
 function createliquidationData(
   time: string,
   event: string,
-  liquidationValue: number,
+  liquidationAsset: Asset,
+  liquidationAmount: number,
   repaidDebt: number,
   liquidationThreshold: number,
-  positionCollateralization: number,
   liquidationPenalty: number,
-  remainingCollateralValue: number,
   liquidatorAddr: string,
-  //todo
-  viewDetails: string[]
+  hash: string
 ): LiquidationData {
   return {
-    key: liquidatorAddr,
+    key: liquidationAmount,
     time,
     event,
-    liquidationValue,
+    liquidationAsset,
+    liquidationAmount,
     repaidDebt,
-    liquidationThreshold: (
-      <div>
-        <span>{`${positionCollateralization}%/`}</span>
-
-        <span style={{ color: '#E3493F' }}>{`${liquidationThreshold}%`}</span>
-      </div>
-    ),
+    liquidationThreshold,
     liquidationPenalty,
-    remainingCollateralValue,
     liquidatorAddr,
-    viewDetails
+    hash
   };
 }
 
@@ -108,50 +101,62 @@ const liquidationRows = [
   createliquidationData(
     '2023',
     '清算',
+    {
+      logo: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
+      symbol: 'BTC',
+      name: 'btc'
+    },
     305,
     3.7,
     89,
     85,
-    4.3,
-    123123,
     '0x213',
-    ['TX1', 'TX2', 'TX3']
+    'tx2'
   ),
   createliquidationData(
     '2023',
     '清算',
+    {
+      logo: 'https://static.okx.com/cdn/assets/imgs/221/5F33E3F751873296.png',
+      symbol: 'ETH',
+      name: 'eth'
+    },
     305,
     3.7,
     89,
     85,
-    4.3,
-    123123,
     '0x213',
-    ['TX1', 'TX2', 'TX3']
+    'tx7'
   ),
   createliquidationData(
     '2023',
     '清算',
+    {
+      logo: 'https://static.okx.com/cdn/assets/imgs/221/5F74EB20302D7761.png',
+      symbol: 'USDT',
+      name: 'usdt'
+    },
     305,
     3.7,
     89,
     85,
-    4.3,
-    123123,
     '0x213',
-    ['TX1', 'TX2', 'TX3']
+    'tx7'
   ),
   createliquidationData(
     '2023',
     '清算',
+    {
+      logo: 'https://static.okx.com/cdn/announce/20220119/1642588815382f0fd4a29-ba95-4ba9-ab33-23c1258ce96a.png',
+      symbol: 'OKB',
+      name: 'okb'
+    },
     305,
     3.7,
     89,
     85,
-    4.3,
-    123123,
     '0x213',
-    ['TX1', 'TX2', 'TX3']
+    'tx9'
   )
 ];
 const Liquidation = () => {

@@ -18,6 +18,17 @@ const StyledTableRow = styled(TableRow)(() => ({
 }));
 
 export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
+  const {
+    time,
+    event,
+    liquidationAsset: { logo, symbol, name },
+    liquidationAmount,
+    repaidDebt,
+    liquidationThreshold,
+    liquidationPenalty,
+    liquidatorAddr,
+    hash
+  } = row;
   return (
     <StyledTableRow
       sx={{
@@ -26,7 +37,7 @@ export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
       }}
       hover
       tabIndex={-1}
-      key={row.liquidatorAddr}
+      key={liquidatorAddr}
       className={cls('cursor-pointer', style.row)}
     >
       <TableCell
@@ -35,38 +46,41 @@ export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
         sx={{ width: 147 }}
         component="th"
       >
-        <div>{row.time}</div>
+        <div>{time}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 133 }}>
-        {row.event}
+        {event}
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 133 }}>
-        <div>{row.liquidationValue}</div>
+        <div className={cls('flex items-center')}>
+          <img
+            style={{ width: 31, height: 30, marginRight: 10 }}
+            src={logo}
+            alt={symbol}
+          />
+          <div>
+            <div>{name}</div>
+            <div className={style.font12}>{symbol}</div>
+          </div>
+        </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 133 }}>
-        {row.repaidDebt}
+        {liquidationAmount}
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 134 }}>
-        <div>{row.liquidationThreshold}</div>
+        <div>{repaidDebt}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 121 }}>
-        <div>{`${row.liquidationPenalty}%`}</div>
+        <div>{`${liquidationThreshold}%`}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 133 }}>
-        <div>{row.remainingCollateralValue}</div>
+        <div>{`${liquidationPenalty}%`}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 151 }}>
-        <div style={{ color: '#0032D3' }}>{row.liquidatorAddr}</div>
+        <div style={{ color: '#0032D3' }}>{liquidatorAddr}</div>
       </TableCell>
-      <TableCell padding="none" align="right">
-        <div
-          style={{ paddingRight: 16, color: '#0032D3' }}
-          className={cls('flex justify-between')}
-        >
-          {row.viewDetails.map((tx) => {
-            return <span key={tx}>{tx}</span>;
-          })}
-        </div>
+      <TableCell padding="none" align="left">
+        <div style={{ paddingRight: 16, color: '#0032D3' }}>查看详情</div>
       </TableCell>
     </StyledTableRow>
   );

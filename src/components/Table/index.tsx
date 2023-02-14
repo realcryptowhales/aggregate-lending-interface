@@ -136,15 +136,9 @@ function getComparator<T, Key extends keyof T>(
 }
 
 function stableSort<T>(array: T[], comparator: (a: T, b: T) => number): T[] {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]); //sort
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
+  return array.sort((a, b) => {
+    return comparator(a, b); //sort
   });
-  return stabilizedThis.map((el) => el[0]);
 }
 
 export interface HeadCell<T> {
