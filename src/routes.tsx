@@ -1,16 +1,14 @@
 import * as React from 'react';
-import Layout from '@containers/Layout';
-import Martket from '@containers/Market';
-import MarketItem from '@containers/Market/MarketItem';
-import Porfolio from './containers/Porfolio';
+import Layout from '@/containers';
+import MarketItem from '@/containers/Markets/MarketItem';
 import PorfolioItem from './containers/Porfolio/PorfolioItem';
 import Liquidation from './containers/Liquidation';
-import NoMatch from '@containers/NoMatch';
+import NoMatch from '@/components/NoMatch';
 import Redirect from '@/components/Redirect';
 import type { RouteObject } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
-import MyAsset from './containers/MyAsset';
-import Home from './containers/Home';
+import Porfolio from './containers/Porfolio';
+import Markets from './containers/Markets';
 
 const routes: RouteObject[] = [
   {
@@ -21,14 +19,14 @@ const routes: RouteObject[] = [
       {
         path: '/markets',
         children: [
-          { index: true, element: <Home /> },
+          { index: true, element: <Markets /> },
           { path: '/markets/:id', element: <MarketItem /> }
         ]
       },
       {
         path: '/porfolio',
         children: [
-          { index: true, element: <MyAsset /> },
+          { index: true, element: <Porfolio /> },
           { path: '/porfolio/liquidation', element: <Liquidation /> },
           { path: '/porfolio/:id', element: <PorfolioItem /> }
         ]

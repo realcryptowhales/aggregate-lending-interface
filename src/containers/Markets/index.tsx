@@ -75,7 +75,7 @@ const currencyList = [
     symbol: 'USDT'
   }
 ];
-const Home: React.FC = () => {
+const Markets: React.FC = () => {
   return (
     <div className={cls(style.container)}>
       <div className={cls(style.header)}>
@@ -137,4 +137,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Markets;
