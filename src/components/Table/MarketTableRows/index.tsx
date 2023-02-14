@@ -5,6 +5,7 @@ import cls from 'classnames';
 import { PinkButton } from '@/containers/MyAsset/DepositTableRows';
 import { PurpleButton } from '@/containers/MyAsset/BorrowTableRows';
 import { useNavigate } from 'react-router-dom';
+import React from 'react';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -46,7 +47,7 @@ export const MarketTableRows: React.FC = ({ row }: any) => {
       tabIndex={-1}
       key={row.asset}
       className={style.row}
-      onClick={(event) => {
+      onClick={() => {
         navigate(`/markets/${symbol}`);
       }}
     >
@@ -96,7 +97,8 @@ export const MarketTableRows: React.FC = ({ row }: any) => {
             className={cls(style['button-l'])}
             variant="contained"
             sx={{ mr: '12px', background: '#F98A6B' }}
-            onClick={() => {
+            onClick={(e: any) => {
+              e.stopPropagation();
               //   todo
               //openDepositDialog
             }}
@@ -106,7 +108,9 @@ export const MarketTableRows: React.FC = ({ row }: any) => {
           <PurpleButton
             className={cls(style['button-r'])}
             sx={{ background: '#51459D' }}
-            onClick={() => {
+            onClick={(e: any) => {
+              e.stopPropagation();
+
               //   todo
               //openBorrowDialog
             }}

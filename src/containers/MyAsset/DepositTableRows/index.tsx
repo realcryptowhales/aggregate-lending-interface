@@ -58,7 +58,7 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
         background: '#F7F9FA'
       }}
       hover
-      onClick={(event) => {
+      onClick={() => {
         navigate(`/porfolio/${symbol}`);
       }}
       tabIndex={-1}
@@ -112,7 +112,8 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
           <PinkButton
             variant="contained"
             sx={{ mr: '12px', background: '#F98A6B' }}
-            onClick={() => {
+            onClick={(e: any) => {
+              e.stopPropagation();
               //   todo
               //openDepositDialog
             }}
@@ -121,7 +122,9 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
           </PinkButton>
           <BorderButton
             sx={{ border: '1px solid #000000', color: '#3D3E3E' }}
-            onClick={() => {
+            onClick={(e: any) => {
+              e.stopPropagation();
+
               //   todo
               //openBorrowDialog
             }}

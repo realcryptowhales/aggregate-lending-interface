@@ -57,7 +57,7 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
         background: '#F7F9FA'
       }}
       hover
-      onClick={(event) => {
+      onClick={() => {
         navigate(`/porfolio/${symbol}`);
       }}
       tabIndex={-1}
@@ -107,21 +107,24 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
           <PurpleButton
             variant="contained"
             sx={{ mr: '12px', background: '#51459D' }}
-            onClick={() => {
+            onClick={(e: any) => {
+              e.stopPropagation();
+
               //   todo
-              //openDepositDialog
+              //openBorrowDialog
             }}
           >
             借款
           </PurpleButton>
           <BorderButton
             sx={{ border: '1px solid #000000', color: '#3D3E3E' }}
-            onClick={() => {
+            onClick={(e: any) => {
+              e.stopPropagation();
               //   todo
-              //openBorrowDialog
+              //openDepositDialog
             }}
           >
-            换款
+            还款
           </BorderButton>
         </div>
       </TableCell>
