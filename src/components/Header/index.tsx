@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom';
 import SmallDialog from '@/components/SmallDialog';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Tooltip from '@mui/material/Tooltip';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const Header: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -47,7 +48,7 @@ const Header: React.FC = () => {
           );
         })}
       </div>
-      <div>
+      <div className="flex items-center">
         <Button
           variant="contained"
           sx={{
@@ -59,22 +60,7 @@ const Header: React.FC = () => {
         >
           挖矿奖励
         </Button>
-        <Button
-          sx={{
-            height: '26px',
-            color: 'white'
-          }}
-        >
-          连接钱包
-        </Button>
-        {/* <Button
-          sx={{
-            height: '26px',
-            color: 'white'
-          }}
-        >
-          英语
-        </Button> */}
+        <ConnectButton />
         <SmallDialog
           open={open}
           handleClose={handleClose}

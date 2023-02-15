@@ -35,6 +35,20 @@ recomment to install unocss vscode plugin which can show style results when hove
 
 extend tailwind, so you can use any tailwind rules
 
+### wallet package
+
+https://www.rainbowkit.com/docs/custom-chains
+
+### web3 library
+
+https://wagmi.sh/react/chains
+
+https://docs.ethers.org/v5/getting-started/
+
+### competing
+
+https://www.yuque.com/zgryhn/duu5f7/xp2u5d
+
 ### external
 
 https://github.com/crcong/vite-plugin-externals
