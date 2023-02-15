@@ -111,7 +111,7 @@ const DepositRows = [
     3.7,
     67,
     4.3,
-    true,
+    false,
     <div>1231231312313131</div>
   ),
   createDepositData(
@@ -120,18 +120,18 @@ const DepositRows = [
     25.0,
     51,
     4.9,
-    true,
+    false,
 
     <div>123</div>
   ),
-  createDepositData('USDT', 262, 16.0, 24, 6.0, true, <div>123</div>),
+  createDepositData('USDT', 262, 16.0, 24, 6.0, false, <div>123</div>),
   createDepositData(
     'OKB',
     159,
     6.0,
     24,
     4.0,
-    true,
+    false,
 
     <div>123</div>
   )
