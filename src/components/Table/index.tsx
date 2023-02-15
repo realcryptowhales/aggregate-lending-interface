@@ -22,6 +22,7 @@ import Switch from '@mui/material/Switch';
 import { visuallyHidden } from '@mui/utils';
 import style from './index.module.less';
 import { padding } from '@mui/system';
+import { TOKENSYMBOL } from '@/constant';
 export interface Asset {
   name: string;
   symbol: string;
@@ -29,7 +30,7 @@ export interface Asset {
 }
 export interface Data {
   key: string;
-  asset: Asset;
+  asset: string;
   totalDeposit: number;
   depositApr: number;
   totalLoan: number;
@@ -39,7 +40,7 @@ export interface Data {
 }
 
 function createData(
-  asset: Asset,
+  asset: string,
   totalDeposit: number,
   depositApr: number,
   totalLoan: number,
@@ -48,7 +49,7 @@ function createData(
   option: React.ReactNode
 ): Data {
   return {
-    key: asset.symbol,
+    key: asset,
     asset,
     totalDeposit,
     depositApr,
@@ -60,58 +61,10 @@ function createData(
 }
 
 export const rows = [
-  createData(
-    {
-      logo: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
-      symbol: 'BTC',
-      name: 'btc'
-    },
-    305,
-    3.7,
-    67,
-    4.3,
-    100,
-    <div>1231231312313131</div>
-  ),
-  createData(
-    {
-      logo: 'https://static.okx.com/cdn/assets/imgs/221/5F33E3F751873296.png',
-      symbol: 'ETH',
-      name: 'eth'
-    },
-    452,
-    25.0,
-    51,
-    4.9,
-    100,
-    <div>123</div>
-  ),
-  createData(
-    {
-      logo: 'https://static.okx.com/cdn/assets/imgs/221/5F74EB20302D7761.png',
-      symbol: 'USDT',
-      name: 'usdt'
-    },
-    262,
-    16.0,
-    24,
-    6.0,
-    100,
-    <div>123</div>
-  ),
-  createData(
-    {
-      logo: 'https://static.okx.com/cdn/announce/20220119/1642588815382f0fd4a29-ba95-4ba9-ab33-23c1258ce96a.png',
-      symbol: 'OKB',
-      name: 'okb'
-    },
-    159,
-    6.0,
-    24,
-    4.0,
-    100,
-    <div>123</div>
-  )
+  createData('BTC', 305, 3.7, 67, 4.3, 100, <div>1231231312313131</div>),
+  createData('ETH', 452, 25.0, 51, 4.9, 100, <div>123</div>),
+  createData('USDT', 262, 16.0, 24, 6.0, 100, <div>123</div>),
+  createData('OKB', 159, 6.0, 24, 4.0, 100, <div>123</div>)
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {

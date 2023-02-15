@@ -7,6 +7,7 @@ import { border } from '@mui/system';
 import { DepositData } from '..';
 import { BorderButton } from '../BorrowTableRows';
 import { useNavigate } from 'react-router-dom';
+import { currencyList } from '@/constant';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -47,9 +48,12 @@ export const PinkButton = styled(Button)({
 
 export const DepositTableRows = ({ row }: { row: DepositData }) => {
   const [ifChecked, setChecked] = useState(row.collateral);
-  const {
-    depositToken: { symbol }
-  } = row;
+  const { depositToken } = row;
+  const [icon, symbol] = [
+    currencyList[depositToken].icon,
+    currencyList[depositToken].symbol
+  ];
+
   const navigate = useNavigate();
   return (
     <StyledTableRow
@@ -62,7 +66,7 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
         navigate(`/porfolio/${symbol}`);
       }}
       tabIndex={-1}
-      key={row.depositToken.symbol}
+      key={symbol}
       className={cls('cursor-pointer', style.row)}
     >
       <TableCell
@@ -75,12 +79,12 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img
             style={{ width: 30, height: 30, marginRight: 8 }}
-            src={row.depositToken.logo}
+            src={icon}
           ></img>
           <div>
-            <div className={style.name}> {row.depositToken.name}</div>
+            <div className={style.name}> {symbol}</div>
 
-            <span className={style.font12}> {row.depositToken.symbol}</span>
+            <span className={style.font12}> {symbol}</span>
           </div>
         </div>
       </TableCell>
@@ -102,7 +106,9 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
         <BlueSwitch
           color="secondary"
           checked={ifChecked}
-          onClick={() => {
+          onClick={(e: any) => {
+            e.stopPropagation();
+
             setChecked(!ifChecked);
           }}
         ></BlueSwitch>

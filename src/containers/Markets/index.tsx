@@ -14,7 +14,7 @@ const headCells: HeadCell<Data>[] = [
   {
     id: 'asset',
     label: '资产',
-    needSort: false
+    needSort: true
   },
   {
     id: 'totalDeposit',

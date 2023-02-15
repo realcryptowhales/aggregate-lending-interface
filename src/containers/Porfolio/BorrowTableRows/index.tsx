@@ -3,6 +3,7 @@ import style from './index.module.less';
 import cls from 'classnames';
 import { BorrowData } from '..';
 import { useNavigate } from 'react-router-dom';
+import { currencyList } from '@/constant';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -45,10 +46,12 @@ export const PurpleButton = styled(Button)({
   }
 });
 export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
-  const {
-    borrowToken: { symbol }
-  } = row;
+  const { borrowToken } = row;
   const navigate = useNavigate();
+  const [icon, symbol] = [
+    currencyList[borrowToken].icon,
+    currencyList[borrowToken].symbol
+  ];
 
   return (
     <StyledTableRow
@@ -61,7 +64,7 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
         navigate(`/porfolio/${symbol}`);
       }}
       tabIndex={-1}
-      key={row.borrowToken.symbol}
+      key={symbol}
       className={cls('cursor-pointer', style.row)}
     >
       <TableCell
@@ -74,12 +77,12 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img
             style={{ width: 30, height: 30, marginRight: 8 }}
-            src={row.borrowToken.logo}
+            src={icon}
           ></img>
           <div>
-            <div className={style.name}> {row.borrowToken.name}</div>
+            <div className={style.name}> {symbol}</div>
 
-            <span className={style.font12}> {row.borrowToken.symbol}</span>
+            <span className={style.font12}> {symbol}</span>
           </div>
         </div>
       </TableCell>

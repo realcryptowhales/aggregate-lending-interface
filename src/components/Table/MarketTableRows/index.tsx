@@ -6,6 +6,8 @@ import { PinkButton } from '@/containers/Porfolio/DepositTableRows';
 import { PurpleButton } from '@/containers/Porfolio/BorrowTableRows';
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
+import { currencyList, TOKENSYMBOL } from '@/constant';
+import { Data } from '..';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -29,13 +31,11 @@ const StyledTableRow = styled(TableRow)(() => ({
   }
 }));
 
-export const MarketTableRows: React.FC = ({ row }: any) => {
-  const {
-    asset: { symbol }
-  } = row;
+export const MarketTableRows = ({ row }: { row: Data }) => {
+  const { asset } = row;
   console.log('row', row);
   const navigate = useNavigate();
-
+  const [icon, symbol] = [currencyList[asset].icon, currencyList[asset].symbol];
   return (
     <StyledTableRow
       sx={{
@@ -48,7 +48,7 @@ export const MarketTableRows: React.FC = ({ row }: any) => {
       key={row.asset}
       className={cls('cursor-pointer', style.row)}
       onClick={() => {
-        navigate(`/markets/${symbol}`);
+        navigate(`/markets/${asset}`);
       }}
     >
       <TableCell
@@ -61,12 +61,12 @@ export const MarketTableRows: React.FC = ({ row }: any) => {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img
             style={{ width: 30, height: 30, marginRight: 8 }}
-            src={row.asset.logo}
+            src={icon}
           ></img>
           <div>
-            <div className={style.name}> {row.asset.name}</div>
+            <div className={style.name}> {symbol}</div>
 
-            <span className={style.font12}> {row.asset.symbol}</span>
+            <span className={style.font12}> {symbol}</span>
           </div>
         </div>
       </TableCell>
