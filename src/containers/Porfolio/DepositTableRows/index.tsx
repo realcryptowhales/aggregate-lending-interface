@@ -9,7 +9,7 @@ import {
 import style from './index.module.less';
 import cls from 'classnames';
 import classNames from 'classnames';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { border } from '@mui/system';
 import { DepositData } from '..';
 import { BorderButton } from '../BorrowTableRows';
@@ -57,20 +57,21 @@ export const PinkButton = styled(Button)({
 });
 
 export const DepositTableRows = ({ row }: { row: DepositData }) => {
-  const [ifCollteral, setCollteral] = useState(row.collateral);
   const { depositToken } = row;
   const [icon, symbol] = [
     currencyList[depositToken].icon,
     currencyList[depositToken].symbol
   ];
-  const [open, setOpen] = useState(row.collateral);
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const handleConfirm = () => {
-    handleClose();
-    setCollteral(!ifCollteral);
-  };
+  const [collateralStatus, setCollateralStatus] = useState(row.collateral);
+  const [openCollateralModalVisible, setOpenCollateralModalVisible] =
+    useState(false);
+  const [closeCollateralModalVisible, setCloseCollateralModalVisible] =
+    useState(false);
+  const collateralBtnAction = useCallback(() => {
+    !collateralStatus && setOpenCollateralModalVisible(true);
+    collateralStatus && setCloseCollateralModalVisible(true);
+  }, [collateralStatus]);
+
   const navigate = useNavigate();
   return (
     <>
@@ -123,11 +124,11 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
         <TableCell padding="none" align="left" sx={{ width: 254 }}>
           <BlueSwitch
             color="secondary"
-            checked={ifCollteral}
+            checked={collateralStatus}
             onClick={(e: any) => {
               e.stopPropagation();
 
-              setOpen(true);
+              collateralBtnAction();
             }}
           ></BlueSwitch>
         </TableCell>
@@ -159,24 +160,87 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
         </TableCell>
       </StyledTableRow>
       <SmallDialog
-        open={open}
-        handleClose={handleClose}
-        title={ifCollteral ? '是否关闭抵押' : '是否开启抵押'}
+        open={openCollateralModalVisible}
+        handleClose={() => {
+          setOpenCollateralModalVisible(false);
+        }}
+        title="开启抵押"
         button={
           <Button
+            style={{
+              width: '130px',
+              height: '40px'
+            }}
             sx={{
               background: '#000000',
               color: '#ffffff',
-              '&:hover': { background: 'gray' }
+              '&:hover': { background: '#000000' }
             }}
-            onClick={handleConfirm}
+            onClick={() => {
+              //todo 上链 -> 切换按钮状态 成功后关闭
+              setCollateralStatus(true);
+              setOpenCollateralModalVisible(false);
+            }}
           >
             Confirm
           </Button>
         }
         content={
           <div className="flex flex-col items-center justify-center min-w-85.75 min-h-47 text-3.5 leading-4">
-            content
+            {`请确定以${symbol}作为抵押品 作为抵押品的资产可以用于借贷`}
+          </div>
+        }
+      />
+      <SmallDialog
+        open={closeCollateralModalVisible}
+        handleClose={() => {
+          setCloseCollateralModalVisible(false);
+        }}
+        title="关闭抵押"
+        button={
+          <div className={cls('grow flex justify-center')}>
+            <Button
+              style={{
+                width: '130px',
+                height: '40px',
+                marginRight: '20px'
+              }}
+              sx={{
+                border: '1px solid #000000',
+                background: '#ffffff',
+                color: '#000000',
+                '&:hover': { background: '#ffffff' }
+              }}
+              onClick={() => {
+                //todo 上链 -> 切换按钮状态 成功后关闭
+                setCollateralStatus(false);
+                setCloseCollateralModalVisible(false);
+              }}
+            >
+              关闭抵押
+            </Button>
+            <Button
+              style={{
+                width: '130px',
+                height: '40px'
+              }}
+              sx={{
+                background: '#000000',
+                color: '#ffffff',
+                '&:hover': { background: '#000000' }
+              }}
+              onClick={() => {
+                setCloseCollateralModalVisible(false);
+              }}
+            >
+              取 消
+            </Button>
+          </div>
+        }
+        content={
+          <div className="flex flex-col items-center justify-center min-w-85.75 min-h-47 text-3.5 leading-4">
+            <span>关闭按钮会增加您的资产清算风险，</span>
+            <div>若需关闭，建议存入更多资产或归还部分借款</div>
           </div>
         }
       />
