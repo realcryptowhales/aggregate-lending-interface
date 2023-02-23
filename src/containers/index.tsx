@@ -19,7 +19,7 @@ function Layout() {
   // console.log(data, isError, isLoading, 'useBalance');
 
   const ethkContract = {
-    address: '0xbFec33e59621d0C6E944931B3B31A40C23Cd8d84',
+    address: '0xbFec33e59621d0C6E944931B3B31A40C23Cd8d84' as `0x${string}`,
     abi: [
       {
         inputs: [],
@@ -37,7 +37,7 @@ function Layout() {
     ]
   };
   const usdtContract = {
-    address: '0x9ad7458f654d3dc27f858031f14d8933a4d0eb5f',
+    address: '0x9ad7458f654d3dc27f858031f14d8933a4d0eb5f' as `0x${string}`,
     abi: [
       {
         inputs: [],
