@@ -40,9 +40,44 @@ const theme = createTheme({
   palette: {
     primary: {
       main: '#dbdbdb'
+    },
+    blue: {
+      main: '#51459D',
+      contrastText: '#FFFFFF'
+    },
+    orange: {
+      main: '#F98A6B',
+      contrastText: '#FFFFFF'
+    },
+    gray: {
+      main: '#C9C9C9',
+      contrastText: '#000000'
     }
   }
 });
+
+declare module '@mui/material/styles' {
+  interface Palette {
+    blue: Palette['primary'];
+    orange: Palette['primary'];
+    gray: Palette['primary'];
+  }
+
+  interface PaletteOptions {
+    blue: PaletteOptions['primary'];
+    orange: PaletteOptions['primary'];
+    gray: PaletteOptions['primary'];
+  }
+}
+
+// Update the Button's color prop options
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
+    orange: true;
+    blue: true;
+    gray: true;
+  }
+}
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

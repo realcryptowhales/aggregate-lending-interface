@@ -36,7 +36,6 @@ export interface AprInfoProps {
 
 const useLendingDialog = ({
   type,
-  currencyList,
   optimization,
   aave,
   compound,
@@ -47,30 +46,47 @@ const useLendingDialog = ({
   depositAmount,
   maxLTV,
   liquidation,
-  usedBorrowLimit
+  usedBorrowLimit,
+  activeCurrency
 }: UseLendingDialogProps) => {
   const [tabs, setTabs] = useState<tabsItemProps[]>();
   const [open, setOpen] = useState(true);
-  const [activeCurrency, setActiveCurrency] = useState(currencyList[0]?.symbol);
   const [infosTop, setInfosTop] = useState<InfosTopItemProps[]>();
-  const [number, setNumber] = useState();
+  const [balance, setBalance] = useState<number>();
+  const [dolors, setDolors] = useState<number>(0);
   const [aprInfo, setAprInfo] = useState<AprInfoProps>();
   const [willBecomeBorrowLimit, setWillBecomeBorrowLimit] = useState<number>();
+  const [formValues, setFormValues] = useState<{ number: string | number }>({
+    number: ''
+  });
+
+  const handleInputChange = (value: number | string) => {
+    setFormValues({
+      number: value
+    });
+  };
 
   useEffect(() => {
+    getBalance();
     init();
   }, [type, activeCurrency]);
 
-  const onChangeActiveCurrency = (name: string) => {
-    setActiveCurrency(name);
-  };
+  useEffect(() => {
+    setDolors(formValues.number > 0 ? Math.random() : 0);
+  }, [formValues.number]);
 
   const getBestApr = (num: number) => {
     return num === Math.max(optimization, aave, compound);
   };
 
   const toPercent = (num: number) => {
-    return `${Number(num * 100).toFixed(2)}%`;
+    return `${parseFloat(Number(num * 100).toFixed(2))}%`;
+  };
+
+  const getBalance = () => {
+    if (activeCurrency) {
+      setBalance(1223.2);
+    }
   };
 
   const init = () => {
@@ -232,7 +248,6 @@ const useLendingDialog = ({
     open,
     setOpen,
     activeCurrency,
-    onChangeActiveCurrency,
     infosTop,
     aprInfo,
     showMaxLTV,
@@ -240,7 +255,11 @@ const useLendingDialog = ({
     maxLTVPercent,
     usedBorrowLimitPercent,
     liquidationPercent,
-    willBecomeBorrowLimitPercent
+    willBecomeBorrowLimitPercent,
+    formValues,
+    handleInputChange,
+    balance,
+    dolors
   };
 };
 

@@ -8,8 +8,8 @@ import Tips from './Tips';
 import Tabs from './Tabs';
 import useTradeDialog, {
   CurrencyInfoProps,
-  InfosTopItemProps,
-  AprInfoProps,
+  // InfosTopItemProps,
+  // AprInfoProps,
   DialogTypeProps
 } from './hooks/useTradeDialog';
 
@@ -19,7 +19,6 @@ export interface TabItemProps {
 }
 
 export interface UseLendingDialogProps {
-  currencyList: CurrencyInfoProps[];
   type: DialogTypeProps;
   optimization: number;
   aave: number;
@@ -32,12 +31,15 @@ export interface UseLendingDialogProps {
   maxLTV?: number; // 最高抵押率
   liquidation?: number; // 清算域值
   usedBorrowLimit?: number; // 已用借款限额
+  activeCurrency: string;
 }
 
 export interface LendingDialogProps extends UseLendingDialogProps {
   open: boolean;
+  currencyList: CurrencyInfoProps[];
   onClose: () => void;
   onChangeTab: (dialogType: DialogTypeProps) => void;
+  onChangeActiveCurrency: (name: string) => void;
 }
 
 function LendingDialog({
@@ -56,12 +58,12 @@ function LendingDialog({
   depositAmount,
   maxLTV,
   liquidation,
-  usedBorrowLimit
+  usedBorrowLimit,
+  onChangeActiveCurrency,
+  activeCurrency
 }: LendingDialogProps) {
   const {
     tabs,
-    activeCurrency,
-    onChangeActiveCurrency,
     infosTop,
     aprInfo,
     showMaxLTV,
@@ -69,13 +71,16 @@ function LendingDialog({
     maxLTVPercent,
     usedBorrowLimitPercent,
     liquidationPercent,
-    willBecomeBorrowLimitPercent
+    willBecomeBorrowLimitPercent,
+    formValues,
+    handleInputChange,
+    balance,
+    dolors
   } = useTradeDialog({
     type,
     optimization,
     aave,
     compound,
-    currencyList,
     outstandingLoan,
     borrowAPRPercent,
     borrowAmount,
@@ -83,24 +88,34 @@ function LendingDialog({
     depositAmount,
     maxLTV,
     liquidation,
-    usedBorrowLimit
+    usedBorrowLimit,
+    activeCurrency
   });
 
+  const onDialogClose = () => {
+    handleInputChange('');
+    onClose();
+  };
+
   return (
-    <Dialog onClose={onClose} open={open} maxWidth="xl">
+    <Dialog onClose={onDialogClose} open={open} maxWidth="xl">
       <div className={styles.title}>
         <Tabs activeTab={type} tabs={tabs} onChangeTab={onChangeTab} />
       </div>
       <div className={styles.content}>
         <section className={styles.left}>
           <DialogInput
+            balance={balance}
+            formValue={formValues}
+            handleInputChange={handleInputChange}
             currencyList={currencyList}
             activeCurrency={activeCurrency}
+            dolors={dolors}
             onChangeActiveCurrency={onChangeActiveCurrency}
           />
           <Tips />
           <UnAuth />
-          <Buttons />
+          <Buttons activeCurrency={activeCurrency} type={type} />
         </section>
         <section className={styles.right}>
           <Infos

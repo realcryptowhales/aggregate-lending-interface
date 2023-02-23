@@ -39,6 +39,7 @@ const Markets = () => {
   const [usedBorrowLimit, setUsedBorrowLimit] = useState<number>();
   const [liquidation, setLiquidation] = useState<number>();
   const [maxLTV, setMaxLTV] = useState<number>();
+  const [activeCurrency, setActiveCurrency] = useState(currencyList[0]?.symbol);
 
   const onClose = () => {
     setOpen(false);
@@ -111,6 +112,10 @@ const Markets = () => {
     setMaxLTV(0.8);
   };
 
+  const onChangeActiveCurrency = (symbol: string) => {
+    setActiveCurrency(symbol);
+  };
+
   return (
     <div>
       <Button variant="outlined" onClick={onClickDeposit}>
@@ -142,6 +147,8 @@ const Markets = () => {
         usedBorrowLimit={usedBorrowLimit}
         liquidation={liquidation}
         maxLTV={maxLTV}
+        onChangeActiveCurrency={onChangeActiveCurrency}
+        activeCurrency={activeCurrency}
       />
     </div>
   );
