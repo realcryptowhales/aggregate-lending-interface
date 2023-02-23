@@ -9,7 +9,7 @@ import {
   connectorsForWallets
 } from '@rainbow-me/rainbowkit';
 import { chainList } from '@constant/index';
-import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
+import { metaMaskWallet, injectedWallet } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import router from './routes';
@@ -23,7 +23,10 @@ const { chains, provider } = configureChains(chainList, [publicProvider()]);
 const connectors = connectorsForWallets([
   {
     groupName: 'Wallets',
-    wallets: [metaMaskWallet({ chains })]
+    wallets: [
+      injectedWallet({ chains }), // okx wallet
+      metaMaskWallet({ chains })
+    ]
   }
 ]);
 
