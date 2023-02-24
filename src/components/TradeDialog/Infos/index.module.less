@@ -1,0 +1,212 @@
+.top {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: calc(100% / 2);
+}
+
+.title {
+  color: #929292;
+  line-height: 16px;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.value {
+  color: #000;
+  line-height: 24px;
+  text-align: right;
+  font-size: 20px;
+  margin-top: 4px;
+  font-weight: 700;
+}
+
+.middle {
+  margin-top: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+}
+
+.limit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tip {
+  color: #929292;
+  line-height: 16px;
+  font-weight: 400;
+  font-size: 14px;
+  margin-right: 4px;
+}
+
+.num {
+  color: #000;
+  line-height: 16px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.bottom {
+  margin-top: 16px;
+}
+
+.apr {
+  color: #000;
+  line-height: 16px;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.list {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.listItem {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.best {
+  padding: 0 12px;
+  color: #fff;
+  line-height: 158%;
+  border-radius: 16px;
+  font-weight: 400;
+  font-size: 12px;
+  background: #f98a6b;
+  margin-left: 8px;
+}
+
+.itemTitle {
+  display: flex;
+  align-items: center;
+  color: #929292;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 158%;
+
+  /* or 22px */
+}
+
+.itemValue {
+  color: #000;
+  line-height: 16px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.sliderContainer {
+  position: relative;
+  width: 204px;
+  height: 27px;
+  margin-top: 8px;
+}
+
+.sliderBase {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.sliderBackground {
+  z-index: 0;
+  width: 100%;
+  background: #ebebeb;
+}
+
+.sliderCurrent {
+  z-index: 1;
+  background: #424242;
+}
+
+.sliderLiquidationText {
+  position: absolute;
+  top: 7px;
+  left: 0;
+  color: #dd1f16;
+  line-height: 158%;
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.sliderLiquidationMark {
+  position: absolute;
+  top: -1px;
+  z-index: 3;
+  width: 2px;
+  height: 6px;
+  background: #dd1f16;
+}
+
+.sliderLiquidationValue {
+  position: absolute;
+  top: 7px;
+  color: #dd1f16;
+  line-height: 158%;
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.showMaxLTVSliderContainer {
+  height: 49px;
+}
+
+.sliderMaxLTVText {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #808080;
+  line-height: 158%;
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.sliderMaxLVTMark {
+  position: absolute;
+  top: 15px;
+  z-index: 3;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #424242;
+}
+
+.sliderMaxLTVValue {
+  position: absolute;
+  color: #808080;
+  line-height: 158%;
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.showMaxLTVSlider {
+  top: 22px;
+}
+
+.showMaxLTVSliderLiquidation {
+  top: 29px;
+}

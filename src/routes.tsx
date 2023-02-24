@@ -9,6 +9,7 @@ import type { RouteObject } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
 import Porfolio from './containers/Porfolio';
 import Markets from './containers/Markets';
+import Test from './containers/Test';
 
 const routes: RouteObject[] = [
   {
@@ -30,6 +31,10 @@ const routes: RouteObject[] = [
           { path: '/porfolio/liquidation', element: <Liquidation /> },
           { path: '/porfolio/:id', element: <PorfolioItem /> }
         ]
+      },
+      {
+        path: '/test',
+        children: [{ index: true, element: <Test /> }]
       },
       { path: '*', element: <NoMatch /> }
       // { path: '*', element: <Redirect to="/markets" /> }
