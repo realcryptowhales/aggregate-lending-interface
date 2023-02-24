@@ -1,11 +1,9 @@
-import { Button, styled, Switch, TableCell, TableRow } from '@mui/material';
+import { styled, TableCell, TableRow } from '@mui/material';
 import style from './index.module.less';
 import cls from 'classnames';
-import classNames from 'classnames';
-import { useState } from 'react';
-import { border } from '@mui/system';
 import { LiquidationData } from '..';
 import { formatAddr } from '@/utils';
+import { formatDate, thousandNumber } from '@/utils/format';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -21,7 +19,6 @@ const StyledTableRow = styled(TableRow)(() => ({
 export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
   const {
     gmtCreate,
-    event,
     redeemTokenSymbol,
     redeemTokenIcon,
     redeemTokenName,
@@ -30,8 +27,8 @@ export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
     repayedTokenName,
     repayedTokenSymbol,
     repayedAmount,
-    liquidationThreshold,
-    liquidationPenalty,
+
+    liquidateRewardRatio,
     liquidator,
     transactionHash
   } = row;
@@ -53,7 +50,7 @@ export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
         sx={{ width: 142 }}
         component="th"
       >
-        <div>{gmtCreate}</div>
+        <div>{formatDate(gmtCreate)}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 118 }}>
         清算
@@ -72,7 +69,7 @@ export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
         </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 152 }}>
-        {redeemAmount}
+        {thousandNumber(redeemAmount)}
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 152 }}>
         <div className={cls('flex items-center')}>
@@ -88,10 +85,10 @@ export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
         </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 152 }}>
-        <div>{repayedAmount}</div>
+        <div>{thousandNumber(repayedAmount)}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 86 }}>
-        <div>{'todo%'}</div>
+        <div>{`${liquidateRewardRatio}%`}</div>
       </TableCell>
 
       <TableCell padding="none" align="left" sx={{ width: 151 }}>

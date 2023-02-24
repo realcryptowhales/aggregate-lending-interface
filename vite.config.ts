@@ -16,6 +16,14 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   return {
     // root: path.join(__dirname, 'src'),
+    server: {
+      proxy: {
+        '/aggregate-lending/': {
+          target: 'http://35.220.222.252',
+          changeOrigin: true
+        }
+      }
+    },
     resolve: {
       // 别名配置
       alias: {
