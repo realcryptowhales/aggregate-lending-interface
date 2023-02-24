@@ -180,7 +180,6 @@ export default function EnhancedTable<T extends { key: string }>({
   useEffect(() => {
     setOrderBy(defaultOrderBy);
   }, [defaultOrderBy]);
-  console.log('orderBy', orderBy);
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof T

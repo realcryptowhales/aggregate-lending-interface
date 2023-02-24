@@ -1,10 +1,7 @@
 import * as React from 'react';
-import useSWR from 'swr';
-import { fetcher } from '@api/index';
 import style from './index.module.less';
 import cls from 'classnames';
-import { Box, LinearProgress, Tooltip } from '@mui/material';
-import { ClassSharp } from '@mui/icons-material';
+import { Tooltip } from '@mui/material';
 // interface Props {
 // title: React.ReactNode;
 // secondTitle?: string;

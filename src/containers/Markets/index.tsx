@@ -1,6 +1,4 @@
 import * as React from 'react';
-import useSWR from 'swr';
-import { fetcher } from '@api/index';
 import style from './index.module.less';
 import cls from 'classnames';
 import Card from './Card';
@@ -9,7 +7,6 @@ import AprDataDisplay from './Card/AprDataDisplay';
 import MoneyDataDisplay from './Card/MoneyDataDisplay';
 import EnhancedTable, { Data, HeadCell, rows } from '@/components/Table';
 import { MarketTableRows } from '@/components/Table/MarketTableRows';
-
 const headCells: HeadCell<Data>[] = [
   {
     id: 'asset',
@@ -76,6 +73,10 @@ const currencyList = [
   }
 ];
 const Markets: React.FC = () => {
+  // const { useMultiCallResult } = useMultiCall();
+  // const res = useMultiCallResult();
+  // console.log('res', res);
+
   return (
     <div className={cls(style.container)}>
       <div className={cls(style.header)}>

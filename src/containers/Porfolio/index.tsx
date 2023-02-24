@@ -1,9 +1,7 @@
-import useSWR from 'swr';
-import { fetcher } from '@api/index';
 import style from './index.module.less';
 import cls from 'classnames';
 import AssetInfo from './AssetInfo';
-import EnhancedTable, { Asset, HeadCell, rows } from '@/components/Table';
+import EnhancedTable, { HeadCell } from '@/components/Table';
 import { DepositTableRows } from './DepositTableRows';
 import { Tooltip } from '@mui/material';
 import Tab, { Tabs } from './Tab';

@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { currencyList } from '@/constant';
 import SmallDialog from '@/components/SmallDialog';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-
+import { readContracts } from 'wagmi';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0

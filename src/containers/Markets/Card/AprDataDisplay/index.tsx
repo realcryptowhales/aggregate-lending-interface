@@ -1,6 +1,4 @@
 import * as React from 'react';
-import useSWR from 'swr';
-import { fetcher } from '@api/index';
 import style from './index.module.less';
 import cls from 'classnames';
 interface Props {

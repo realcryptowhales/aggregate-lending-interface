@@ -33,7 +33,6 @@ const StyledTableRow = styled(TableRow)(() => ({
 
 export const MarketTableRows = ({ row }: { row: Data }) => {
   const { asset } = row;
-  console.log('row', row);
   const navigate = useNavigate();
   const [icon, symbol] = [currencyList[asset].icon, currencyList[asset].symbol];
   return (

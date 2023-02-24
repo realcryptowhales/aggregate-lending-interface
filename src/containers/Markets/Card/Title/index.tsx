@@ -1,19 +1,13 @@
 import * as React from 'react';
-import useSWR from 'swr';
-import { fetcher } from '@api/index';
 import style from './index.module.less';
 import cls from 'classnames';
 import {
   Select,
   MenuItem,
   SelectChangeEvent,
-  InputLabel,
   FormControl,
-  Box,
-  listClasses
+  Box
 } from '@mui/material';
-import { height } from '@mui/system';
-import CurrencySelect from '@/components/CurrencySelect';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 interface Props {
