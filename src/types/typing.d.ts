@@ -13,3 +13,4 @@ declare interface Window {
 
 declare module '@mui/system';
 declare module '@mui/utils';
+declare module '@wagmi/core';

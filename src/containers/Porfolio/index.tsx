@@ -255,7 +255,7 @@ const Porfolio = () => {
   return (
     <div className={cls(style.container)}>
       <div className={cls(style['container-head'])}>
-        <div onClick={write}>我的资产</div>
+        <div onClick={() => write?.()}>我的资产</div>
         <Link to="/porfolio/liquidation" style={{ textDecoration: 'none' }}>
           <div className={cls('flex items-center cursor-pointer')}>
             <i

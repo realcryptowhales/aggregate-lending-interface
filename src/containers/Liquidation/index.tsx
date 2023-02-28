@@ -4,9 +4,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { liquidationTableRows } from './LiquidationTableRows';
 import style from './index.module.less';
-import useSWR, { SWRResponse } from 'SWR';
+import useSWR from 'swr';
 import { useAccount } from 'wagmi';
-import axios from 'axios';
+import { fetcher } from '@api/index';
 
 interface LiquidationHistoryRecord {
   liquidator: string;
@@ -22,6 +22,7 @@ interface LiquidationHistoryRecord {
   repayedAmount: number;
   assetAddress: string;
   transactionHash: string;
+
   gmtCreate: number;
   liquidateRewardRatio: number;
 }
@@ -91,12 +92,6 @@ interface Params {
   pageNo: number;
   pageSize: number;
 }
-const fetcher = async (args: { url: string; params: Params }) => {
-  const { url, params } = args;
-  console.log(params);
-  const { data, status } = await axios.get(url, { params });
-  return data;
-};
 
 const Liquidation = () => {
   const [pageNo, setPageNo] = useState(0);
