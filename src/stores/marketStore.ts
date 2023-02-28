@@ -1,4 +1,4 @@
-import { multicall, MulticallConfig } from '@wagmi/core';
+// import { multicall, MulticallConfig } from '@wagmi/core';
 import { makeAutoObservable } from 'mobx';
 import { erc20ABI } from 'wagmi';
 
@@ -26,18 +26,18 @@ export default class MarketStore {
     makeAutoObservable(this, {}, { autoBind: true });
   }
   async getMarketData() {
-    const [symbol, amount] = await multicall({
-      contracts: [
-        {
-          ...Erc20,
-          functionName: 'symbol'
-        },
-        {
-          ...Erc20,
-          functionName: 'balanceOf',
-          args: ['0x49f8948c60cE2b4180DEf540f03148540268C5B0' as `0x${string}`]
-        }
-      ]
-    });
+    // const [symbol, amount] = await multicall({
+    //   contracts: [
+    //     {
+    //       ...Erc20,
+    //       functionName: 'symbol'
+    //     },
+    //     {
+    //       ...Erc20,
+    //       functionName: 'balanceOf',
+    //       args: ['0x49f8948c60cE2b4180DEf540f03148540268C5B0' as `0x${string}`]
+    //     }
+    //   ]
+    // });
   }
 }
