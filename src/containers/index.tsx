@@ -25,7 +25,10 @@ function Layout() {
     {
       url: 'http://35.220.222.252/aggregate-lending/config/list'
     },
-    fetcher
+    fetcher,
+    {
+      refreshInterval: 0
+    }
     // {
     //   refreshInterval: 3000
     // }
@@ -45,19 +48,22 @@ function Layout() {
   // );
   // console.log(secondRes, 'secondRes');
 
-  // const thirdRes = useSWR(
-  //   {
-  //     url: 'http://35.220.222.252/aggregate-lending/apr/calc',
-  //     params: {
-  //       configId: 1,
-  //       operateType: 1,
-  //       beginTime: 1677095230000,
-  //       endTime: 1677095230000
-  //     }
-  //   },
-  //   fetcher
-  // );
-  // console.log(thirdRes, 'thirdRes');
+  const thirdRes = useSWR(
+    {
+      url: 'http://35.220.222.252/aggregate-lending/apr/calc',
+      params: {
+        configId: 1,
+        operateType: 1,
+        beginTime: 1677095230000,
+        endTime: 1677095230000
+      }
+    },
+    fetcher,
+    {
+      refreshInterval: 0
+    }
+  );
+  console.log(thirdRes, 'thirdRes');
 
   const ethkContract = {
     address: '0xbFec33e59621d0C6E944931B3B31A40C23Cd8d84' as `0x${string}`,

@@ -12,7 +12,6 @@ export const fetcher = async (args: {
   params: Record<string, any>;
 }) => {
   const { url, params } = args;
-  console.log(params);
   const { data } = await axios.get(url, { params });
   axios
     .get(url, { params })
