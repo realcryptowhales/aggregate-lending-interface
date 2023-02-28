@@ -40,7 +40,7 @@ export default class PorfolioStore {
     let suppliedList: any, borrowedList: any, userInfo: any;
 
     try {
-      [suppliedList, borrowedList, userInfo] = await multicall({
+      [suppliedList = [], borrowedList = [], userInfo] = await multicall({
         contracts: [
           {
             ...queryHelperContract,
@@ -83,7 +83,7 @@ export default class PorfolioStore {
   formatSuppliedList(suppliedList: SuppliedInfo[]) {
     let totalSupplied = new BigNumber(0),
       suppliedInterest = new BigNumber(0);
-    const userSuppliedList = suppliedList.filter(
+    const userSuppliedList = suppliedList?.filter(
       ({ underlying, depositValue, depositApr }: SuppliedInfo) => {
         console.log('depositValue.toString()', depositValue.toString());
         if (underlying !== unmeaningAddr) {
@@ -101,7 +101,8 @@ export default class PorfolioStore {
       }
     );
     const totalSuppliedApr = suppliedInterest.div(totalSupplied);
-    this.totalSuppliedApr = formatUnits(totalSuppliedApr.toFixed(), 6);
+    console.log('totalSuppliedApr3213131', totalSuppliedApr);
+    this.totalSuppliedApr = totalSuppliedApr.toFixed();
     this.userTotalSupplied = totalSupplied.toFixed();
     console.log('userSuppliedList', userSuppliedList);
     console.log('this.totalSuppliedApr', this.totalSuppliedApr);

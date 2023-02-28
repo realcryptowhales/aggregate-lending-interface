@@ -1,7 +1,6 @@
-import EnhancedTable, { Asset, HeadCell } from '@/components/Table';
-import { TablePagination, Tooltip } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import EnhancedTable, { HeadCell } from '@/components/Table';
+import { TablePagination } from '@mui/material';
+import { useState } from 'react';
 import { liquidationTableRows } from './LiquidationTableRows';
 import style from './index.module.less';
 import useSWR from 'swr';

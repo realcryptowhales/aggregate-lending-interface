@@ -54,6 +54,8 @@ const AssetInfo: React.FC = ({}) => {
     return thousandCurrency(+collateralValue, 4);
   }, [collateralValue]);
   const percentUsedRatio = useMemo(() => {
+    console.log('usedRatio', usedRatio);
+
     if (Number.isNaN(usedRatio)) return '0%';
     return formatPercent(+usedRatio);
   }, [usedRatio]);
