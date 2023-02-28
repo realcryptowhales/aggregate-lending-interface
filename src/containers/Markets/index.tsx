@@ -7,6 +7,7 @@ import AprDataDisplay from './Card/AprDataDisplay';
 import MoneyDataDisplay from './Card/MoneyDataDisplay';
 import EnhancedTable, { Data, HeadCell, rows } from '@/components/Table';
 import { MarketTableRows } from '@/components/Table/MarketTableRows';
+import { useStore } from '@/stores';
 const headCells: HeadCell<Data>[] = [
   {
     id: 'asset',
@@ -73,6 +74,20 @@ const currencyList = [
   }
 ];
 const Markets: React.FC = () => {
+  const {
+    marketStore: {
+      getMarketData,
+      getCurrentSupplyRates,
+      getCurrentBorrowRates,
+      getMarketsInfo
+    }
+  } = useStore();
+  React.useEffect(() => {
+    getMarketData();
+    getCurrentBorrowRates('0x677fD6Ea1a1adB1ce221031f62FFA892F7277190');
+    getCurrentSupplyRates('0x677fD6Ea1a1adB1ce221031f62FFA892F7277190');
+    getMarketsInfo();
+  }, []);
   // const { useMultiCallResult } = useMultiCall();
   // const res = useMultiCallResult();
   // console.log('res', res);

@@ -1,7 +1,14 @@
-import * as React from 'react';
+import React, { useMemo } from 'react';
 import style from './index.module.less';
 import cls from 'classnames';
 import { Tooltip } from '@mui/material';
+import { useStore } from '@/stores';
+import {
+  formatPercent,
+  thousandCurrency,
+  thousandNumber
+} from '@/utils/format';
+import { observer } from 'mobx-react-lite';
 // interface Props {
 // title: React.ReactNode;
 // secondTitle?: string;
@@ -9,9 +16,9 @@ import { Tooltip } from '@mui/material';
 // }
 const InfoItem: React.FC<{
   title: string;
-  amount: number;
+  amount: string;
   percentText?: React.ReactNode;
-  percent?: number;
+  percent?: string;
   hasTips?: boolean;
 }> = ({ title, amount, percentText, percent, hasTips }) => {
   return (
@@ -39,33 +46,48 @@ const InfoItem: React.FC<{
 };
 // eslint-disable-next-line no-empty-pattern
 const AssetInfo: React.FC = ({}) => {
+  const {
+    porfolioStore: { collateralValue, usedRatio, borrowLimit }
+  } = useStore();
+  const thousandCollateralValue = useMemo(() => {
+    if (Number.isNaN(collateralValue)) return '--';
+    return thousandCurrency(+collateralValue, 4);
+  }, [collateralValue]);
+  const percentUsedRatio = useMemo(() => {
+    if (Number.isNaN(usedRatio)) return '0%';
+    return formatPercent(+usedRatio);
+  }, [usedRatio]);
+  const thousandBorrowLimit = useMemo(() => {
+    if (Number.isNaN(borrowLimit)) return '--';
+    return thousandCurrency(+borrowLimit, 4);
+  }, [borrowLimit]);
   return (
     <div className={cls(style.container)}>
       <InfoItem
         title={'总存款金额'}
-        amount={0}
+        amount={'0'}
         percentText={'总存款'}
-        percent={0}
+        percent={'0'}
       />
       <InfoItem
         title={'总借款金额'}
-        amount={0}
+        amount={'0'}
         percentText={'总借款'}
-        percent={0}
+        percent={'0'}
       />
       <InfoItem
         title={'今日预估总收益'}
-        amount={0}
+        amount={'0'}
         percentText="净收益率"
-        percent={0}
+        percent={'0'}
         hasTips
       />
-      <InfoItem title={'总抵押品价值'} amount={0} />
+      <InfoItem title={'总抵押品价值'} amount={thousandCollateralValue} />
       <div className={style.limit}>
         <div className={style.title}>借款限额</div>
         <div className={cls('flex justify-between', style.percent)}>
           <span>已用比例</span>
-          <span>{1231}</span>
+          <span>{percentUsedRatio}</span>
         </div>
         <div
           style={{
@@ -79,23 +101,23 @@ const AssetInfo: React.FC = ({}) => {
           <div
             style={{
               backgroundColor: '#424242',
-              width: '50%',
+              width: percentUsedRatio,
               height: 4,
               borderRadius: '2px'
             }}
           ></div>
           <div
             className={style.arrow}
-            style={{ left: 'calc(50% - 3px)', top: '-6px' }}
+            style={{ left: `calc(${percentUsedRatio} - 3px)`, top: '-6px' }}
           ></div>
         </div>
         <div className={cls('flex justify-between', style.percent)}>
           <span>最多可借</span>
-          <span>{2322}</span>
+          <span>{thousandBorrowLimit}</span>
         </div>
       </div>
     </div>
   );
 };
 
-export default AssetInfo;
+export default observer(AssetInfo);

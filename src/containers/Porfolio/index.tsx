@@ -8,6 +8,11 @@ import Tab, { Tabs } from './Tab';
 import { useMemo, useState } from 'react';
 import { BorrowTableRows } from './BorrowTableRows';
 import { Link } from 'react-router-dom';
+import { useStore } from '@/stores';
+import { routerABI, wagmigotchiABI } from '@/constant';
+import { erc20ABI, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { mockUSDTAddr, routerAddr } from '@/constant/contract';
+import { okc } from 'wagmi/chains';
 export interface DepositData {
   key: string;
   depositToken: string;
@@ -216,6 +221,10 @@ const Porfolio = () => {
     { value: Tabs.DEPOSIT, label: '我的存款' },
     { value: Tabs.BORROW, label: '我的借款' }
   ];
+  const {
+    porfolioStore: { getUserSupplied }
+  } = useStore();
+  getUserSupplied('0x49f8948c60cE2b4180DEf540f03148540268C5B0');
   const [curHeadCells, curTableRow, renderCurTableRows, defaultOrderBy] =
     useMemo(() => {
       if (curTab === Tabs.DEPOSIT)
@@ -227,10 +236,26 @@ const Porfolio = () => {
         ];
       return [BorrowHeadCells, BorrowRows, BorrowTableRows, 'borrowLimit'];
     }, [curTab]);
+  const { config } = usePrepareContractWrite({
+    address: routerAddr,
+    abi: routerABI,
+    functionName: 'supply',
+    args: [
+      {
+        asset: mockUSDTAddr,
+        amount: 1 * 10 ** 6,
+        to: '0x49f8948c60cE2b4180DEf540f03148540268C5B0'
+      },
+      true,
+      true
+    ],
+    chainId: okc.id
+  });
+  const { write } = useContractWrite(config);
   return (
     <div className={cls(style.container)}>
       <div className={cls(style['container-head'])}>
-        <div>我的资产</div>
+        <div onClick={write}>我的资产</div>
         <Link to="/porfolio/liquidation" style={{ textDecoration: 'none' }}>
           <div className={cls('flex items-center cursor-pointer')}>
             <i
