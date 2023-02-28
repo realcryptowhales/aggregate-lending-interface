@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '@/components/Header';
+import useSWR from 'swr';
+import { fetcher } from '@api/index';
 import {
   useAccount,
   useBalance,
@@ -9,6 +11,7 @@ import {
 } from 'wagmi';
 
 import { wagmigotchiABI, mlootABI } from '@constant/index';
+import { formatUrl } from '@utils/index';
 
 function Layout() {
   // const { address, isConnecting, isDisconnected } = useAccount();
@@ -17,6 +20,42 @@ function Layout() {
   //   address: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e'
   // });
   // console.log(data, isError, isLoading, 'useBalance');
+
+  const restRes = useSWR(
+    'http://35.220.222.252/aggregate-lending/config/list',
+    fetcher
+    // {
+    //   refreshInterval: 3000
+    // }
+  );
+  console.log(restRes, 'restRes');
+
+  const secondRes = useSWR(
+    formatUrl({
+      url: 'http://35.220.222.252/aggregate-lending/liquidator/list',
+      args: {
+        assetAddress: '0x23335657622Dcc27bB1914E51cDc30871D6d04d3',
+        pageNo: 1,
+        pageSize: 20
+      }
+    }),
+    fetcher
+  );
+  console.log(secondRes, 'secondRes');
+
+  const thirdRes = useSWR(
+    formatUrl({
+      url: 'http://35.220.222.252/aggregate-lending/apr/calc',
+      args: {
+        configId: 1,
+        operateType: 1,
+        beginTime: 1677095230000,
+        endTime: 1677095230000
+      }
+    }),
+    fetcher
+  );
+  console.log(thirdRes, 'thirdRes');
 
   const ethkContract = {
     address: '0xbFec33e59621d0C6E944931B3B31A40C23Cd8d84' as `0x${string}`,

@@ -1,4 +1,10 @@
-import { mainnet, polygon, optimism, arbitrum, Chain } from 'wagmi/chains';
+import {
+  // mainnet,
+  //  polygon,
+  //   optimism,
+  //   arbitrum,
+  Chain
+} from 'wagmi/chains';
 
 const okcChain: Chain = {
   id: 66,
@@ -55,10 +61,10 @@ const okcTestChain: Chain = {
 } as any;
 
 export const chainList = [
-  mainnet,
-  polygon,
-  optimism,
-  arbitrum,
-  okcChain,
-  okcTestChain
+  // mainnet,
+  // polygon,
+  // optimism,
+  // arbitrum,
+  okcTestChain,
+  okcChain
 ];
