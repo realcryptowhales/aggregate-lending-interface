@@ -34,6 +34,11 @@ export interface AprInfoProps {
   list: AprItemProps[];
 }
 
+export interface FormValuesProps {
+  number: string | number;
+  asCollateral: boolean;
+}
+
 const useLendingDialog = ({
   type,
   optimization,
@@ -56,24 +61,30 @@ const useLendingDialog = ({
   const [dolors, setDolors] = useState<number>(0);
   const [aprInfo, setAprInfo] = useState<AprInfoProps>();
   const [willBecomeBorrowLimit, setWillBecomeBorrowLimit] = useState<number>();
-  const [formValues, setFormValues] = useState<{ number: string | number }>({
-    number: ''
+  const [formValue, setFormValues] = useState<FormValuesProps>({
+    number: '',
+    asCollateral: true
   });
+  const [auth, setAuth] = useState(false);
 
-  const handleInputChange = (value: number | string) => {
+  const handleFormChange = (obj: { [key: string]: any }) => {
     setFormValues({
-      number: value
+      ...formValue,
+      ...obj
     });
   };
 
   useEffect(() => {
     getBalance();
     init();
+    setAuth(true);
   }, [type, activeCurrency]);
 
   useEffect(() => {
-    setDolors(formValues.number > 0 ? Math.random() : 0);
-  }, [formValues.number]);
+    console.log(formValue);
+    setDolors(formValue.number > 0 ? Math.random() : 0);
+    setWillBecomeBorrowLimit(formValue.number > 0 ? 0.9 : 0);
+  }, [formValue.number]);
 
   const getBestApr = (num: number) => {
     return num === Math.max(optimization, aave, compound);
@@ -85,7 +96,7 @@ const useLendingDialog = ({
 
   const getBalance = () => {
     if (activeCurrency) {
-      setBalance(1223.2);
+      setBalance(0);
     }
   };
 
@@ -178,7 +189,9 @@ const useLendingDialog = ({
             value: depositAPRPercent!
           },
           {
-            title: `存款数量(${activeCurrency})`,
+            title: `${
+              type === DialogTypeProps.deposit ? '存款数量' : '存款余额'
+            }(${activeCurrency})`,
             value: depositAmount!
           }
         ]);
@@ -220,6 +233,11 @@ const useLendingDialog = ({
   }, [type]);
 
   const isOverLiquidation = useMemo(() => {
+    console.log(
+      'isOverLiquidation',
+      !!willBecomeBorrowLimit &&
+        Number(willBecomeBorrowLimit) >= Number(liquidation)
+    );
     return (
       Number(usedBorrowLimit) >= Number(liquidation) ||
       (!!willBecomeBorrowLimit &&
@@ -243,6 +261,13 @@ const useLendingDialog = ({
     return willBecomeBorrowLimit ? toPercent(willBecomeBorrowLimit) : '0%';
   }, [willBecomeBorrowLimit]);
 
+  const isHighRisk = useMemo(() => {
+    return (
+      !!willBecomeBorrowLimit &&
+      Number(willBecomeBorrowLimit + 0.1) >= Number(liquidation)
+    );
+  }, [usedBorrowLimit, willBecomeBorrowLimit]);
+
   return {
     tabs,
     open,
@@ -256,10 +281,12 @@ const useLendingDialog = ({
     usedBorrowLimitPercent,
     liquidationPercent,
     willBecomeBorrowLimitPercent,
-    formValues,
-    handleInputChange,
+    formValue,
+    handleFormChange,
+    isHighRisk,
     balance,
-    dolors
+    dolors,
+    auth
   };
 };
 

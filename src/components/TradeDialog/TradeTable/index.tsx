@@ -1,8 +1,14 @@
 import { Fragment } from 'react';
 import { Tooltip } from '@mui/material';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
+import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
 import clsx from 'classnames';
-import { InfosTopItemProps, AprInfoProps } from '../hooks/useTradeDialog';
+import {
+  InfosTopItemProps,
+  AprInfoProps,
+  DialogTypeProps,
+  FormValuesProps
+} from '../hooks/useTradeDialog';
 import styles from './index.module.less';
 
 interface InfosProps {
@@ -14,6 +20,8 @@ interface InfosProps {
   usedBorrowLimitPercent: string;
   liquidationPercent: string;
   willBecomeBorrowLimitPercent: string;
+  type: DialogTypeProps;
+  formValue: FormValuesProps;
 }
 
 function Infos({
@@ -23,10 +31,14 @@ function Infos({
   usedBorrowLimitPercent,
   maxLTVPercent,
   showMaxLTV,
-  isOverLiquidation
+  isOverLiquidation,
+  willBecomeBorrowLimitPercent,
+  type,
+  formValue
 }: InfosProps) {
   // const limit = '40%';
   // const max = "87.5%";
+  console.log('isOverLiquidation', isOverLiquidation);
   const { aprTitle, list } = aprInfo || {};
   return (
     <div className={styles.Infos}>
@@ -59,7 +71,23 @@ function Infos({
               />
             </Tooltip>
           </div>
-          <div className={styles.num}>{usedBorrowLimitPercent}</div>
+          <div className={styles.num}>
+            {usedBorrowLimitPercent}
+            {type !== DialogTypeProps.deposit && formValue?.number ? (
+              <div className={styles.willBecome}>
+                &nbsp;
+                <TrendingFlatIcon
+                  sx={{
+                    fontSize: 16,
+                    color: '#000000'
+                  }}
+                />
+                &nbsp;{willBecomeBorrowLimitPercent}
+              </div>
+            ) : (
+              ''
+            )}
+          </div>
         </div>
         <div
           className={clsx(
@@ -74,7 +102,12 @@ function Infos({
               isOverLiquidation ? styles.redSlider : '',
               showMaxLTV ? styles.showMaxLTVSlider : ''
             )}
-            style={{ width: usedBorrowLimitPercent }}
+            style={{
+              width:
+                type !== DialogTypeProps.deposit && formValue?.number
+                  ? willBecomeBorrowLimitPercent
+                  : usedBorrowLimitPercent
+            }}
           />
           {showMaxLTV ? (
             <Fragment>
@@ -134,7 +167,7 @@ function Infos({
                 <div className={styles.listItem} key={title}>
                   <div className={styles.itemTitle}>
                     {title}
-                    {isBest && <div className={styles.best}>best</div>}
+                    {isBest && <div className={styles.best}>Best</div>}
                   </div>
                   <div className={styles.itemValue}>{value}</div>
                 </div>

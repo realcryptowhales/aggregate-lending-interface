@@ -1,15 +1,11 @@
 import { Dialog } from '@mui/material';
 import styles from './index.module.less';
 import DialogInput from './DialogInput';
-import UnAuth from './UnAuth';
-import Buttons from './Buttons';
-import Infos from './Infos';
-import Tips from './Tips';
+import InfoDetails from './InfoDetails';
+import TradeTable from './TradeTable';
 import Tabs from './Tabs';
 import useTradeDialog, {
   CurrencyInfoProps,
-  // InfosTopItemProps,
-  // AprInfoProps,
   DialogTypeProps
 } from './hooks/useTradeDialog';
 
@@ -42,7 +38,7 @@ export interface LendingDialogProps extends UseLendingDialogProps {
   onChangeActiveCurrency: (name: string) => void;
 }
 
-function LendingDialog({
+function TradeDialog({
   type,
   open,
   currencyList,
@@ -72,10 +68,12 @@ function LendingDialog({
     usedBorrowLimitPercent,
     liquidationPercent,
     willBecomeBorrowLimitPercent,
-    formValues,
-    handleInputChange,
+    formValue,
+    handleFormChange,
+    isHighRisk,
     balance,
-    dolors
+    dolors,
+    auth
   } = useTradeDialog({
     type,
     optimization,
@@ -93,7 +91,10 @@ function LendingDialog({
   });
 
   const onDialogClose = () => {
-    handleInputChange('');
+    handleFormChange({
+      number: '',
+      asCollateral: true
+    });
     onClose();
   };
 
@@ -105,22 +106,34 @@ function LendingDialog({
       <div className={styles.content}>
         <section className={styles.left}>
           <DialogInput
+            type={type}
             balance={balance}
-            formValue={formValues}
-            handleInputChange={handleInputChange}
+            formValue={formValue}
+            handleInputChange={handleFormChange}
             currencyList={currencyList}
             activeCurrency={activeCurrency}
             dolors={dolors}
             onChangeActiveCurrency={onChangeActiveCurrency}
           />
-          <Tips />
-          <UnAuth />
-          <Buttons activeCurrency={activeCurrency} type={type} />
+          <InfoDetails
+            balance={balance}
+            type={type}
+            activeCurrency={activeCurrency}
+            maxLTVPercent={maxLTVPercent}
+            isHighRisk={isHighRisk}
+            isOverLiquidation={isOverLiquidation}
+            formValue={formValue}
+            willBecomeBorrowLimitPercent={willBecomeBorrowLimitPercent}
+            handleFormChange={handleFormChange}
+            auth={auth}
+          />
         </section>
         <section className={styles.right}>
-          <Infos
+          <TradeTable
+            type={type}
             infosTop={infosTop}
             aprInfo={aprInfo}
+            formValue={formValue}
             showMaxLTV={showMaxLTV}
             isOverLiquidation={isOverLiquidation}
             maxLTVPercent={maxLTVPercent}
@@ -134,4 +147,4 @@ function LendingDialog({
   );
 }
 
-export default LendingDialog;
+export default TradeDialog;
