@@ -33,8 +33,8 @@ export default class PorfolioStore {
   userBorrowedList: any[] = [];
   borrowLimit = '';
   borrowingValue = '';
-  collateralValue = '';
-  usedRatio = '';
+  collateralValue = ''; // 抵押品价值
+  usedRatio = ''; // 已用比例
 
   userTotalSupplied = '';
   totalSuppliedApr = '';
@@ -42,8 +42,8 @@ export default class PorfolioStore {
   userTotalBorrowed = '';
   totalBorrowedApr = '';
 
-  dailyEstProfit = '';
-  totalBorrowInterest = '';
+  dailyEstProfit = ''; //今日预估总收益率
+  totalBorrowInterest = ''; // 借款利息
   a = 1;
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -123,6 +123,7 @@ export default class PorfolioStore {
     console.log('this.totalBorrowedApr', this.totalBorrowedApr);
     console.log('this.userTotalBorrowed', this.userTotalBorrowed);
   }
+  // 净收益率
   get netProfit() {
     if (!this.dailyEstProfit && !this.totalBorrowInterest) return '';
     const netInterest = new BigNumber(

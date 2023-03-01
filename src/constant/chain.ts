@@ -26,7 +26,7 @@ const okcChain: Chain = {
   },
   contracts: {
     multicall3: {
-      address: '0xca11bde05977b3631167028862be2a173976ca11',
+      address: '0x33EC0d62C539936D43e2825BBcf064a44151DEE6',
       blockCreated: 10364792
     }
   },
