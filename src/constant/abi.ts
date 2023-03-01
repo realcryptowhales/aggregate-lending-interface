@@ -917,6 +917,11 @@ export const queryHelperABI = [
         internalType: 'address',
         name: 'user',
         type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: 'quote',
+        type: 'address'
       }
     ],
     name: 'getUserBorrowed',
@@ -950,7 +955,7 @@ export const queryHelperABI = [
           }
         ],
         internalType: 'struct QueryHelper.UserBorrowInfo[]',
-        name: 'userBorrowInfo',
+        name: 'userBorrowInfos',
         type: 'tuple[]'
       }
     ],
@@ -997,6 +1002,11 @@ export const queryHelperABI = [
         internalType: 'address',
         name: 'user',
         type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: 'quote',
+        type: 'address'
       }
     ],
     name: 'getUserSupplied',
@@ -1035,7 +1045,7 @@ export const queryHelperABI = [
           }
         ],
         internalType: 'struct QueryHelper.UserSupplyInfo[]',
-        name: 'userSupplyInfo',
+        name: 'userSupplyInfos',
         type: 'tuple[]'
       }
     ],
