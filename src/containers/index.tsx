@@ -52,10 +52,10 @@ function Layout() {
     {
       url: 'http://35.220.222.252/aggregate-lending/apr/calc',
       params: {
-        configId: 1,
+        configId: 2,
         operateType: 1,
-        beginTime: 1677095230000,
-        endTime: 1677095230000
+        beginTime: 1667275932000,
+        endTime: 1677575532000
       }
     },
     fetcher,
