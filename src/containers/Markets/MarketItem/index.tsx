@@ -7,7 +7,7 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Tooltip from '@mui/material/Tooltip';
 
 function MarketItem() {
-  const { id } = useParams<'id'>();
+  const { address } = useParams<'address'>();
   const currencyList = [
     {
       icon: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
@@ -89,7 +89,7 @@ function MarketItem() {
   return (
     <div className="w-full box-border px-27 py-6">
       <Summary
-        selectValue={id}
+        selectValue={address}
         currencyList={currencyList}
         dataList={dataList}
       />

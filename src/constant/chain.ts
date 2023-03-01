@@ -65,6 +65,6 @@ export const chainList = [
   // polygon,
   // optimism,
   // arbitrum,
-  okcTestChain,
+  // okcTestChain,
   okcChain
 ];

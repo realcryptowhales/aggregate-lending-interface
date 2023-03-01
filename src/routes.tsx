@@ -21,7 +21,7 @@ const routes: RouteObject[] = [
         path: '/markets',
         children: [
           { index: true, element: <Markets /> },
-          { path: '/markets/:id', element: <MarketItem /> }
+          { path: '/markets/:address', element: <MarketItem /> }
         ]
       },
       {
@@ -29,7 +29,7 @@ const routes: RouteObject[] = [
         children: [
           { index: true, element: <Porfolio /> },
           { path: '/porfolio/liquidation', element: <Liquidation /> },
-          { path: '/porfolio/:id', element: <PorfolioItem /> }
+          { path: '/porfolio/:address', element: <PorfolioItem /> }
         ]
       },
       {
