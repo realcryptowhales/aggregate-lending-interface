@@ -83,10 +83,10 @@ const Markets: React.FC = () => {
     }
   } = useStore();
   React.useEffect(() => {
-    getMarketData();
-    getCurrentBorrowRates('0x677fD6Ea1a1adB1ce221031f62FFA892F7277190');
-    getCurrentSupplyRates('0x677fD6Ea1a1adB1ce221031f62FFA892F7277190');
-    getMarketsInfo();
+    // getMarketData();
+    // getCurrentBorrowRates('0x677fD6Ea1a1adB1ce221031f62FFA892F7277190');
+    // getCurrentSupplyRates('0x677fD6Ea1a1adB1ce221031f62FFA892F7277190');
+    // getMarketsInfo();
   }, []);
   // const { useMultiCallResult } = useMultiCall();
   // const res = useMultiCallResult();

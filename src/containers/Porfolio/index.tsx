@@ -5,14 +5,21 @@ import EnhancedTable, { HeadCell } from '@/components/Table';
 import { DepositTableRows } from './DepositTableRows';
 import { Tooltip } from '@mui/material';
 import Tab, { Tabs } from './Tab';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BorrowTableRows } from './BorrowTableRows';
 import { Link } from 'react-router-dom';
 import { useStore } from '@/stores';
-import { routerABI, wagmigotchiABI } from '@/constant';
-import { erc20ABI, useContractWrite, usePrepareContractWrite } from 'wagmi';
-import { mockUSDTAddr, routerAddr } from '@/constant/contract';
-import { okc } from 'wagmi/chains';
+import { useAccount, useContractRead, useContractReads } from 'wagmi';
+import { mockUSDTAddr, queryHelperContractAddr } from '@/constant/contract';
+import { queryHelperContract } from '@/stores/marketStore';
+import { queryHelperABI } from '@/constant';
+import {
+  BorrowedInfo,
+  PorfolioData,
+  SuppliedInfo,
+  UserInfo
+} from '@/stores/porfolioStore';
+import { observer } from 'mobx-react-lite';
 export interface DepositData {
   key: string;
   depositToken: string;
@@ -222,9 +229,39 @@ const Porfolio = () => {
     { value: Tabs.BORROW, label: '我的借款' }
   ];
   const {
-    porfolioStore: { getUserSupplied }
+    porfolioStore: { computePorfolioData, netProfit }
   } = useStore();
-  getUserSupplied('0x49f8948c60cE2b4180DEf540f03148540268C5B0');
+  useEffect(() => {
+    console.log('netProfit', netProfit);
+    // getUserSupplied('0x49f8948c60cE2b4180DEf540f03148540268C5B0');
+  }, [netProfit]);
+  const { address } = useAccount();
+  const res = useContractReads({
+    // watch: true,
+    // cacheTime: 4_000,
+    onSuccess(data: PorfolioData) {
+      console.log('Success', data);
+      computePorfolioData(data);
+    },
+    contracts: [
+      {
+        ...queryHelperContract,
+        functionName: 'getUserSupplied',
+        args: [address, mockUSDTAddr]
+      },
+      {
+        ...queryHelperContract,
+        functionName: 'getUserBorrowed',
+        args: [address, mockUSDTAddr]
+      },
+      {
+        ...queryHelperContract,
+        functionName: 'getUserInfo',
+        args: [address, mockUSDTAddr]
+      }
+    ]
+  });
+  console.log('res', res);
   const [curHeadCells, curTableRow, renderCurTableRows, defaultOrderBy] =
     useMemo(() => {
       if (curTab === Tabs.DEPOSIT)
@@ -236,26 +273,11 @@ const Porfolio = () => {
         ];
       return [BorrowHeadCells, BorrowRows, BorrowTableRows, 'borrowLimit'];
     }, [curTab]);
-  const { config } = usePrepareContractWrite({
-    address: routerAddr,
-    abi: routerABI,
-    functionName: 'supply',
-    args: [
-      {
-        asset: mockUSDTAddr,
-        amount: 1 * 10 ** 6,
-        to: '0x49f8948c60cE2b4180DEf540f03148540268C5B0'
-      },
-      true,
-      true
-    ],
-    chainId: okc.id
-  });
-  const { write } = useContractWrite(config);
+
   return (
     <div className={cls(style.container)}>
       <div className={cls(style['container-head'])}>
-        <div onClick={() => write?.()}>我的资产</div>
+        <div>我的资产{netProfit}</div>
         <Link to="/porfolio/liquidation" style={{ textDecoration: 'none' }}>
           <div className={cls('flex items-center cursor-pointer')}>
             <i
@@ -286,4 +308,4 @@ const Porfolio = () => {
   );
 };
 
-export default Porfolio;
+export default observer(Porfolio);

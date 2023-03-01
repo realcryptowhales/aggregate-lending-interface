@@ -1,13 +1,12 @@
-import { routerAddr, priceOracleAddr, mockUSDTAddr } from '@/constant/contract';
-import { ThreeGMobiledataSharp } from '@mui/icons-material';
-import { multicall } from '@wagmi/core';
+import { mockUSDTAddr } from '@/constant/contract';
 import BigNumber from 'bignumber.js';
-import { BigNumberish, ethers } from 'ethers';
+import { BigNumberish } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
-import { makeAutoObservable, toJS } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import { queryHelperContract } from './marketStore';
+import { multicall } from '@wagmi/core';
 const unmeaningAddr = '0x0000000000000000000000000000000000000000';
-interface SuppliedInfo {
+export interface SuppliedInfo {
   availableBalance: BigNumberish;
   collateral: boolean;
   dailyEstProfit: BigNumberish;
@@ -15,7 +14,7 @@ interface SuppliedInfo {
   depositValue: BigNumberish;
   underlying: string;
 }
-interface BorrowedInfo {
+export interface BorrowedInfo {
   borrowApr: BigNumberish;
 
   borrowLimit: BigNumberish;
@@ -23,6 +22,12 @@ interface BorrowedInfo {
   dailyEstInterest: BigNumberish;
   underlying: string;
 }
+export interface UserInfo {
+  borrowLimit: BigNumberish;
+  borrowingValue: BigNumberish;
+  collateralValue: BigNumberish;
+}
+export type PorfolioData = [SuppliedInfo[], BorrowedInfo[], UserInfo];
 export default class PorfolioStore {
   userSuppliedList: any[] = [];
   userBorrowedList: any[] = [];
@@ -30,43 +35,33 @@ export default class PorfolioStore {
   borrowingValue = '';
   collateralValue = '';
   usedRatio = '';
+
   userTotalSupplied = '';
   totalSuppliedApr = '';
+
+  userTotalBorrowed = '';
+  totalBorrowedApr = '';
+
+  dailyEstProfit = '';
+  totalBorrowInterest = '';
+  a = 1;
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
-  async getUserSupplied(userAddr: string) {
-    let suppliedList: any, borrowedList: any, userInfo: any;
-
-    try {
-      [suppliedList = [], borrowedList = [], userInfo] = await multicall({
-        contracts: [
-          {
-            ...queryHelperContract,
-            functionName: 'getUserSupplied',
-            args: [userAddr]
-          },
-          {
-            ...queryHelperContract,
-            functionName: 'getUserBorrowed',
-            args: [userAddr]
-          },
-          {
-            ...queryHelperContract,
-            functionName: 'getUserInfo',
-            args: ['0x49f8948c60cE2b4180DEf540f03148540268C5B0', mockUSDTAddr]
-          }
-        ]
-      });
-    } catch (error) {
-      console.log('error', error);
-    }
-    this.formatSuppliedList(suppliedList);
+  async computePorfolioData(data: PorfolioData) {
+    let suppliedList: SuppliedInfo[],
+      borrowedList: BorrowedInfo[],
+      userInfo: UserInfo;
+    // eslint-disable-next-line prefer-const
+    [suppliedList = [], borrowedList = [], userInfo] = data;
+    this.userSuppliedList = suppliedList;
     this.userBorrowedList = borrowedList;
 
+    suppliedList.length && this.computeTotalSupAprAndTotalSup(suppliedList);
+    borrowedList.length && this.computeTotalBorAprAndTotalBor(borrowedList);
     this.borrowLimit = formatUnits(userInfo?.borrowLimit ?? 0, 6);
-    this.borrowingValue = formatUnits(userInfo?.borrowingValue ?? 0, 6);
+    this.userTotalBorrowed = formatUnits(userInfo?.borrowingValue ?? 0, 6);
     this.collateralValue = formatUnits(userInfo?.collateralValue ?? 0, 6);
     this.usedRatio = new BigNumber(userInfo?.borrowingValue.toString())
       .div(
@@ -80,32 +75,62 @@ export default class PorfolioStore {
     console.log('this.collateralValue', this.collateralValue);
     console.log('this.usedRatio', this.usedRatio);
   }
-  formatSuppliedList(suppliedList: SuppliedInfo[]) {
+  computeTotalSupAprAndTotalSup(suppliedList: SuppliedInfo[] = []) {
     let totalSupplied = new BigNumber(0),
       suppliedInterest = new BigNumber(0);
-    const userSuppliedList = suppliedList?.filter(
-      ({ underlying, depositValue, depositApr }: SuppliedInfo) => {
-        console.log('depositValue.toString()', depositValue.toString());
-        if (underlying !== unmeaningAddr) {
-          totalSupplied = totalSupplied.plus(
-            new BigNumber(depositValue.toString())
-          );
 
-          suppliedInterest = suppliedInterest.plus(
-            new BigNumber(depositValue.toString()).multipliedBy(
-              new BigNumber(depositApr.toString())
-            )
-          );
-        }
-        return underlying !== unmeaningAddr;
-      }
-    );
-    const totalSuppliedApr = suppliedInterest.div(totalSupplied);
-    console.log('totalSuppliedApr3213131', totalSuppliedApr);
-    this.totalSuppliedApr = totalSuppliedApr.toFixed();
+    suppliedList.forEach(({ depositValue, depositApr }: SuppliedInfo) => {
+      console.log('depositValue.toString()', depositValue.toString());
+
+      totalSupplied = totalSupplied.plus(
+        new BigNumber(formatUnits(depositValue, 6))
+      );
+
+      suppliedInterest = suppliedInterest.plus(
+        new BigNumber(formatUnits(depositValue, 6)).multipliedBy(
+          // new BigNumber(formatUnits(depositApr, 6)) todo
+          new BigNumber(0.7)
+        )
+      );
+    });
+    console.log('suppliedInterest', suppliedInterest.toFixed());
+    this.dailyEstProfit = suppliedInterest.toFixed();
+    console.log('this.dailyEstProfit', this.dailyEstProfit);
+    this.totalSuppliedApr = suppliedInterest.div(totalSupplied).toFixed();
     this.userTotalSupplied = totalSupplied.toFixed();
-    console.log('userSuppliedList', userSuppliedList);
     console.log('this.totalSuppliedApr', this.totalSuppliedApr);
     console.log('this.userTotalSupplied', this.userTotalSupplied);
+  }
+  computeTotalBorAprAndTotalBor(borrowedList: BorrowedInfo[] = []) {
+    let totalBorrowed = new BigNumber(0),
+      borrowedInterest = new BigNumber(0);
+    borrowedList.forEach(({ borrowValue, borrowApr }: BorrowedInfo) => {
+      console.log('depositValue.toString()', borrowValue.toString());
+      totalBorrowed = totalBorrowed.plus(
+        new BigNumber(formatUnits(borrowValue, 6))
+      );
+
+      borrowedInterest = borrowedInterest.plus(
+        new BigNumber(formatUnits(borrowValue, 6)).multipliedBy(
+          new BigNumber(formatUnits(borrowApr, 6))
+        )
+      );
+    });
+    this.totalBorrowInterest = borrowedInterest.toFixed();
+    this.totalBorrowedApr = borrowedInterest.div(totalBorrowed).toFixed();
+
+    // this.userTotalBorrowed = totalBorrowed.toFixed();
+    console.log('this.totalBorrowedApr', this.totalBorrowedApr);
+    console.log('this.userTotalBorrowed', this.userTotalBorrowed);
+  }
+  get netProfit() {
+    if (!this.dailyEstProfit && !this.totalBorrowInterest) return '';
+    const netInterest = new BigNumber(
+      this.dailyEstProfit ? this.dailyEstProfit : '0'
+    ).minus(
+      new BigNumber(this.totalBorrowInterest ? this.totalBorrowInterest : '0')
+    );
+    console.log('borInterest', this.userTotalSupplied);
+    return netInterest.div(this.userTotalSupplied).toFixed();
   }
 }

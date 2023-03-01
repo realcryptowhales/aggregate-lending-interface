@@ -30,7 +30,7 @@ const okcChain: Chain = {
       blockCreated: 10364792
     }
   },
-  testnet: true
+  testnet: false
 } as any;
 
 const okcTestChain: Chain = {

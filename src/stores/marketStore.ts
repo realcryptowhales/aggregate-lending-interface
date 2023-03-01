@@ -1,12 +1,12 @@
 import { queryHelperABI } from '@/constant';
 import {
+  mockUSDTAddr,
   priceOracleAddr,
   queryHelperContractAddr,
   routerAddr
 } from '@/constant/contract';
-import { multicall, MulticallConfig } from '@wagmi/core';
+import { multicall } from '@wagmi/core';
 import { makeAutoObservable } from 'mobx';
-import { erc20ABI } from 'wagmi';
 
 export const queryHelperContract = {
   address: queryHelperContractAddr as `0x${string}`,
@@ -115,7 +115,7 @@ export default class MarketStore {
           {
             ...queryHelperContract,
             functionName: 'getMarketsInfo',
-            args: [routerAddr, priceOracleAddr]
+            args: [mockUSDTAddr]
           }
         ]
       });

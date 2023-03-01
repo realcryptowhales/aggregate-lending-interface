@@ -47,7 +47,15 @@ const InfoItem: React.FC<{
 // eslint-disable-next-line no-empty-pattern
 const AssetInfo: React.FC = ({}) => {
   const {
-    porfolioStore: { collateralValue, usedRatio, borrowLimit }
+    porfolioStore: {
+      userTotalSupplied,
+      totalSuppliedApr,
+      userTotalBorrowed,
+      totalBorrowedApr,
+      collateralValue,
+      usedRatio,
+      borrowLimit
+    }
   } = useStore();
   const thousandCollateralValue = useMemo(() => {
     if (Number.isNaN(collateralValue)) return '--';
