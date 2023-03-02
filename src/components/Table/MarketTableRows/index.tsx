@@ -60,6 +60,7 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
       className={cls('cursor-pointer', style.row)}
       onClick={() => {
         navigate(`/markets/${symbol}`);
+        // navigate(`/markets/token?address=${row.asset}`);//address 暂时没调通 先用symbol
       }}
     >
       <TableCell

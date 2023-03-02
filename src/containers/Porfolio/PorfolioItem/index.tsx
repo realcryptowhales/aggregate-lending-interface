@@ -1,13 +1,19 @@
 import * as React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useMemo } from 'react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import Summary from '@components/Summary';
 import Avatar from '@mui/material/Avatar';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Tooltip from '@mui/material/Tooltip';
 import Detail from '@/components/Detail';
+import { queryHelperContract, mockUSDTAddr } from '@constant/index';
+import { useContractRead, useContractReads, useAccount } from 'wagmi';
+import { BigNumber as BN } from 'ethers';
 
 function PorfolioItem() {
-  const { id } = useParams<'id'>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  // console.log( searchParams.get("address")); // 12
+
   const currencyList = [
     {
       icon: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
@@ -86,10 +92,45 @@ function PorfolioItem() {
     }
   ];
 
+  // const { data, isError, isLoading } = useContractRead({
+  //   ...queryHelperContract,
+  //   functionName: 'getMarketInfo',
+  //   args: [mockUSDTAddr],
+  //   watch: true
+  // });
+  // console.log(data, 'data');
+  const { address } = useAccount();
+  const contractsArgs = useMemo(() => {
+    const options: any = [
+      {
+        ...queryHelperContract,
+        functionName: 'getSupplyMarkets'
+      },
+      {
+        ...queryHelperContract,
+        functionName: 'getBorrowMarkets'
+      }
+    ];
+    if (address) {
+      options.push({
+        ...queryHelperContract,
+        functionName: 'getTokenInfoWithUser',
+        args: [address]
+      });
+    }
+    return options;
+  }, [address]);
+
+  const { data, isError, isLoading } = useContractReads({
+    contracts: contractsArgs,
+    watch: true
+  });
+  console.log(data, isError, isLoading, 'multicall');
+
   return (
     <div className="w-full box-border px-27 py-6">
       <Summary
-        selectValue={id}
+        selectValue={address}
         currencyList={currencyList}
         dataList={dataList}
       />
