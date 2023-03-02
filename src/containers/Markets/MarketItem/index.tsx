@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import Summary from '@components/Summary';
 import Avatar from '@mui/material/Avatar';
 import Detail from '@components/Detail';
@@ -8,7 +8,8 @@ import Tooltip from '@mui/material/Tooltip';
 import Item from '@containers/Markets/MarketItem';
 
 function MarketItem() {
-  const { address } = useParams<'address'>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  // console.log( searchParams.get("tokeaddr")); // 12
   const currencyList = [
     {
       icon: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
@@ -90,7 +91,7 @@ function MarketItem() {
   return (
     <div className="w-full box-border px-27 py-6">
       <Summary
-        selectValue={address}
+        selectValue={'OKB'}
         currencyList={currencyList}
         dataList={dataList}
       />

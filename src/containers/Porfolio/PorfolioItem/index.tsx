@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import Summary from '@components/Summary';
 import Avatar from '@mui/material/Avatar';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
@@ -11,7 +11,9 @@ import { useContractRead, useContractReads, useAccount } from 'wagmi';
 import { BigNumber as BN } from 'ethers';
 
 function PorfolioItem() {
-  const params = useParams<'address'>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  // console.log( searchParams.get("address")); // 12
+
   const currencyList = [
     {
       icon: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',

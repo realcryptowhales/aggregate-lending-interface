@@ -82,7 +82,7 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
         }}
         hover
         onClick={() => {
-          navigate(`/porfolio/${symbol}`);
+          navigate(`/porfolio/token?address=${symbol}`);
         }}
         tabIndex={-1}
         key={symbol}

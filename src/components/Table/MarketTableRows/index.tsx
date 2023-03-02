@@ -47,7 +47,7 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
       key={row.asset}
       className={cls('cursor-pointer', style.row)}
       onClick={() => {
-        navigate(`/markets/${asset}`);
+        navigate(`/markets/token?address=${row.asset}`);
       }}
     >
       <TableCell
