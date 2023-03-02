@@ -24,6 +24,7 @@ const CurrencySelect: React.FC<CurrencySelectProps> = ({
   sx
 }) => {
   const [currency, setCurrency] = useState(defaultValue || list[0].address);
+
   const handleChange = (event: SelectChangeEvent) => {
     setCurrency(event.target.value);
   };

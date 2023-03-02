@@ -6,7 +6,7 @@ import Item from './Item';
 interface SummaryProps {
   currencyList: any[];
   dataList: any[];
-  selectValue: any;
+  selectValue: string;
 }
 
 const Summary: React.FC<SummaryProps> = ({
