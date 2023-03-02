@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Summary from '@components/Summary';
 import Avatar from '@mui/material/Avatar';
@@ -6,11 +7,11 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Tooltip from '@mui/material/Tooltip';
 import Detail from '@/components/Detail';
 import { queryHelperContract, mockUSDTAddr } from '@constant/index';
-import { useContractRead } from 'wagmi';
+import { useContractRead, useContractReads, useAccount } from 'wagmi';
 import { BigNumber as BN } from 'ethers';
 
 function PorfolioItem() {
-  const { address } = useParams<'address'>();
+  const params = useParams<'address'>();
   const currencyList = [
     {
       icon: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
@@ -89,13 +90,41 @@ function PorfolioItem() {
     }
   ];
 
-  const { data, isError, isLoading } = useContractRead({
-    ...queryHelperContract,
-    functionName: 'getMarketInfo',
-    args: [mockUSDTAddr],
+  // const { data, isError, isLoading } = useContractRead({
+  //   ...queryHelperContract,
+  //   functionName: 'getMarketInfo',
+  //   args: [mockUSDTAddr],
+  //   watch: true
+  // });
+  // console.log(data, 'data');
+  const { address } = useAccount();
+  const contractsArgs = useMemo(() => {
+    const options: any = [
+      {
+        ...queryHelperContract,
+        functionName: 'getSupplyMarkets'
+      },
+      {
+        ...queryHelperContract,
+        functionName: 'getBorrowMarkets'
+      }
+    ];
+    if (address) {
+      options.push({
+        ...queryHelperContract,
+        functionName: 'getTokenInfoWithUser',
+        args: [address]
+      });
+    }
+    return options;
+  }, [address]);
+
+  const { data, isError, isLoading } = useContractReads({
+    contracts: contractsArgs,
     watch: true
   });
-  console.log(BN.from(data[0]).toString(), 'data');
+  console.log(data, isError, isLoading, 'multicall');
+
   return (
     <div className="w-full box-border px-27 py-6">
       <Summary

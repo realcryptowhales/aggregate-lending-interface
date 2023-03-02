@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Layout from '@/containers';
-import MarketItem from '@/containers/Markets/MarketItem';
+// import MarketItem from '@/containers/Markets/MarketItem';
 import PorfolioItem from './containers/Porfolio/PorfolioItem';
 import Liquidation from './containers/Liquidation';
 import NoMatch from '@/components/NoMatch';
@@ -21,7 +21,7 @@ const routes: RouteObject[] = [
         path: '/markets',
         children: [
           { index: true, element: <Markets /> },
-          { path: '/markets/:address', element: <MarketItem /> }
+          { path: '/markets/:address', element: <PorfolioItem /> }
         ]
       },
       {

@@ -5,6 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import Detail from '@components/Detail';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Tooltip from '@mui/material/Tooltip';
+import Item from '@containers/Markets/MarketItem';
 
 function MarketItem() {
   const { address } = useParams<'address'>();
