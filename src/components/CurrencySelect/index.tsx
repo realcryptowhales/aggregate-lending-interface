@@ -23,7 +23,7 @@ const CurrencySelect: React.FC<CurrencySelectProps> = ({
   height,
   sx
 }) => {
-  const [currency, setCurrency] = useState(defaultValue || list[0].symbol);
+  const [currency, setCurrency] = useState(defaultValue || list[0].address);
   const handleChange = (event: SelectChangeEvent) => {
     setCurrency(event.target.value);
   };
@@ -36,9 +36,9 @@ const CurrencySelect: React.FC<CurrencySelectProps> = ({
         autoWidth
         sx={sx}
       >
-        {list.map(({ icon, symbol }) => {
+        {list.map(({ icon, symbol, address }) => {
           return (
-            <MenuItem key={symbol} value={symbol}>
+            <MenuItem key={address} value={address}>
               {showImage ? (
                 <div className={clsx('flex items-center')}>
                   <Avatar

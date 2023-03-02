@@ -1,41 +1,33 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import Summary from '@components/Summary';
 import Avatar from '@mui/material/Avatar';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Tooltip from '@mui/material/Tooltip';
 import Detail from '@/components/Detail';
-import { queryHelperContract, mockUSDTAddr } from '@constant/index';
+import {
+  queryHelperContractAddr,
+  queryHelperABI,
+  mockUSDTAddr
+} from '@constant/index';
 import { useContractRead, useContractReads, useAccount } from 'wagmi';
 import { BigNumber as BN } from 'ethers';
+import useSWR from 'swr';
+import { fetcher } from '@api/index';
+
+const queryHelperContract = {
+  address: queryHelperContractAddr as `0x${string}`,
+  abi: queryHelperABI
+};
 
 function PorfolioItem() {
   const [searchParams, setSearchParams] = useSearchParams();
-  // console.log( searchParams.get("address")); // 12
+  let tokenAddr = searchParams.get('address');
+  // TODO: remove test
+  tokenAddr = mockUSDTAddr;
+  console.log(tokenAddr, 'tokenAddr');
 
-  const currencyList = [
-    {
-      icon: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
-      symbol: 'BTC'
-    },
-    {
-      icon: 'https://static.okx.com/cdn/assets/imgs/221/5F33E3F751873296.png',
-      symbol: 'ETH'
-    },
-    {
-      icon: 'https://static.okx.com/cdn/announce/20220119/1642588815382f0fd4a29-ba95-4ba9-ab33-23c1258ce96a.png',
-      symbol: 'OKB'
-    },
-    {
-      icon: 'https://static.okx.com/cdn/assets/imgs/221/8EC634AF717771B6.png',
-      symbol: 'LTC'
-    },
-    {
-      icon: 'https://static.okx.com/cdn/assets/imgs/221/5F74EB20302D7761.png',
-      symbol: 'USDT'
-    }
-  ];
   const dataList = [
     {
       key: 'index1',
@@ -92,6 +84,36 @@ function PorfolioItem() {
     }
   ];
 
+  const tokenList = useSWR(
+    {
+      url: 'http://35.220.222.252/aggregate-lending/config/list'
+    },
+    fetcher
+  );
+  const currencyList = useMemo(() => {
+    if (!tokenList.data) return [];
+    return tokenList.data;
+  }, [tokenList.data]);
+  console.log(currencyList, 'restRes');
+
+  const thirdRes = useSWR(
+    {
+      url: 'http://35.220.222.252/aggregate-lending/apr/calc',
+      params: {
+        configId: 2, // token id
+        operateType: 1, // 0:存款 1:取款
+        beginTime: 1667275932000,
+        endTime: 1677575532000,
+        platformType: 0 //平台类型
+      }
+    },
+    fetcher,
+    {
+      refreshInterval: 0
+    }
+  );
+  console.log(thirdRes, 'thirdRes');
+
   // const { data, isError, isLoading } = useContractRead({
   //   ...queryHelperContract,
   //   functionName: 'getMarketInfo',
@@ -130,8 +152,8 @@ function PorfolioItem() {
   return (
     <div className="w-full box-border px-27 py-6">
       <Summary
-        selectValue={address}
-        currencyList={currencyList}
+        selectValue={tokenAddr}
+        currencyList={currencyList || []}
         dataList={dataList}
       />
       <Detail />
