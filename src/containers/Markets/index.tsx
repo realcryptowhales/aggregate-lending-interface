@@ -92,7 +92,11 @@ const Markets: React.FC = () => {
       setCurrentBorrowRates,
       setMarketsInfo,
       setPlatformInfo,
-      marketTableList
+      marketTableList,
+      totalAmount,
+      matchTotalAmount,
+      totalSupplyAmount,
+      totalBorrowAmount
     }
   } = useStore();
 
@@ -121,7 +125,10 @@ const Markets: React.FC = () => {
       {
         ...queryHelperContract,
         functionName: 'getMarketsInfo',
-        args: [[mockUSDTAddr, mockUSDCAddr, mockWBTCAddr, mockWETHAddr]]
+        args: [
+          [mockUSDTAddr, mockUSDCAddr, mockWBTCAddr, mockWETHAddr],
+          mockUSDTAddr
+        ]
       },
       {
         ...queryHelperContract,

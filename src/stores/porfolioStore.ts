@@ -13,6 +13,7 @@ export interface SuppliedInfo {
   dailyEstProfit: BigNumberish;
   depositApr: BigNumberish;
   depositValue: BigNumberish;
+  depositAmount: BigNumberish;
   underlying: string;
 }
 export interface BorrowedInfo {
@@ -20,6 +21,8 @@ export interface BorrowedInfo {
 
   borrowLimit: BigNumberish;
   borrowValue: BigNumberish;
+  borrowAmount: BigNumberish;
+
   dailyEstInterest: BigNumberish;
   underlying: string;
 }

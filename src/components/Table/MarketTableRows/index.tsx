@@ -9,6 +9,7 @@ import React from 'react';
 import { currencyList, TOKENSYMBOL } from '@/constant';
 import { MarketCurrencyInfo } from '@/stores/marketStore';
 import { rawToPercent, rawToThousandCurrency } from '@/utils/format';
+import { useStore } from '@/stores';
 export type Data = MarketCurrencyInfo;
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
@@ -43,9 +44,14 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
     borrowRate
   } = row;
   const navigate = useNavigate();
-  const [icon = '', symbol = ''] = [
-    currencyList?.[underlying]?.icon,
-    currencyList?.[underlying]?.symbol
+  const {
+    commonStore: { tokenMap }
+  } = useStore();
+
+  const [icon = '', symbol = '', decimal = 6] = [
+    tokenMap[underlying]?.icon,
+    tokenMap[underlying]?.symbol,
+    tokenMap[underlying]?.deciaml
   ];
   return (
     <StyledTableRow
@@ -59,8 +65,7 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
       key={symbol}
       className={cls('cursor-pointer', style.row)}
       onClick={() => {
-        navigate(`/markets/${symbol}`);
-        // navigate(`/markets/token?address=${row.asset}`);//address 暂时没调通 先用symbol
+        navigate(`/markets/token?address=${underlying}`);
       }}
     >
       <TableCell

@@ -28,6 +28,7 @@ export interface DepositData {
   underlying: string;
   depositValue: number;
   depositApr: number;
+  depositAmount: string;
   availableBalance: number;
   dailyEstProfit: number;
   collateral: boolean;
@@ -155,6 +156,7 @@ export interface BorrowData {
 
   underlying: string;
   borrowValue: BigNumberish;
+  borrowAmount: string;
   borrowApr: BigNumberish;
   borrowLimit: BigNumberish;
   dailyEstInterest: BigNumberish;

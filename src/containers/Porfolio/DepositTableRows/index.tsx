@@ -14,7 +14,6 @@ import { border } from '@mui/system';
 import { DepositData } from '..';
 import { BorderButton } from '../BorrowTableRows';
 import { useNavigate } from 'react-router-dom';
-import { currencyList } from '@/constant';
 import SmallDialog from '@/components/SmallDialog';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import { readContracts } from 'wagmi';
@@ -26,6 +25,7 @@ import {
   rawToThousandNumber,
   thousandCurrency
 } from '@/utils/format';
+import { useStore } from '@/stores';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -71,13 +71,23 @@ export const DepositTableRows = observer(({ row }: { row: DepositData }) => {
     depositApr,
     availableBalance,
     dailyEstProfit,
-    collateral
+    collateral,
+    depositAmount
   } = row;
   console.log(formatUnits(dailyEstProfit, 6));
-
-  const [icon = '', symbol = ''] = [
-    currencyList[underlying]?.icon,
-    currencyList[underlying]?.symbol
+  const {
+    commonStore: { tokenMap }
+  } = useStore();
+  console.log(
+    'tokenMap[underlying]',
+    tokenMap[underlying],
+    tokenMap,
+    underlying
+  );
+  const [icon = '', symbol = '', decimal = 6] = [
+    tokenMap[underlying]?.icon,
+    tokenMap[underlying]?.symbol,
+    tokenMap[underlying]?.deciaml
   ];
   const [collateralStatus, setCollateralStatus] = useState(collateral);
   const [openCollateralModalVisible, setOpenCollateralModalVisible] =
@@ -125,8 +135,10 @@ export const DepositTableRows = observer(({ row }: { row: DepositData }) => {
           </div>
         </TableCell>
         <TableCell padding="none" align="left" sx={{ width: 140 }}>
-          <div>{rawToThousandCurrency(depositValue)}</div>
-          <span className={style.font12}>美元估值</span>
+          <div>{rawToThousandNumber(depositAmount, decimal)}</div>
+          <span className={style.font12}>
+            {rawToThousandCurrency(depositValue)}
+          </span>
         </TableCell>
         <TableCell padding="none" align="left" sx={{ width: 163 }}>
           <div>{rawToPercent(depositApr)}</div>

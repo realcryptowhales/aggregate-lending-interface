@@ -3,12 +3,12 @@ import style from './index.module.less';
 import cls from 'classnames';
 import { BorrowData } from '..';
 import { useNavigate } from 'react-router-dom';
-import { currencyList } from '@/constant';
 import {
   rawToPercent,
   rawToThousandCurrency,
   rawToThousandNumber
 } from '@/utils/format';
+import { useStore } from '@/stores';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -51,12 +51,22 @@ export const PurpleButton = styled(Button)({
   }
 });
 export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
-  const { underlying, borrowValue, borrowApr, borrowLimit, dailyEstInterest } =
-    row;
+  const {
+    commonStore: { tokenMap }
+  } = useStore();
+  const {
+    underlying,
+    borrowValue,
+    borrowApr,
+    borrowLimit,
+    dailyEstInterest,
+    borrowAmount
+  } = row;
   const navigate = useNavigate();
-  const [icon, symbol] = [
-    currencyList[underlying].icon,
-    currencyList[underlying].symbol
+  const [icon = '', symbol = '', deciaml = 6] = [
+    tokenMap?.[underlying]?.icon,
+    tokenMap?.[underlying]?.symbol,
+    tokenMap?.[underlying]?.deciaml
   ];
 
   return (
@@ -93,8 +103,10 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
         </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 140 }}>
-        <div>{rawToThousandCurrency(borrowValue)}</div>
-        <span className={style.font12}>美元估值</span>
+        <div>{rawToThousandNumber(borrowAmount, deciaml)}</div>
+        <span className={style.font12}>
+          {rawToThousandCurrency(borrowValue)}
+        </span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 163 }}>
         <div>{rawToPercent(borrowApr)}</div>

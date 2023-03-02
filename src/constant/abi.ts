@@ -685,7 +685,12 @@ export const queryHelperABI = [
     inputs: [
       {
         internalType: 'address',
-        name: 'underlying',
+        name: '_underlying',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_quote',
         type: 'address'
       }
     ],
@@ -693,6 +698,11 @@ export const queryHelperABI = [
     outputs: [
       {
         components: [
+          {
+            internalType: 'address',
+            name: 'underlying',
+            type: 'address'
+          },
           {
             internalType: 'uint256',
             name: 'totalSupplied',
@@ -733,12 +743,22 @@ export const queryHelperABI = [
         internalType: 'address[]',
         name: '_underlyings',
         type: 'address[]'
+      },
+      {
+        internalType: 'address',
+        name: '_quote',
+        type: 'address'
       }
     ],
     name: 'getMarketsInfo',
     outputs: [
       {
         components: [
+          {
+            internalType: 'address',
+            name: 'underlying',
+            type: 'address'
+          },
           {
             internalType: 'uint256',
             name: 'totalSupplied',
@@ -935,6 +955,11 @@ export const queryHelperABI = [
           },
           {
             internalType: 'uint256',
+            name: 'borrowAmount',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
             name: 'borrowValue',
             type: 'uint256'
           },
@@ -1017,6 +1042,11 @@ export const queryHelperABI = [
             internalType: 'address',
             name: 'underlying',
             type: 'address'
+          },
+          {
+            internalType: 'uint256',
+            name: 'depositAmount',
+            type: 'uint256'
           },
           {
             internalType: 'uint256',

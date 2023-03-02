@@ -1,13 +1,13 @@
 import { createContext, useContext } from 'react';
 import MarketStore from './marketStore';
-import testStore from './testStore';
+import commonStore from './commonStore';
 import PorfolioStore from './porfolioStore';
 export class RootStore {
-  public testStore: testStore;
+  public commonStore: commonStore;
   marketStore: MarketStore;
   porfolioStore: PorfolioStore;
   constructor() {
-    this.testStore = new testStore();
+    this.commonStore = new commonStore();
     this.marketStore = new MarketStore();
     this.porfolioStore = new PorfolioStore();
   }
