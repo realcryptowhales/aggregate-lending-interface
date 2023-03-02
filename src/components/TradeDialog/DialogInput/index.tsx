@@ -15,7 +15,7 @@ import {
 } from '../hooks/useTradeDialog';
 
 interface DialogInputType {
-  currencyList: CurrencyInfoProps[];
+  currencyDetailList: CurrencyInfoProps[];
   activeCurrency: string;
   onChangeActiveCurrency: (name: string) => void;
   formValue: FormValuesProps;
@@ -26,7 +26,7 @@ interface DialogInputType {
 }
 
 const DialogInput = ({
-  currencyList,
+  currencyDetailList,
   activeCurrency,
   onChangeActiveCurrency,
   formValue,
@@ -40,7 +40,7 @@ const DialogInput = ({
   };
 
   const getRenderValue = (value: any) => {
-    const item = currencyList.find((currency) => {
+    const item = currencyDetailList.find((currency) => {
       return currency.symbol === value;
     });
     const { symbol, icon } = item || {};
@@ -111,8 +111,8 @@ const DialogInput = ({
               className={styles.select}
               renderValue={getRenderValue}
             >
-              {currencyList &&
-                currencyList.map((item) => {
+              {currencyDetailList &&
+                currencyDetailList.map((item) => {
                   const { symbol, icon } = item;
                   return (
                     <MenuItem value={symbol} key={symbol}>

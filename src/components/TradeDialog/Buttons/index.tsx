@@ -132,19 +132,6 @@ function RepayButtons({ activeCurrency, auth, formValue }: ButtonProps) {
         还款
       </Button>
     </div>
-    // <div className={clsx(styles.buttons, styles.buttonsMargin)}>
-    //   <Button
-    //     variant="contained"
-    //     color="blue"
-    //     className={styles.button}
-    //     sx={{ marginRight: '16px' }}
-    //   >
-    //     授权 {activeCurrency}
-    //   </Button>
-    //   <Button variant="contained" className={styles.button} color="gray">
-    //     还款
-    //   </Button>
-    // </div>
   );
 }
 
@@ -157,7 +144,6 @@ export default function Buttons({
   isOverLiquidation,
   balance
 }: ButtonProps) {
-  console.log('isHighRisk', isHighRisk);
   switch (type) {
     case DialogTypeProps.deposit:
       return (
