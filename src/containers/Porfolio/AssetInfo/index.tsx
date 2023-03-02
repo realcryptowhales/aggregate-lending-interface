@@ -52,44 +52,51 @@ const AssetInfo: React.FC = ({}) => {
       totalSuppliedApr,
       userTotalBorrowed,
       totalBorrowedApr,
+      dailyEstProfit,
+      netProfit,
       collateralValue,
       usedRatio,
       borrowLimit
     }
   } = useStore();
   const thousandCollateralValue = useMemo(() => {
-    if (Number.isNaN(collateralValue)) return '--';
+    if (Number.isNaN(+collateralValue) || !collateralValue) return '--';
     return thousandCurrency(+collateralValue, 4);
   }, [collateralValue]);
   const percentUsedRatio = useMemo(() => {
-    console.log('usedRatio', usedRatio);
+    console.log('usedRatio', typeof usedRatio);
 
-    if (Number.isNaN(usedRatio)) return '0%';
+    if (Number.isNaN(+usedRatio)) return '0%';
     return formatPercent(+usedRatio);
   }, [usedRatio]);
   const thousandBorrowLimit = useMemo(() => {
-    if (Number.isNaN(borrowLimit)) return '--';
+    if (Number.isNaN(+borrowLimit) || !borrowLimit) return '--';
     return thousandCurrency(+borrowLimit, 4);
   }, [borrowLimit]);
+  console.log('userTotalSupplied', userTotalSupplied);
   return (
     <div className={cls(style.container)}>
       <InfoItem
         title={'总存款金额'}
-        amount={'0'}
-        percentText={'总存款'}
-        percent={'0'}
+        amount={
+          userTotalSupplied ? thousandCurrency(userTotalSupplied, 6) : '--'
+        }
+        percentText={'总存款APR'}
+        percent={totalSuppliedApr ? formatPercent(totalSuppliedApr) : '--'}
       />
       <InfoItem
         title={'总借款金额'}
-        amount={'0'}
-        percentText={'总借款'}
-        percent={'0'}
+        amount={
+          userTotalBorrowed ? thousandCurrency(userTotalBorrowed, 6) : '--'
+        }
+        percentText={'总借款APR'}
+        percent={totalBorrowedApr ? formatPercent(totalBorrowedApr) : '--'}
       />
       <InfoItem
         title={'今日预估总收益'}
-        amount={'0'}
+        amount={dailyEstProfit ? thousandCurrency(dailyEstProfit, 6) : '--'}
         percentText="净收益率"
-        percent={'0'}
+        percent={netProfit ? formatPercent(netProfit) : '--'}
         hasTips
       />
       <InfoItem title={'总抵押品价值'} amount={thousandCollateralValue} />

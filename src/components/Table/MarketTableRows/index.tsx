@@ -7,7 +7,9 @@ import { PurpleButton } from '@/containers/Porfolio/BorrowTableRows';
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import { currencyList, TOKENSYMBOL } from '@/constant';
-import { Data } from '..';
+import { MarketCurrencyInfo } from '@/stores/marketStore';
+import { rawToPercent, rawToThousandCurrency } from '@/utils/format';
+export type Data = MarketCurrencyInfo;
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -32,9 +34,19 @@ const StyledTableRow = styled(TableRow)(() => ({
 }));
 
 export const MarketTableRows = ({ row }: { row: Data }) => {
-  const { asset } = row;
+  const {
+    underlying,
+    totalBorrowed,
+    totalSupplied,
+    totalMatched,
+    supplyRate,
+    borrowRate
+  } = row;
   const navigate = useNavigate();
-  const [icon, symbol] = [currencyList[asset].icon, currencyList[asset].symbol];
+  const [icon = '', symbol = ''] = [
+    currencyList?.[underlying]?.icon,
+    currencyList?.[underlying]?.symbol
+  ];
   return (
     <StyledTableRow
       sx={{
@@ -44,10 +56,10 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
       hover
       //   onClick={(event) => handleClick(event, row.name)}
       tabIndex={-1}
-      key={row.asset}
+      key={symbol}
       className={cls('cursor-pointer', style.row)}
       onClick={() => {
-        navigate(`/markets/${asset}`);
+        navigate(`/markets/${symbol}`);
       }}
     >
       <TableCell
@@ -70,21 +82,21 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
         </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 140 }}>
-        <div className={style.cell}>{row.totalDeposit}</div>
+        <div className={style.cell}>{rawToThousandCurrency(totalSupplied)}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 163 }}>
-        <div className={style.cell}>{row.depositApr}</div>
+        <div className={style.cell}>{rawToPercent(supplyRate)}</div>
         <span className={style.font12}>{'match'}</span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 146 }}>
-        <div className={style.cell}> {row.totalLoan}</div>
+        <div className={style.cell}>{rawToThousandCurrency(totalBorrowed)}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 182 }}>
-        <div>{row.loanApr}</div>
+        <div>{rawToPercent(borrowRate)}</div>
         <span className={style.font12}>{'match'}</span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 256 }}>
-        <div>{row.matchAmount}</div>
+        <div>{rawToThousandCurrency(totalMatched)}</div>
       </TableCell>
       <TableCell
         padding="none"

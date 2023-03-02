@@ -5,13 +5,35 @@ import {
   queryHelperContractAddr,
   routerAddr
 } from '@/constant/contract';
+import { formatContractData } from '@/utils/format';
 import { multicall } from '@wagmi/core';
+import { BigNumberish } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils.js';
 import { makeAutoObservable } from 'mobx';
 
 export const queryHelperContract = {
   address: queryHelperContractAddr as `0x${string}`,
   abi: queryHelperABI
 };
+export interface MarketCurrencyInfo {
+  underlying: string;
+  borrowRate: BigNumberish;
+  supplyRate: BigNumberish;
+  totalBorrowed: BigNumberish;
+  totalMatched: BigNumberish;
+  totalSupplied: BigNumberish;
+}
+interface BorrowAprInfo {
+  aaveBorrowRate: BigNumberish;
+  aggBorrowRate: BigNumberish;
+  compBorrowRate: BigNumberish;
+}
+interface SupplyAprInfo {
+  aaveSupplyRate: BigNumberish;
+  aggSupplyRate: BigNumberish;
+  compSupplyRate: BigNumberish;
+}
+
 export default class MarketStore {
   totalAmount = '';
   matchTotalAmount = '';
@@ -28,53 +50,29 @@ export default class MarketStore {
   borrowAaveApr = '';
   borrowCompoundApr = '';
 
+  marketTableList: MarketCurrencyInfo[] = [];
+
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
   }
-  async getMarketData() {
-    console.log('1', 1);
-    let platFormInfo: any;
-    try {
-      [platFormInfo] = await multicall({
-        contracts: [
-          {
-            ...queryHelperContract,
-            functionName: 'getPlatformInfo'
-            // args: [routerAddr, priceOracleAddr]
-          }
-        ]
-      });
-    } catch (e) {
-      console.log('e', e);
-    }
+  async setPlatformInfo(platFormInfo: any[]) {
     console.log('platFormInfo', platFormInfo);
-    this.totalSupplyAmount = platFormInfo?.[0]?.toString();
-    this.totalBorrowAmount = platFormInfo?.[1]?.toString();
-    this.matchTotalAmount = platFormInfo?.[2]?.toString();
-    this.totalAmount = platFormInfo?.[0].add(platFormInfo?.[1]).toString();
+    this.totalSupplyAmount = formatUnits(platFormInfo?.[0], 6);
+    this.totalBorrowAmount = formatUnits(platFormInfo?.[1], 6);
+    this.matchTotalAmount = formatUnits(platFormInfo?.[2], 6);
+    this.totalAmount = formatUnits(platFormInfo?.[0].add(platFormInfo?.[1]), 6);
     console.log('this.totalSupplyAmount', this.totalSupplyAmount);
     console.log('this.totalBorrowAmount', this.totalBorrowAmount);
     console.log('this.matchTotalAmount', this.matchTotalAmount);
     console.log('this.totalAmount', this.totalAmount);
   }
-  async getCurrentSupplyRates(tokenAddr: string) {
-    let supplyRates: any;
-    try {
-      [supplyRates] = await multicall({
-        contracts: [
-          {
-            ...queryHelperContract,
-            functionName: 'getCurrentSupplyRates',
-            args: [tokenAddr]
-          }
-        ]
-      });
-    } catch (e) {
-      console.log('e', e);
-    }
-    this.supplyAaveApr = supplyRates.aaveSupplyRate.toString();
-    this.supplyCompoundApr = supplyRates.compSupplyRate.toString();
-    this.supplyAggregationPlatformApr = supplyRates.aggSupplyRate.toString();
+  async setCurrentSupplyRates(supplyRates: SupplyAprInfo) {
+    this.supplyAaveApr = formatUnits(supplyRates.aaveSupplyRate, 6);
+    this.supplyCompoundApr = formatUnits(supplyRates.compSupplyRate, 6);
+    this.supplyAggregationPlatformApr = formatUnits(
+      supplyRates.aggSupplyRate,
+      6
+    );
     console.log('this.supplyAaveApr', this.supplyAaveApr);
     console.log('this.supplyCompoundApr', this.supplyCompoundApr);
     console.log(
@@ -82,24 +80,13 @@ export default class MarketStore {
       this.supplyAggregationPlatformApr
     );
   }
-  async getCurrentBorrowRates(tokenAddr: string) {
-    let borrowRates: any;
-    try {
-      [borrowRates] = await multicall({
-        contracts: [
-          {
-            ...queryHelperContract,
-            functionName: 'getCurrentBorrowRates',
-            args: [tokenAddr]
-          }
-        ]
-      });
-    } catch (e) {
-      console.log('e', e);
-    }
-    this.borrowAaveApr = borrowRates.aaveBorrowRate.toString();
-    this.borrowCompoundApr = borrowRates.compBorrowRate.toString();
-    this.borrowAggregationPlatformApr = borrowRates.aggBorrowRate.toString();
+  async setCurrentBorrowRates(borrowRates: BorrowAprInfo) {
+    this.borrowAaveApr = formatUnits(borrowRates.aaveBorrowRate, 6);
+    this.borrowCompoundApr = formatUnits(borrowRates.compBorrowRate, 6);
+    this.borrowAggregationPlatformApr = formatUnits(
+      borrowRates.aggBorrowRate,
+      6
+    );
     console.log('this.borrowAaveApr', this.borrowAaveApr);
     console.log('this.borrowCompoundApr', this.borrowCompoundApr);
     console.log(
@@ -107,21 +94,9 @@ export default class MarketStore {
       this.borrowAggregationPlatformApr
     );
   }
-  async getMarketsInfo() {
-    let marketTableList: any;
-    try {
-      [marketTableList] = await multicall({
-        contracts: [
-          {
-            ...queryHelperContract,
-            functionName: 'getMarketsInfo',
-            args: [mockUSDTAddr]
-          }
-        ]
-      });
-    } catch (e) {
-      console.log('e', e);
-    }
-    console.log('marketTableList', marketTableList);
+  async setMarketsInfo(marketTableList: any[]) {
+    const res = marketTableList.map(formatContractData);
+    console.log('marketTableList', res);
+    this.marketTableList = res;
   }
 }

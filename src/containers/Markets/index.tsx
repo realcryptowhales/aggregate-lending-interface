@@ -5,41 +5,53 @@ import Card from './Card';
 import Title from './Card/Title';
 import AprDataDisplay from './Card/AprDataDisplay';
 import MoneyDataDisplay from './Card/MoneyDataDisplay';
-import EnhancedTable, { Data, HeadCell, rows } from '@/components/Table';
-import { MarketTableRows } from '@/components/Table/MarketTableRows';
+import EnhancedTable, { HeadCell } from '@/components/Table';
+import { Data, MarketTableRows } from '@/components/Table/MarketTableRows';
 import { useStore } from '@/stores';
-const headCells: HeadCell<Data>[] = [
+import {
+  mockUSDCAddr,
+  mockUSDTAddr,
+  mockWBTCAddr,
+  mockWETHAddr,
+  routerAddr
+} from '@/constant/contract';
+import { queryHelperContract } from '@/stores/marketStore';
+import { PorfolioData } from '@/stores/porfolioStore';
+import { useContractReads } from 'wagmi';
+import { observer } from 'mobx-react-lite';
+import { routerABI } from '@/constant';
+const headCells: HeadCell<any>[] = [
   {
-    id: 'asset',
+    id: 'underlying',
     label: '资产',
     needSort: true
   },
   {
-    id: 'totalDeposit',
+    id: 'totalSupplied',
 
     label: '存款总额',
     needSort: true
   },
   {
-    id: 'depositApr',
+    id: 'supplyRate',
 
     label: '存款 APR',
     needSort: true
   },
   {
-    id: 'totalLoan',
+    id: 'totalBorrowed',
 
     label: '借款总额',
     needSort: true
   },
   {
-    id: 'loanApr',
+    id: 'borrowRate',
 
     label: '借款 APR',
     needSort: true
   },
   {
-    id: 'matchAmount',
+    id: 'totalMatched',
 
     label: '撮合金额',
     needSort: true
@@ -76,22 +88,49 @@ const currencyList = [
 const Markets: React.FC = () => {
   const {
     marketStore: {
-      getMarketData,
-      getCurrentSupplyRates,
-      getCurrentBorrowRates,
-      getMarketsInfo
+      setCurrentSupplyRates,
+      setCurrentBorrowRates,
+      setMarketsInfo,
+      setPlatformInfo,
+      marketTableList
     }
   } = useStore();
-  React.useEffect(() => {
-    // getMarketData();
-    // getCurrentBorrowRates('0x677fD6Ea1a1adB1ce221031f62FFA892F7277190');
-    // getCurrentSupplyRates('0x677fD6Ea1a1adB1ce221031f62FFA892F7277190');
-    // getMarketsInfo();
-  }, []);
-  // const { useMultiCallResult } = useMultiCall();
-  // const res = useMultiCallResult();
-  // console.log('res', res);
 
+  const { data } = useContractReads({
+    // watch: true,
+    // cacheTime: 4_000,
+    onSuccess(data: any[]) {
+      console.log('Success', data);
+      // computePorfolioData(data);
+      setCurrentBorrowRates(data[0]);
+      setCurrentSupplyRates(data[1]);
+      setMarketsInfo(data[2]);
+      setPlatformInfo(data[3]);
+    },
+    contracts: [
+      {
+        ...queryHelperContract,
+        functionName: 'getCurrentBorrowRates',
+        args: [mockUSDTAddr]
+      },
+      {
+        ...queryHelperContract,
+        functionName: 'getCurrentSupplyRates',
+        args: [mockUSDTAddr]
+      },
+      {
+        ...queryHelperContract,
+        functionName: 'getMarketsInfo',
+        args: [[mockUSDTAddr, mockUSDCAddr, mockWBTCAddr, mockWETHAddr]]
+      },
+      {
+        ...queryHelperContract,
+        functionName: 'getPlatformInfo'
+        // args: [routerAddr, priceOracleAddr]
+      },
+      { address: routerAddr, abi: routerABI, functionName: 'getUnderlyings' }
+    ]
+  });
   return (
     <div className={cls(style.container)}>
       <div className={cls(style.header)}>
@@ -142,15 +181,15 @@ const Markets: React.FC = () => {
       </div>
       <main className={cls(style.main)}>
         <div className={cls(style.market)}>市场</div>
-        <EnhancedTable<Data>
+        <EnhancedTable<any>
           headCells={headCells}
-          rows={rows}
+          rows={marketTableList}
           TableRows={MarketTableRows}
-          defaultOrderBy="totalDeposit"
+          defaultOrderBy="totalSupplied"
         />
       </main>
     </div>
   );
 };
 
-export default Markets;
+export default observer(Markets);

@@ -20,11 +20,14 @@ import {
   UserInfo
 } from '@/stores/porfolioStore';
 import { observer } from 'mobx-react-lite';
+import { toJS } from 'mobx';
+import { BigNumberish } from 'ethers';
 export interface DepositData {
   key: string;
-  depositToken: string;
-  depositAmount: number;
-  supplyApr: number;
+  symbol: string;
+  underlying: string;
+  depositValue: number;
+  depositApr: number;
   availableBalance: number;
   dailyEstProfit: number;
   collateral: boolean;
@@ -33,18 +36,18 @@ export interface DepositData {
 
 const DepositHeadCells: HeadCell<DepositData>[] = [
   {
-    id: 'depositToken',
+    id: 'symbol',
     label: '存款币种',
     needSort: true
   },
   {
-    id: 'depositAmount',
+    id: 'depositValue',
 
     label: '存款头寸',
     needSort: true
   },
   {
-    id: 'supplyApr',
+    id: 'depositApr',
     label: '存款 APR',
     needSort: true
   },
@@ -93,76 +96,78 @@ const DepositHeadCells: HeadCell<DepositData>[] = [
     needSort: false
   }
 ];
-function createDepositData(
-  depositToken: string,
-  depositAmount: number,
-  supplyApr: number,
-  availableBalance: number,
-  dailyEstProfit: number,
-  collateral: boolean,
-  action?: React.ReactNode
-): DepositData {
-  return {
-    key: depositToken,
-    depositToken,
-    depositAmount,
-    supplyApr,
-    availableBalance,
-    dailyEstProfit,
-    collateral,
-    action
-  };
-}
+// function createDepositData(
+//   depositToken: string,
+//   depositAmount: number,
+//   supplyApr: number,
+//   availableBalance: number,
+//   dailyEstProfit: number,
+//   collateral: boolean,
+//   action?: React.ReactNode
+// ): DepositData {
+//   return {
+//     key: depositToken,
+//     depositToken,
+//     depositAmount,
+//     supplyApr,
+//     availableBalance,
+//     dailyEstProfit,
+//     collateral,
+//     action
+//   };
+// }
 
-const DepositRows = [
-  createDepositData(
-    'BTC',
-    305,
-    3.7,
-    67,
-    4.3,
-    false,
-    <div>1231231312313131</div>
-  ),
-  createDepositData(
-    'ETH',
-    452,
-    25.0,
-    51,
-    4.9,
-    false,
+// const DepositRows = [
+//   createDepositData(
+//     'BTC',
+//     305,
+//     3.7,
+//     67,
+//     4.3,
+//     false,
+//     <div>1231231312313131</div>
+//   ),
+//   createDepositData(
+//     'ETH',
+//     452,
+//     25.0,
+//     51,
+//     4.9,
+//     false,
 
-    <div>123</div>
-  ),
-  createDepositData('USDT', 262, 16.0, 24, 6.0, false, <div>123</div>),
-  createDepositData(
-    'OKB',
-    159,
-    6.0,
-    24,
-    4.0,
-    false,
+//     <div>123</div>
+//   ),
+//   createDepositData('USDT', 262, 16.0, 24, 6.0, false, <div>123</div>),
+//   createDepositData(
+//     'OKB',
+//     159,
+//     6.0,
+//     24,
+//     4.0,
+//     false,
 
-    <div>123</div>
-  )
-];
+//     <div>123</div>
+//   )
+// ];
 export interface BorrowData {
   key: string;
-  borrowToken: string;
-  borrowAmount: number;
-  borrowApr: number;
-  borrowLimit: number;
-  dailyEstInterest: number;
+  symbol: string;
+
+  underlying: string;
+  borrowValue: BigNumberish;
+  borrowApr: BigNumberish;
+  borrowLimit: BigNumberish;
+  dailyEstInterest: BigNumberish;
   action: React.ReactNode;
 }
 const BorrowHeadCells: HeadCell<BorrowData>[] = [
   {
-    id: 'borrowToken',
+    id: 'symbol',
     label: '借款币种',
     needSort: true
   },
   {
-    id: 'borrowAmount',
+    id: 'borrowValue',
 
     label: '借款头寸',
     needSort: true
@@ -200,28 +205,7 @@ const BorrowHeadCells: HeadCell<BorrowData>[] = [
     needSort: false
   }
 ];
-function createBorrowData(
-  borrowToken: string,
-  borrowAmount: number,
-  borrowApr: number,
-  borrowLimit: number,
-  dailyEstInterest: number
-): Omit<BorrowData, 'action'> {
-  return {
-    key: borrowToken,
-    borrowToken,
-    borrowAmount,
-    borrowApr,
-    borrowLimit,
-    dailyEstInterest
-  };
-}
-const BorrowRows = [
-  createBorrowData('BTC', 123, 2, 32, 123),
-  createBorrowData('ETH', 4522, 225.0, 511, 14.9),
-  createBorrowData('USDT', 2362, 1612.0, 1324, 1236.0),
-  createBorrowData('OKB', 113159, 6131.0, 2234, 4123.0)
-];
+
 const Porfolio = () => {
   const [curTab, setCurTab] = useState(Tabs.DEPOSIT);
   const options = [
@@ -229,14 +213,16 @@ const Porfolio = () => {
     { value: Tabs.BORROW, label: '我的借款' }
   ];
   const {
-    porfolioStore: { computePorfolioData, netProfit }
+    porfolioStore: {
+      computePorfolioData,
+      netProfit,
+      userSuppliedList,
+      userBorrowedList
+    }
   } = useStore();
-  useEffect(() => {
-    console.log('netProfit', netProfit);
-    // getUserSupplied('0x49f8948c60cE2b4180DEf540f03148540268C5B0');
-  }, [netProfit]);
+
   const { address } = useAccount();
-  const res = useContractReads({
+  const { data } = useContractReads({
     // watch: true,
     // cacheTime: 4_000,
     onSuccess(data: PorfolioData) {
@@ -261,19 +247,23 @@ const Porfolio = () => {
       }
     ]
   });
-  console.log('res', res);
   const [curHeadCells, curTableRow, renderCurTableRows, defaultOrderBy] =
     useMemo(() => {
       if (curTab === Tabs.DEPOSIT)
         return [
           DepositHeadCells,
-          DepositRows,
+          userSuppliedList,
           DepositTableRows,
           'depositAmount'
         ];
-      return [BorrowHeadCells, BorrowRows, BorrowTableRows, 'borrowLimit'];
-    }, [curTab]);
-
+      return [
+        BorrowHeadCells,
+        userBorrowedList,
+        BorrowTableRows,
+        'borrowLimit'
+      ];
+    }, [curTab, userSuppliedList, data, userBorrowedList]);
+  console.log('data', data);
   return (
     <div className={cls(style.container)}>
       <div className={cls(style['container-head'])}>

@@ -1,71 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 // import DeleteIcon from '@mui/icons-material/Delete';
 // import FilterListIcon from '@mui/icons-material/FilterList';
-import { visuallyHidden } from '@mui/utils';
 import style from './index.module.less';
-import { padding } from '@mui/system';
-import { TOKENSYMBOL } from '@/constant';
 export interface Asset {
   name: string;
   symbol: string;
   logo: string;
 }
-export interface Data {
-  key: string;
-  asset: string;
-  totalDeposit: number;
-  depositApr: number;
-  totalLoan: number;
-  loanApr: number;
-  matchAmount: number;
-  option: React.ReactNode;
-}
-
-function createData(
-  asset: string,
-  totalDeposit: number,
-  depositApr: number,
-  totalLoan: number,
-  loanApr: number,
-  matchAmount: number,
-  option: React.ReactNode
-): Data {
-  return {
-    key: asset,
-    asset,
-    totalDeposit,
-    depositApr,
-    totalLoan,
-    loanApr,
-    matchAmount,
-    option
-  };
-}
-
-export const rows = [
-  createData('BTC', 305, 3.7, 67, 4.3, 100, <div>1231231312313131</div>),
-  createData('ETH', 452, 25.0, 51, 4.9, 100, <div>123</div>),
-  createData('USDT', 262, 16.0, 24, 6.0, 100, <div>123</div>),
-  createData('OKB', 159, 6.0, 24, 4.0, 100, <div>123</div>)
-];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -157,10 +107,6 @@ function EnhancedTableHead<T>(props: EnhancedTableProps<T>) {
       </TableRow>
     </TableHead>
   );
-}
-
-interface EnhancedTableToolbarProps {
-  numSelected: number;
 }
 
 interface TableProps<T> {

@@ -4,6 +4,11 @@ import cls from 'classnames';
 import { BorrowData } from '..';
 import { useNavigate } from 'react-router-dom';
 import { currencyList } from '@/constant';
+import {
+  rawToPercent,
+  rawToThousandCurrency,
+  rawToThousandNumber
+} from '@/utils/format';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -46,11 +51,12 @@ export const PurpleButton = styled(Button)({
   }
 });
 export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
-  const { borrowToken } = row;
+  const { underlying, borrowValue, borrowApr, borrowLimit, dailyEstInterest } =
+    row;
   const navigate = useNavigate();
   const [icon, symbol] = [
-    currencyList[borrowToken].icon,
-    currencyList[borrowToken].symbol
+    currencyList[underlying].icon,
+    currencyList[underlying].symbol
   ];
 
   return (
@@ -87,18 +93,18 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
         </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 140 }}>
-        <div>{row.borrowAmount}</div>
+        <div>{rawToThousandCurrency(borrowValue)}</div>
         <span className={style.font12}>美元估值</span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 163 }}>
-        <div>{row.borrowApr}</div>
+        <div>{rawToPercent(borrowApr)}</div>
         <span className={style.font12}>APR组成</span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 146 }}>
-        <div>{row.borrowLimit}</div>
+        <div>{rawToThousandNumber(borrowLimit)}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 436 }}>
-        <div>{row.dailyEstInterest}</div>
+        <div>{rawToThousandCurrency(dailyEstInterest)}</div>
       </TableCell>
 
       <TableCell

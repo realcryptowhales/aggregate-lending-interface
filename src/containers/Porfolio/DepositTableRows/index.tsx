@@ -18,6 +18,14 @@ import { currencyList } from '@/constant';
 import SmallDialog from '@/components/SmallDialog';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import { readContracts } from 'wagmi';
+import { observer } from 'mobx-react-lite';
+import { formatUnits } from 'ethers/lib/utils.js';
+import {
+  rawToPercent,
+  rawToThousandCurrency,
+  rawToThousandNumber,
+  thousandCurrency
+} from '@/utils/format';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -56,13 +64,22 @@ export const PinkButton = styled(Button)({
   }
 });
 
-export const DepositTableRows = ({ row }: { row: DepositData }) => {
-  const { depositToken } = row;
-  const [icon, symbol] = [
-    currencyList[depositToken].icon,
-    currencyList[depositToken].symbol
+export const DepositTableRows = observer(({ row }: { row: DepositData }) => {
+  const {
+    underlying,
+    depositValue,
+    depositApr,
+    availableBalance,
+    dailyEstProfit,
+    collateral
+  } = row;
+  console.log(formatUnits(dailyEstProfit, 6));
+
+  const [icon = '', symbol = ''] = [
+    currencyList[underlying]?.icon,
+    currencyList[underlying]?.symbol
   ];
-  const [collateralStatus, setCollateralStatus] = useState(row.collateral);
+  const [collateralStatus, setCollateralStatus] = useState(collateral);
   const [openCollateralModalVisible, setOpenCollateralModalVisible] =
     useState(false);
   const [closeCollateralModalVisible, setCloseCollateralModalVisible] =
@@ -108,18 +125,18 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
           </div>
         </TableCell>
         <TableCell padding="none" align="left" sx={{ width: 140 }}>
-          <div>{row.depositAmount}</div>
+          <div>{rawToThousandCurrency(depositValue)}</div>
           <span className={style.font12}>美元估值</span>
         </TableCell>
         <TableCell padding="none" align="left" sx={{ width: 163 }}>
-          <div>{row.supplyApr}</div>
+          <div>{rawToPercent(depositApr)}</div>
           <span className={style.font12}>APR组成</span>
         </TableCell>
         <TableCell padding="none" align="left" sx={{ width: 146 }}>
-          <div>{row.availableBalance}</div>
+          <div>{rawToThousandNumber(availableBalance)}</div>
         </TableCell>
         <TableCell padding="none" align="left" sx={{ width: 182 }}>
-          <div>{row.dailyEstProfit}</div>
+          <div>{rawToThousandCurrency(dailyEstProfit)}</div>
         </TableCell>
         <TableCell padding="none" align="left" sx={{ width: 254 }}>
           <BlueSwitch
@@ -246,4 +263,4 @@ export const DepositTableRows = ({ row }: { row: DepositData }) => {
       />
     </>
   );
-};
+});
