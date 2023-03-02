@@ -67,7 +67,6 @@ const InfosWithdrawOperation = ({
   formValue,
   willBecomeBorrowLimitPercent
 }: OperationProps) => {
-  console.log(formValue?.number, isOverLiquidation, isHighRisk);
   if (formValue?.number && isOverLiquidation) {
     return (
       <div className={styles.commonTip}>

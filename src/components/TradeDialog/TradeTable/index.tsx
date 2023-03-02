@@ -36,9 +36,6 @@ function Infos({
   type,
   formValue
 }: InfosProps) {
-  // const limit = '40%';
-  // const max = "87.5%";
-  console.log('isOverLiquidation', isOverLiquidation);
   const { aprTitle, list } = aprInfo || {};
   return (
     <div className={styles.Infos}>
