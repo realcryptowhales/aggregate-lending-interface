@@ -33,7 +33,7 @@ export interface AssetProps {
 export type str = string;
 
 export default function useCurrencyList() {
-  const [list, setList] = useState<CurrencyInfoProps>();
+  const [list, setList] = useState<CurrencyInfoProps[]>();
 
   const { data, error, isLoading } = useSWR(
     {

@@ -25,7 +25,7 @@ export interface CurrencyInfoProps {
 export interface UseTradeDialogProps {
   type: DialogTypeProps;
   activeCurrency: string;
-  currencyList: CurrencyInfoProps[];
+  currencyDetailList: CurrencyInfoProps[];
 }
 
 export enum DialogTypeProps {
@@ -64,7 +64,7 @@ export interface FormValuesProps {
 const useLendingDialog = ({
   type,
   activeCurrency,
-  currencyList
+  currencyDetailList
 }: UseTradeDialogProps) => {
   const [activeCurrencyInfo, setActiveCurrencyInfo] =
     useState<CurrencyInfoProps>();
@@ -82,13 +82,13 @@ const useLendingDialog = ({
   const [auth, setAuth] = useState(false);
 
   const getActiveCurrencyInfo = (name: string) => {
-    return currencyList.find((item) => {
+    return currencyDetailList.find((item) => {
       return item.symbol === name;
     });
   };
 
   const updateActiveCurrencyInfo = () => {
-    if (activeCurrency && currencyList) {
+    if (activeCurrency && currencyDetailList) {
       setActiveCurrencyInfo(getActiveCurrencyInfo(activeCurrency));
     }
   };
@@ -117,18 +117,21 @@ const useLendingDialog = ({
   const currencyBaseInfo = useCurrencyList();
 
   useEffect(() => {
-    if (currencyBaseInfo.data) {
+    if (currencyBaseInfo.data && activeCurrency) {
       const { data } = currencyBaseInfo;
-      console.log('data', data);
+      const activeCurrencyBaseInfo = data.find((item) => {
+        return item.symbol === activeCurrency;
+      });
+      console.log('activeCurrencyBaseInfo', activeCurrencyBaseInfo);
     }
-  }, [currencyBaseInfo]);
+  }, [currencyBaseInfo, activeCurrency]);
 
   useEffect(() => {
     getBalance();
     init();
     setAuth(true);
     updateActiveCurrencyInfo();
-  }, [type, activeCurrency, currencyList]);
+  }, [type, activeCurrency, currencyDetailList]);
 
   useEffect(() => {
     setDolors(formValue.number > 0 ? Math.random() : 0);

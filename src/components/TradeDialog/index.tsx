@@ -24,7 +24,7 @@ export interface LendingDialogProps extends UseTradeDialogProps {
 function TradeDialog({
   type,
   open,
-  currencyList,
+  currencyDetailList,
   onClose,
   onChangeTab,
   onChangeActiveCurrency,
@@ -49,7 +49,7 @@ function TradeDialog({
   } = useTradeDialog({
     type,
     activeCurrency,
-    currencyList
+    currencyDetailList
   });
 
   const onDialogClose = () => {
@@ -72,7 +72,7 @@ function TradeDialog({
             balance={balance}
             formValue={formValue}
             handleInputChange={handleFormChange}
-            currencyList={currencyList}
+            currencyDetailList={currencyDetailList}
             activeCurrency={activeCurrency}
             dolors={dolors}
             onChangeActiveCurrency={onChangeActiveCurrency}
