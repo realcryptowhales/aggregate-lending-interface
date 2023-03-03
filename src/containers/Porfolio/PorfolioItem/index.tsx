@@ -129,6 +129,7 @@ function PorfolioItem() {
     // watch: true
   });
   const [supplyData, borrowData, userData] = data;
+  console.log(userData, 'userData');
   const userSummary = useMemo(() => {
     let nowUserData = [];
     if (userData && Array.isArray(userData)) {
@@ -157,34 +158,35 @@ function PorfolioItem() {
       {
         key: 'index1',
         title: '价格',
-        text: rawToThousandNumber(tokenPrice.toString(), 8, 4) || '--'
+        text: rawToThousandNumber(tokenPrice?.toString(), 8, 4) || '--'
       },
       {
         key: 'index2',
         title: '价格来源',
-        text: (
-          <div className="flex items-center">
-            {/* <Avatar
-              sx={{ width: '18px', height: '18px' }}
-              alt="Remy Sharp"
-              src="https://static.okx.com/cdn/announce/20220119/1642588815382f0fd4a29-ba95-4ba9-ab33-23c1258ce96a.png"
-            /> */}
-            <span className="font-500 text-3.5 leading-4 ml-2">预言机</span>
-          </div>
-        )
+        text: '预言机'
+        // (
+        //   <div className="flex items-center">
+        //     <Avatar
+        //       sx={{ width: '18px', height: '18px' }}
+        //       alt="Remy Sharp"
+        //       src="https://static.okx.com/cdn/announce/20220119/1642588815382f0fd4a29-ba95-4ba9-ab33-23c1258ce96a.png"
+        //     />
+        //     <span className="font-500 text-3.5 leading-4 ml-2">预言机</span>
+        //   </div>
+        // )
       },
       {
         key: 'index3',
         title: '你的存款数量',
         text:
-          rawToThousandNumber(depositAmount.toString(), nowToken.decimal, 4) ||
+          rawToThousandNumber(depositAmount?.toString(), nowToken.decimal, 4) ||
           '--'
       },
       {
         key: 'index4',
         title: '你的借款数量',
         text:
-          rawToThousandNumber(borrowAmount.toString(), nowToken.decimal, 4) ||
+          rawToThousandNumber(borrowAmount?.toString(), nowToken.decimal, 4) ||
           '--'
       },
       {
@@ -199,7 +201,7 @@ function PorfolioItem() {
             </Tooltip>
           </div>
         ),
-        text: rawToPercent(maxLTV.toString(), 6, 4) || '--'
+        text: rawToPercent(maxLTV?.toString(), 6, 4) || '--'
       },
       {
         key: 'index6',
@@ -213,7 +215,7 @@ function PorfolioItem() {
             </Tooltip>
           </div>
         ),
-        text: rawToPercent(liquidationThreshold.toString(), 6, 4) || '--'
+        text: rawToPercent(liquidationThreshold?.toString(), 6, 4) || '--'
       }
     ];
   }, [userData]);
