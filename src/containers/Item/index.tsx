@@ -2,15 +2,20 @@ import * as React from 'react';
 import { useMemo, useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Summary from '@components/Summary';
-// import Avatar from '@mui/material/Avatar';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Tooltip from '@mui/material/Tooltip';
 import Detail from '@/components/Detail';
 import { queryHelperContractAddr, queryHelperABI } from '@constant/index';
 import { useContractReads, useAccount } from 'wagmi';
-import { rawToThousandNumber, rawToPercent } from '@utils/format';
+import {
+  rawToThousandNumber,
+  rawToPercent,
+  formatDate,
+  formatPercent
+} from '@utils/format';
 import useSWR from 'swr';
 import { fetcher } from '@api/index';
+import BigNumber from 'bignumber.js';
 
 const queryHelperContract = {
   address: queryHelperContractAddr as `0x${string}`,
@@ -18,6 +23,8 @@ const queryHelperContract = {
 };
 
 function PorfolioItem() {
+  const [isSupply, setIsSupply] = useState(true);
+
   const [searchParams, setSearchParams] = useSearchParams();
   // get token address
   const tokenAddr = searchParams.get('address')?.toLocaleLowerCase();
@@ -129,7 +136,6 @@ function PorfolioItem() {
     // watch: true
   });
   const [supplyData, borrowData, userData] = data;
-  console.log(userData, 'userData');
   const userSummary = useMemo(() => {
     let nowUserData = [];
     if (userData && Array.isArray(userData)) {
@@ -138,13 +144,13 @@ function PorfolioItem() {
           tokenUserData.underlying.toLocaleLowerCase() ===
           tokenAddr?.toLocaleLowerCase()
         ) {
-          console.log(tokenUserData, 'tokenUserData');
+          // console.log(tokenUserData, 'tokenUserData');
           return tokenUserData;
         }
       });
       nowUserData = filterList[0] || [];
     }
-    console.log(nowUserData, 'nowUserData');
+    // console.log(nowUserData, 'nowUserData');
     const [
       underlying,
       tokenPrice,
@@ -158,36 +164,22 @@ function PorfolioItem() {
       {
         key: 'index1',
         title: '价格',
-        text: rawToThousandNumber(tokenPrice?.toString(), 8, 4) || '--'
+        text: rawToThousandNumber(tokenPrice, 8, 4) || '--'
       },
       {
         key: 'index2',
         title: '价格来源',
         text: '预言机'
-        // (
-        //   <div className="flex items-center">
-        //     <Avatar
-        //       sx={{ width: '18px', height: '18px' }}
-        //       alt="Remy Sharp"
-        //       src="https://static.okx.com/cdn/announce/20220119/1642588815382f0fd4a29-ba95-4ba9-ab33-23c1258ce96a.png"
-        //     />
-        //     <span className="font-500 text-3.5 leading-4 ml-2">预言机</span>
-        //   </div>
-        // )
       },
       {
         key: 'index3',
         title: '你的存款数量',
-        text:
-          rawToThousandNumber(depositAmount?.toString(), nowToken.decimal, 4) ||
-          '--'
+        text: rawToThousandNumber(depositAmount, nowToken.decimal, 4) || '--'
       },
       {
         key: 'index4',
         title: '你的借款数量',
-        text:
-          rawToThousandNumber(borrowAmount?.toString(), nowToken.decimal, 4) ||
-          '--'
+        text: rawToThousandNumber(borrowAmount, nowToken.decimal, 4) || '--'
       },
       {
         key: 'index5',
@@ -201,7 +193,7 @@ function PorfolioItem() {
             </Tooltip>
           </div>
         ),
-        text: rawToPercent(maxLTV?.toString(), 6, 4) || '--'
+        text: rawToPercent(maxLTV, 6, 4) || '--'
       },
       {
         key: 'index6',
@@ -215,31 +207,152 @@ function PorfolioItem() {
             </Tooltip>
           </div>
         ),
-        text: rawToPercent(liquidationThreshold?.toString(), 6, 4) || '--'
+        text: rawToPercent(liquidationThreshold, 6, 4) || '--'
       }
     ];
   }, [userData]);
-  console.log(userSummary, 'userSummary');
-  // supplyData?.forEatch((tokenSupplyData: any) => {
-  //   const [
-  //     supplyUnderlying,
-  //     supplyAmount,
-  //     supplyValue,
-  //     supplyMatchAmount,
-  //     supplies
-  //   ] = tokenSupplyData;
-  // });
 
-  // borrowData?.forEach((tokenBorrowData: any) => {
-  //   const [
-  //     borrowUnderlying,
-  //     borrowAmount,
-  //     borrowValue,
-  //     borrowMatchAmount,
-  //     borrows
-  //   ] = tokenBorrowData;
-  // });
+  const [
+    supplyAmount,
+    supplyValue,
+    supplyMatchAmount,
+    supplyAaveAmount,
+    supplyCompoundAmount,
+    supplyMatchPercent,
+    supplyAavePercent,
+    supplyCompoundPercent
+  ] = useMemo(() => {
+    let nowSupplyData = [];
+    if (supplyData && Array.isArray(supplyData)) {
+      const filterList = supplyData?.filter((tokenSupplyData: any) => {
+        if (
+          tokenSupplyData.underlying.toLocaleLowerCase() ===
+          tokenAddr?.toLocaleLowerCase()
+        ) {
+          // console.log(tokenUserData, 'tokenUserData');
+          return tokenSupplyData;
+        }
+      });
+      nowSupplyData = filterList[0] || [];
+    }
+    const [underlying, supplyAmount, supplyValue, supplyMatchAmount, supplies] =
+      nowSupplyData;
+    const [supplyAaveAmount, supplyCompoundAmount] = supplies;
 
+    const totalSupplyAmount = supplyMatchAmount
+      .add(supplyAaveAmount)
+      .add(supplyCompoundAmount);
+
+    const supplyMatchPercent = formatPercent(
+      new BigNumber(supplyMatchAmount.toString())
+        .div(new BigNumber(totalSupplyAmount.toString()))
+        .toString(),
+      0
+    );
+
+    const supplyAavePercent = formatPercent(
+      new BigNumber(supplyAaveAmount.toString())
+        .div(new BigNumber(totalSupplyAmount.toString()))
+        .toString(),
+      0
+    );
+
+    const supplyCompoundPercent = formatPercent(
+      new BigNumber(supplyCompoundAmount.toString())
+        .div(new BigNumber(totalSupplyAmount.toString()))
+        .toString(),
+      0
+    );
+
+    return [
+      rawToThousandNumber(supplyAmount, nowToken.decimal, 4),
+      rawToThousandNumber(supplyValue, nowToken.decimal, 4),
+      rawToThousandNumber(supplyMatchAmount, nowToken.decimal, 4),
+      rawToThousandNumber(supplyAaveAmount, nowToken.decimal, 4),
+      rawToThousandNumber(supplyCompoundAmount, nowToken.decimal, 4),
+      supplyMatchPercent,
+      supplyAavePercent,
+      supplyCompoundPercent
+    ];
+  }, [supplyData]);
+
+  const [
+    borrowAmount,
+    borrowValue,
+    borrowMatchAmount,
+    borrowAaveAmount,
+    borrowCompoundAmount,
+    borrowMatchPercent,
+    borrowAavePercent,
+    borrowCompoundPercent
+  ] = useMemo(() => {
+    let nowBorrowData = [];
+    if (borrowData && Array.isArray(borrowData)) {
+      const filterList = borrowData?.filter((tokenBorrowData: any) => {
+        if (
+          tokenBorrowData.underlying.toLocaleLowerCase() ===
+          tokenAddr?.toLocaleLowerCase()
+        ) {
+          // console.log(tokenUserData, 'tokenUserData');
+          return tokenBorrowData;
+        }
+      });
+      nowBorrowData = filterList[0] || [];
+    }
+    const [underlying, borrowAmount, borrowValue, borrowMatchAmount, borrows] =
+      nowBorrowData;
+    const [borrowAaveAmount, borrowCompoundAmount] = borrows;
+
+    const totalBorrowAmount = borrowMatchAmount
+      .add(borrowAaveAmount)
+      .add(borrowCompoundAmount);
+
+    const borrowMatchPercent = formatPercent(
+      new BigNumber(borrowMatchAmount.toString())
+        .div(new BigNumber(totalBorrowAmount.toString()))
+        .toString(),
+      0
+    );
+    const borrowAavePercent = formatPercent(
+      new BigNumber(borrowAaveAmount.toString())
+        .div(new BigNumber(totalBorrowAmount.toString()))
+        .toString(),
+      0
+    );
+    const borrowCompoundPercent = formatPercent(
+      new BigNumber(borrowCompoundAmount.toString())
+        .div(new BigNumber(totalBorrowAmount.toString()))
+        .toString(),
+      0
+    );
+
+    return [
+      rawToThousandNumber(borrowAmount, nowToken.decimal, 4),
+      rawToThousandNumber(borrowValue, nowToken.decimal, 4),
+      rawToThousandNumber(borrowMatchAmount, nowToken.decimal, 4),
+      rawToThousandNumber(borrowAaveAmount, nowToken.decimal, 4),
+      rawToThousandNumber(borrowCompoundAmount, nowToken.decimal, 4),
+      borrowMatchPercent,
+      borrowAavePercent,
+      borrowCompoundPercent
+    ];
+  }, [borrowData]);
+
+  const detailOptions = useMemo(() => {
+    return {
+      isSupply,
+      setIsSupply,
+      detailAmount: isSupply ? supplyAmount : borrowAmount,
+      detailValue: isSupply ? supplyValue : borrowValue,
+      todayDate: formatDate(todayDate),
+      matchAmount: isSupply ? supplyMatchAmount : borrowMatchAmount,
+      aaveAmount: isSupply ? supplyAaveAmount : borrowAaveAmount,
+      compoundAmount: isSupply ? supplyCompoundAmount : borrowCompoundAmount,
+      matchPercent: isSupply ? supplyMatchPercent : borrowMatchPercent,
+      aavePercent: isSupply ? supplyAavePercent : borrowAavePercent,
+      compoundPercent: isSupply ? supplyCompoundPercent : borrowCompoundPercent
+    };
+  }, [isSupply, supplyData, borrowData]);
   console.log(data, isError, isLoading, 'multicall');
 
   return (
@@ -249,7 +362,7 @@ function PorfolioItem() {
         currencyList={currencyList || []}
         dataList={userSummary}
       />
-      <Detail />
+      <Detail detailOptions={detailOptions} />
     </div>
   );
 }
