@@ -52,8 +52,10 @@ export const rawToThousandNumber = (
   unit = 6,
   mantissa = 4
 ) => {
+  if (!raw) return '--';
   return thousandNumber(formatUnits(raw, unit), mantissa);
 };
 export const rawToPercent = (raw: BigNumberish, unit = 6, mantissa = 4) => {
+  if (!raw) return '--';
   return formatPercent(formatUnits(raw, unit), mantissa);
 };
