@@ -194,6 +194,8 @@ function PorfolioItem() {
     contracts: contractsArgs
     // watch: true
   });
+  // console.log(data, isError, isLoading, 'multicall');
+
   const [supplyData, borrowData, userData] = data || [];
   const userSummary = useMemo(() => {
     let nowUserData = [];
@@ -415,36 +417,25 @@ function PorfolioItem() {
     ];
   }, [borrowData, tokenAddr]);
 
-  const detailOptions = useMemo(() => {
-    return {
-      isSupply,
-      setIsSupply,
-      detailAmount: isSupply ? supplyAmount : borrowAmount,
-      detailValue: isSupply ? supplyValue : borrowValue,
-      todayDate: formatDate(todayDate.current),
-      matchAmount: isSupply ? supplyMatchAmount : borrowMatchAmount,
-      aaveAmount: isSupply ? supplyAaveAmount : borrowAaveAmount,
-      compoundAmount: isSupply ? supplyCompoundAmount : borrowCompoundAmount,
-      matchPercent: isSupply ? supplyMatchPercent : borrowMatchPercent,
-      aavePercent: isSupply ? supplyAavePercent : borrowAavePercent,
-      compoundPercent: isSupply ? supplyCompoundPercent : borrowCompoundPercent,
-      matchAPR: aggAPRFormat,
-      aaveAPR: aaveAPRFormat,
-      compoundAPR: compAPRFormat,
-      currentMatchAPR,
-      currentAaveAPR,
-      currentCompoundAPR
-    };
-  }, [
+  const props = {
     isSupply,
-    supplyData,
-    borrowData,
-    aggAPR,
-    aaveAPR,
-    compAPR,
-    currentAPRList
-  ]);
-  // console.log(data, isError, isLoading, 'multicall');
+    setIsSupply,
+    detailAmount: isSupply ? supplyAmount : borrowAmount,
+    detailValue: isSupply ? supplyValue : borrowValue,
+    todayDate: formatDate(todayDate.current),
+    matchAmount: isSupply ? supplyMatchAmount : borrowMatchAmount,
+    aaveAmount: isSupply ? supplyAaveAmount : borrowAaveAmount,
+    compoundAmount: isSupply ? supplyCompoundAmount : borrowCompoundAmount,
+    matchPercent: isSupply ? supplyMatchPercent : borrowMatchPercent,
+    aavePercent: isSupply ? supplyAavePercent : borrowAavePercent,
+    compoundPercent: isSupply ? supplyCompoundPercent : borrowCompoundPercent,
+    matchAPR: aggAPRFormat,
+    aaveAPR: aaveAPRFormat,
+    compoundAPR: compAPRFormat,
+    currentMatchAPR,
+    currentAaveAPR,
+    currentCompoundAPR
+  };
 
   return (
     <div className="w-full box-border px-27 py-6">
@@ -454,7 +445,7 @@ function PorfolioItem() {
         currencyList={currencyList || []}
         dataList={userSummary}
       />
-      <Detail detailOptions={detailOptions} />
+      <Detail {...props} />
     </div>
   );
 }

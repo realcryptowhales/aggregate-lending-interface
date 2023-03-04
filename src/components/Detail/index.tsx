@@ -8,12 +8,7 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Tooltip from '@mui/material/Tooltip';
 import moment from 'moment';
 
-interface DetailProps {
-  test?: any;
-  detailOptions: any;
-}
-
-const Detail: React.FC<DetailProps> = ({ detailOptions }) => {
+const Detail: React.FC<any> = (props) => {
   const {
     isSupply,
     setIsSupply,
@@ -32,8 +27,7 @@ const Detail: React.FC<DetailProps> = ({ detailOptions }) => {
     currentMatchAPR,
     currentAaveAPR,
     currentCompoundAPR
-  } = detailOptions;
-  // console.log(detailOptions, 'detailOptions');
+  } = props;
   const summary = {
     title: isSupply ? '存款总数' : '借款总数',
     text: detailAmount,
