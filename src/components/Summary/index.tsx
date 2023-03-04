@@ -7,12 +7,14 @@ interface SummaryProps {
   currencyList: any[];
   dataList: any[];
   selectValue: string;
+  onChange: (arg0: string) => void;
 }
 
 const Summary: React.FC<SummaryProps> = ({
   currencyList,
   dataList,
-  selectValue
+  selectValue,
+  onChange
 }) => {
   return (
     <div
@@ -26,6 +28,7 @@ const Summary: React.FC<SummaryProps> = ({
         defaultValue={selectValue}
         list={currencyList}
         showImage
+        onChange={onChange}
       />
       {dataList.map(({ key, title, text }) => {
         return <Item key={key} title={title} text={text} />;

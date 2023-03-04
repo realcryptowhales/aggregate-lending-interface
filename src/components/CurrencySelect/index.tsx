@@ -14,6 +14,7 @@ interface CurrencySelectProps {
   showImage: boolean;
   height?: number;
   sx?: any;
+  onChange?: (arg0: string) => void;
 }
 
 const CurrencySelect: React.FC<CurrencySelectProps> = ({
@@ -21,12 +22,14 @@ const CurrencySelect: React.FC<CurrencySelectProps> = ({
   defaultValue,
   showImage,
   height,
-  sx
+  sx,
+  onChange
 }) => {
   const [currency, setCurrency] = useState(defaultValue || list[0].address);
 
   const handleChange = (event: SelectChangeEvent) => {
     setCurrency(event.target.value);
+    onChange && onChange(event.target.value);
   };
   return (
     <FormControl sx={{ m: 1, minWidth: 80, margin: 0 }}>

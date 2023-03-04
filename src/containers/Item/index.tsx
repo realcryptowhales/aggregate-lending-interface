@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Summary from '@components/Summary';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
@@ -13,7 +13,9 @@ import {
   formatDate,
   formatPercent
 } from '@utils/format';
-import useSWR from 'swr';
+// import useSWR from 'swr'; // set dedupingInterval to close cache
+import useSWRImmutable from 'swr/immutable'; // use cache for swr
+
 import { fetcher } from '@api/index';
 import BigNumber from 'bignumber.js';
 
@@ -27,9 +29,11 @@ function PorfolioItem() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   // get token address
-  const tokenAddr = searchParams.get('address')?.toLocaleLowerCase();
+  const [tokenAddr, setTokenAddr] = useState(
+    searchParams.get('address')?.toLocaleLowerCase()
+  );
   // get token list
-  const { data: currencyList } = useSWR(
+  const { data: currencyList } = useSWRImmutable(
     {
       url: 'http://35.220.222.252/aggregate-lending/config/list'
     },
@@ -49,64 +53,95 @@ function PorfolioItem() {
     }
     return {};
   }, [currencyList, tokenAddr]);
+
+  const onTokenChange = (address: string) => {
+    console.log(address);
+    setSearchParams({ address });
+    setTokenAddr(address);
+  };
+
   // set date
-  const [todayDate, setTodayDate] = useState<any>(null); //今天的毫秒时间
-  const [lastThirtyDate, setLastThirtyDate] = useState<any>(null); //过去30天的毫秒时间
+  const todayDate = useRef<any>(null);
+  const lastThirtyDate = useRef<any>(null);
   useEffect(() => {
-    setTodayDate(new Date().getTime());
-    setLastThirtyDate(new Date(todayDate - 1000 * 60 * 60 * 24 * 30).getTime());
+    todayDate.current = new Date().getTime();
+    lastThirtyDate.current = new Date(
+      todayDate.current - 1000 * 60 * 60 * 24 * 30
+    ).getTime();
+    return () => {
+      todayDate.current = null;
+      lastThirtyDate.current = null;
+    };
   }, []);
 
   // get apr
-  const { data: aggAPR } = useSWR(
-    todayDate && lastThirtyDate
+  const { data: aggAPR } = useSWRImmutable(
+    todayDate.current && lastThirtyDate.current
       ? {
           url: 'http://35.220.222.252/aggregate-lending/apr/calc',
           params: {
-            configId: 2, // token id
-            operateType: 1, // 0:存款 1:取款
-            beginTime: lastThirtyDate,
-            endTime: todayDate,
+            configId: nowToken.configId, // token id
+            operateType: isSupply ? 0 : 1, // 0:存款 1:借款
+            beginTime: lastThirtyDate.current,
+            endTime: todayDate.current,
             platformType: 0 // 平台类型 0：agg; 1：aave; 2：comp
           }
         }
       : null,
     fetcher
   );
+  const aggAPRFormat = useMemo(() => {
+    if (!aggAPR) return [];
+    return aggAPR.map((item: any) => {
+      return [item.calcTime, Number(item.apr).toFixed(4)];
+    });
+  }, [aggAPR]);
   // console.log(aggAPR, 'aggAPR');
 
-  const { data: aaveAPR } = useSWR(
-    todayDate && lastThirtyDate
+  const { data: aaveAPR } = useSWRImmutable(
+    todayDate.current && lastThirtyDate.current
       ? {
           url: 'http://35.220.222.252/aggregate-lending/apr/calc',
           params: {
-            configId: 2, // token id
-            operateType: 1, // 0:存款 1:取款
-            beginTime: lastThirtyDate,
-            endTime: todayDate,
+            configId: nowToken.configId, // token id
+            operateType: isSupply ? 0 : 1, // 0:存款 1:借款
+            beginTime: lastThirtyDate.current,
+            endTime: todayDate.current,
             platformType: 1 // 平台类型 0：agg; 1：aave; 2：comp
           }
         }
       : null,
     fetcher
   );
+  const aaveAPRFormat = useMemo(() => {
+    if (!aaveAPR) return [];
+    return aaveAPR.map((item: any) => {
+      return [item.calcTime, Number(item.apr).toFixed(4)];
+    });
+  }, [aaveAPR]);
   // console.log(aaveAPR, 'aaveAPR');
 
-  const { data: compAPR } = useSWR(
-    todayDate && lastThirtyDate
+  const { data: compAPR } = useSWRImmutable(
+    todayDate.current && lastThirtyDate.current
       ? {
           url: 'http://35.220.222.252/aggregate-lending/apr/calc',
           params: {
-            configId: 2, // token id
-            operateType: 1, // 0:存款 1:取款
-            beginTime: lastThirtyDate,
-            endTime: todayDate,
+            configId: nowToken.configId, // token id
+            operateType: isSupply ? 0 : 1, // 0:存款 1:借款
+            beginTime: lastThirtyDate.current,
+            endTime: todayDate.current,
             platformType: 2 // 平台类型 0：agg; 1：aave; 2：comp
           }
         }
       : null,
     fetcher
   );
+  const compAPRFormat = useMemo(() => {
+    if (!compAPR) return [];
+    return compAPR.map((item: any) => {
+      return [item.calcTime, Number(item.apr).toFixed(4)];
+    });
+  }, [compAPR]);
   // console.log(compAPR, 'compAPR');
 
   const { address } = useAccount();
@@ -210,7 +245,7 @@ function PorfolioItem() {
         text: rawToPercent(liquidationThreshold, 6, 4) || '--'
       }
     ];
-  }, [userData]);
+  }, [userData, tokenAddr]);
 
   const [
     supplyAmount,
@@ -274,7 +309,7 @@ function PorfolioItem() {
       supplyAavePercent,
       supplyCompoundPercent
     ];
-  }, [supplyData]);
+  }, [supplyData, tokenAddr]);
 
   const [
     borrowAmount,
@@ -336,7 +371,7 @@ function PorfolioItem() {
       borrowAavePercent,
       borrowCompoundPercent
     ];
-  }, [borrowData]);
+  }, [borrowData, tokenAddr]);
 
   const detailOptions = useMemo(() => {
     return {
@@ -344,20 +379,24 @@ function PorfolioItem() {
       setIsSupply,
       detailAmount: isSupply ? supplyAmount : borrowAmount,
       detailValue: isSupply ? supplyValue : borrowValue,
-      todayDate: formatDate(todayDate),
+      todayDate: formatDate(todayDate.current),
       matchAmount: isSupply ? supplyMatchAmount : borrowMatchAmount,
       aaveAmount: isSupply ? supplyAaveAmount : borrowAaveAmount,
       compoundAmount: isSupply ? supplyCompoundAmount : borrowCompoundAmount,
       matchPercent: isSupply ? supplyMatchPercent : borrowMatchPercent,
       aavePercent: isSupply ? supplyAavePercent : borrowAavePercent,
-      compoundPercent: isSupply ? supplyCompoundPercent : borrowCompoundPercent
+      compoundPercent: isSupply ? supplyCompoundPercent : borrowCompoundPercent,
+      matchAPR: aggAPRFormat,
+      aaveAPR: aaveAPRFormat,
+      compoundAPR: compAPRFormat
     };
-  }, [isSupply, supplyData, borrowData]);
-  console.log(data, isError, isLoading, 'multicall');
+  }, [isSupply, supplyData, borrowData, aggAPR, aaveAPR, compAPR]);
+  // console.log(data, isError, isLoading, 'multicall');
 
   return (
     <div className="w-full box-border px-27 py-6">
       <Summary
+        onChange={onTokenChange}
         selectValue={tokenAddr || ''}
         currencyList={currencyList || []}
         dataList={userSummary}

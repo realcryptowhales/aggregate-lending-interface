@@ -6,6 +6,7 @@ import Tab from './Tab';
 import Button from '@mui/material/Button';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Tooltip from '@mui/material/Tooltip';
+import moment from 'moment';
 
 interface DetailProps {
   test?: any;
@@ -24,9 +25,12 @@ const Detail: React.FC<DetailProps> = ({ detailOptions }) => {
     compoundAmount,
     matchPercent,
     aavePercent,
-    compoundPercent
+    compoundPercent,
+    matchAPR,
+    aaveAPR,
+    compoundAPR
   } = detailOptions;
-  console.log(detailOptions, 'detailOptions');
+  // console.log(detailOptions, 'detailOptions');
   const summary = {
     title: isSupply ? '存款总数' : '借款总数',
     text: detailAmount,
@@ -73,7 +77,7 @@ const Detail: React.FC<DetailProps> = ({ detailOptions }) => {
     },
     // 图的边距
     grid: {
-      x: 40, //默认是80px
+      x: 60, //默认是80px
       y: 60, //默认是60px
       x2: 80, //默认80px
       y2: 60 //默认60px
@@ -82,6 +86,11 @@ const Detail: React.FC<DetailProps> = ({ detailOptions }) => {
       type: 'time',
       splitLine: {
         show: false
+      },
+      axisLabel: {
+        formatter: function (value: any) {
+          return moment(Number(value)).format('MM-DD');
+        }
       }
     },
     yAxis: {
@@ -101,41 +110,28 @@ const Detail: React.FC<DetailProps> = ({ detailOptions }) => {
     series: [
       {
         name: '平台',
-        data: [
-          // data格式[时间戳，数据]
-          [1675392178742, 5],
-          [1675393178742, 10],
-          [1675394178742, 30]
-        ],
+        // data格式[时间戳，数据]
+        data: matchAPR,
         type: 'line'
       },
       {
         name: 'AAVE',
-        data: [
-          [1675392178742, 7],
-          [1675393178742, 15],
-          [1675394178742, 10]
-        ],
+        data: aaveAPR,
         type: 'line'
       },
       {
         name: 'compound',
-        data: [
-          [1675392178742, 3],
-          [1675393178742, 5],
-          [1675394178742, 15]
-        ],
+        data: compoundAPR,
         type: 'line'
       }
     ],
-    // tooltip: {
-    //   formatter: function (param) {
-    //     const time = param.value[0];
-    //     const value = param.value[1] + '%';
-    //     return value;
-    //   }
-    // },
-    // default ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc']
+    tooltip: {
+      formatter: function (param: any) {
+        const time = param.value[0];
+        const value = param.value[1] + '%';
+        return `APR: ${value}`;
+      }
+    },
     color: [
       '#000000',
       '#7B7B7B',
@@ -154,15 +150,15 @@ const Detail: React.FC<DetailProps> = ({ detailOptions }) => {
       data: [
         {
           value: matchAmount,
-          name: 'match'
+          name: 'matchPercent'
         },
         {
           value: aaveAmount,
-          name: 'aave'
+          name: 'aavePercent'
         },
         {
           value: compoundAmount,
-          name: 'compound'
+          name: 'compoundPercent'
         }
       ],
       // 隐藏饼图的引导线
@@ -221,8 +217,6 @@ const Detail: React.FC<DetailProps> = ({ detailOptions }) => {
             })
           );
           setIsSupply(index === 0);
-
-          console.log(`switch to ${options[index].name}`);
         }}
       />
       <div className=" pl-8 pr-25">
