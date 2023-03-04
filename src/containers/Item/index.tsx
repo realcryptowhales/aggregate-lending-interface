@@ -194,7 +194,7 @@ function PorfolioItem() {
     contracts: contractsArgs
     // watch: true
   });
-  const [supplyData, borrowData, userData] = data;
+  const [supplyData, borrowData, userData] = data || [];
   const userSummary = useMemo(() => {
     let nowUserData = [];
     if (userData && Array.isArray(userData)) {
@@ -294,6 +294,9 @@ function PorfolioItem() {
       });
       nowSupplyData = filterList[0] || [];
     }
+    if (nowSupplyData.length === 0) {
+      return [];
+    }
     const [underlying, supplyAmount, supplyValue, supplyMatchAmount, supplies] =
       nowSupplyData;
     const [supplyAaveAmount, supplyCompoundAmount] = supplies;
@@ -362,6 +365,9 @@ function PorfolioItem() {
         }
       });
       nowBorrowData = filterList[0] || [];
+    }
+    if (nowBorrowData.length === 0) {
+      return [];
     }
     const [underlying, borrowAmount, borrowValue, borrowMatchAmount, borrows] =
       nowBorrowData;
