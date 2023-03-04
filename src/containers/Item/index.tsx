@@ -55,7 +55,6 @@ function PorfolioItem() {
   }, [currencyList, tokenAddr]);
 
   const onTokenChange = (address: string) => {
-    console.log(address);
     setSearchParams({ address });
     setTokenAddr(address);
   };
