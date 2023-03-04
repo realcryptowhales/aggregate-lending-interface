@@ -250,7 +250,9 @@ const Detail: React.FC<DetailProps> = ({ detailOptions }) => {
                 width: '86px',
                 background: isSupply ? '#F98A6B' : '#51459D',
                 color: 'white',
-                '&:hover': { background: '#ff9800' }
+                '&:hover': {
+                  background: isSupply ? '#ff9800' : '#9c27b0'
+                }
               }}
             >
               {isSupply ? '存款' : '借款'}
