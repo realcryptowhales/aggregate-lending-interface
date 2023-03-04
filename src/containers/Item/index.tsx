@@ -277,24 +277,29 @@ function PorfolioItem() {
       .add(supplyAaveAmount)
       .add(supplyCompoundAmount);
 
+    const supplyMatchBignumber = new BigNumber(
+      supplyMatchAmount.toString()
+    ).div(new BigNumber(totalSupplyAmount.toString()));
     const supplyMatchPercent = formatPercent(
-      new BigNumber(supplyMatchAmount.toString())
-        .div(new BigNumber(totalSupplyAmount.toString()))
-        .toString(),
+      supplyMatchBignumber.isNaN() ? '0' : supplyMatchBignumber.toString(),
       0
     );
 
+    const supplyAaveBignumber = new BigNumber(supplyAaveAmount.toString()).div(
+      new BigNumber(totalSupplyAmount.toString())
+    );
     const supplyAavePercent = formatPercent(
-      new BigNumber(supplyAaveAmount.toString())
-        .div(new BigNumber(totalSupplyAmount.toString()))
-        .toString(),
+      supplyAaveBignumber.isNaN() ? '0' : supplyAaveBignumber.toString(),
       0
     );
 
+    const supplyCompoundBignumber = new BigNumber(
+      supplyCompoundAmount.toString()
+    ).div(new BigNumber(totalSupplyAmount.toString()));
     const supplyCompoundPercent = formatPercent(
-      new BigNumber(supplyCompoundAmount.toString())
-        .div(new BigNumber(totalSupplyAmount.toString()))
-        .toString(),
+      supplyCompoundBignumber.isNaN()
+        ? '0'
+        : supplyCompoundBignumber.toString(),
       0
     );
 
@@ -341,22 +346,29 @@ function PorfolioItem() {
       .add(borrowAaveAmount)
       .add(borrowCompoundAmount);
 
+    const borrowMatchBignumber = new BigNumber(
+      borrowMatchAmount.toString()
+    ).div(new BigNumber(totalBorrowAmount.toString()));
     const borrowMatchPercent = formatPercent(
-      new BigNumber(borrowMatchAmount.toString())
-        .div(new BigNumber(totalBorrowAmount.toString()))
-        .toString(),
+      borrowMatchBignumber.isNaN() ? '0' : borrowMatchBignumber.toString(),
       0
+    );
+
+    const borrowAaveBignumber = new BigNumber(borrowAaveAmount.toString()).div(
+      new BigNumber(totalBorrowAmount.toString())
     );
     const borrowAavePercent = formatPercent(
-      new BigNumber(borrowAaveAmount.toString())
-        .div(new BigNumber(totalBorrowAmount.toString()))
-        .toString(),
+      borrowAaveBignumber.isNaN() ? '0' : borrowAaveBignumber.toString(),
       0
     );
+
+    const borrowCompoundBignumber = new BigNumber(
+      borrowCompoundAmount.toString()
+    ).div(new BigNumber(totalBorrowAmount.toString()));
     const borrowCompoundPercent = formatPercent(
-      new BigNumber(borrowCompoundAmount.toString())
-        .div(new BigNumber(totalBorrowAmount.toString()))
-        .toString(),
+      borrowCompoundBignumber.isNaN()
+        ? '0'
+        : borrowCompoundBignumber.toString(),
       0
     );
 
