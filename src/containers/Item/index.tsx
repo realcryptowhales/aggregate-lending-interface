@@ -198,7 +198,7 @@ function PorfolioItem() {
       {
         key: 'index1',
         title: '价格',
-        text: rawToThousandNumber(tokenPrice, 8, 4) || '--'
+        text: `$ ${rawToThousandNumber(tokenPrice, 8, 4)}` || '--'
       },
       {
         key: 'index2',
