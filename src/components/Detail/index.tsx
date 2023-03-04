@@ -28,7 +28,10 @@ const Detail: React.FC<DetailProps> = ({ detailOptions }) => {
     compoundPercent,
     matchAPR,
     aaveAPR,
-    compoundAPR
+    compoundAPR,
+    currentMatchAPR,
+    currentAaveAPR,
+    currentCompoundAPR
   } = detailOptions;
   // console.log(detailOptions, 'detailOptions');
   const summary = {
@@ -46,11 +49,11 @@ const Detail: React.FC<DetailProps> = ({ detailOptions }) => {
     text2: (
       <>
         <span>平台 </span>
-        <span className="color-#F98A6B">6%</span>
+        <span className="color-#F98A6B">{currentMatchAPR}</span>
         <span>、AAVE </span>
-        <span className="color-#F98A6B">5%</span>
+        <span className="color-#F98A6B">{currentAaveAPR}</span>
         <span>、Compound </span>
-        <span className="color-#F98A6B">4%</span>
+        <span className="color-#F98A6B">{currentCompoundAPR}</span>
       </>
     ),
     desc: '这是desc内容'

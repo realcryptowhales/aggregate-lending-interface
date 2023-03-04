@@ -6,7 +6,7 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Tooltip from '@mui/material/Tooltip';
 import Detail from '@/components/Detail';
 import { queryHelperContractAddr, queryHelperABI } from '@constant/index';
-import { useContractReads, useAccount } from 'wagmi';
+import { useContractReads, useAccount, useContractRead } from 'wagmi';
 import {
   rawToThousandNumber,
   rawToPercent,
@@ -72,6 +72,31 @@ function PorfolioItem() {
       lastThirtyDate.current = null;
     };
   }, []);
+
+  // get current APR
+  const { data: currentAPRList } = useContractRead({
+    ...queryHelperContract,
+    functionName: isSupply ? 'getCurrentSupplyRates' : 'getCurrentBorrowRates',
+    args: [tokenAddr],
+    enabled: Boolean(tokenAddr)
+  });
+  const { currentMatchAPR, currentAaveAPR, currentCompoundAPR } =
+    useMemo(() => {
+      if (!currentAPRList)
+        return {
+          currentMatchAPR: '--',
+          currentAaveAPR: '--',
+          currentCompoundAPR: '--'
+        };
+      const [currentMatchAPR, currentAaveAPR, currentCompoundAPR] =
+        currentAPRList;
+      return {
+        currentMatchAPR: rawToPercent(currentMatchAPR, 6, 4),
+        currentAaveAPR: rawToPercent(currentAaveAPR, 6, 4),
+        currentCompoundAPR: rawToPercent(currentCompoundAPR, 6, 4)
+      };
+    }, [currentAPRList]);
+  // , isSupply, tokenAddr
 
   // get apr
   const { data: aggAPR } = useSWRImmutable(
@@ -163,7 +188,7 @@ function PorfolioItem() {
       });
     }
     return options;
-  }, [address]);
+  }, [address, tokenAddr]);
 
   const { data, isError, isLoading } = useContractReads({
     contracts: contractsArgs
@@ -399,9 +424,20 @@ function PorfolioItem() {
       compoundPercent: isSupply ? supplyCompoundPercent : borrowCompoundPercent,
       matchAPR: aggAPRFormat,
       aaveAPR: aaveAPRFormat,
-      compoundAPR: compAPRFormat
+      compoundAPR: compAPRFormat,
+      currentMatchAPR,
+      currentAaveAPR,
+      currentCompoundAPR
     };
-  }, [isSupply, supplyData, borrowData, aggAPR, aaveAPR, compAPR]);
+  }, [
+    isSupply,
+    supplyData,
+    borrowData,
+    aggAPR,
+    aaveAPR,
+    compAPR,
+    currentAPRList
+  ]);
   // console.log(data, isError, isLoading, 'multicall');
 
   return (
