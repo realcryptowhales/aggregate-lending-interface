@@ -37,7 +37,7 @@ export default function useCurrencyList() {
 
   const { data, error, isLoading } = useSWR(
     {
-      url: 'http://35.220.222.252/aggregate-lending/config/list'
+      url: '/config/list'
     },
     fetcher
   );

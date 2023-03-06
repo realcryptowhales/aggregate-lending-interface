@@ -35,7 +35,7 @@ function PorfolioItem() {
   // get token list
   const { data: currencyList } = useSWRImmutable(
     {
-      url: 'http://35.220.222.252/aggregate-lending/config/list'
+      url: '/config/list'
     },
     fetcher
   );
@@ -100,9 +100,9 @@ function PorfolioItem() {
 
   // get apr
   const { data: aggAPR } = useSWRImmutable(
-    todayDate.current && lastThirtyDate.current
+    todayDate.current && lastThirtyDate.current && nowToken.configId
       ? {
-          url: 'http://35.220.222.252/aggregate-lending/apr/calc',
+          url: '/apr/calc',
           params: {
             configId: nowToken.configId, // token id
             operateType: isSupply ? 0 : 1, // 0:存款 1:借款
@@ -123,9 +123,9 @@ function PorfolioItem() {
   // console.log(aggAPR, 'aggAPR');
 
   const { data: aaveAPR } = useSWRImmutable(
-    todayDate.current && lastThirtyDate.current
+    todayDate.current && lastThirtyDate.current && nowToken.configId
       ? {
-          url: 'http://35.220.222.252/aggregate-lending/apr/calc',
+          url: '/apr/calc',
           params: {
             configId: nowToken.configId, // token id
             operateType: isSupply ? 0 : 1, // 0:存款 1:借款
@@ -146,9 +146,9 @@ function PorfolioItem() {
   // console.log(aaveAPR, 'aaveAPR');
 
   const { data: compAPR } = useSWRImmutable(
-    todayDate.current && lastThirtyDate.current
+    todayDate.current && lastThirtyDate.current && nowToken.configId
       ? {
-          url: 'http://35.220.222.252/aggregate-lending/apr/calc',
+          url: '/apr/calc',
           params: {
             configId: nowToken.configId, // token id
             operateType: isSupply ? 0 : 1, // 0:存款 1:借款
