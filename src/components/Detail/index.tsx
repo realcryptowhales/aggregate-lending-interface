@@ -1,6 +1,7 @@
 import * as React from 'react';
 import clsx from 'classnames';
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { DialogTypeProps } from '@constant/index';
 import { echarts } from '@utils/echart';
 import Tab from './Tab';
 import Button from '@mui/material/Button';
@@ -12,6 +13,7 @@ const Detail: React.FC<any> = (props) => {
   const {
     isSupply,
     setIsSupply,
+    nowToken,
     detailAmount,
     detailValue,
     todayDate,
@@ -251,6 +253,14 @@ const Detail: React.FC<any> = (props) => {
                   background: isSupply ? '#ff9800' : '#9c27b0'
                 }
               }}
+              onClick={() => {
+                window.aggregate.openDialog({
+                  type: isSupply
+                    ? DialogTypeProps.deposit
+                    : DialogTypeProps.borrow,
+                  activeCurrency: nowToken.symbol
+                });
+              }}
             >
               {isSupply ? '存款' : '借款'}
             </Button>
@@ -261,6 +271,14 @@ const Detail: React.FC<any> = (props) => {
                 marginLeft: '13px',
                 color: '#000',
                 borderColor: '#000'
+              }}
+              onClick={() => {
+                window.aggregate.openDialog({
+                  type: isSupply
+                    ? DialogTypeProps.withdraw
+                    : DialogTypeProps.repay,
+                  activeCurrency: nowToken.symbol
+                });
               }}
             >
               {isSupply ? '取款' : '还款'}

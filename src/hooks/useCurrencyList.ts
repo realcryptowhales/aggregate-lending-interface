@@ -1,4 +1,4 @@
-import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable'; // use cache for swr
 import { useState, useMemo } from 'react';
 import { fetcher } from '@api/index';
 import { useContractReads } from 'wagmi';
@@ -36,7 +36,7 @@ export type str = string;
 export default function useCurrencyList() {
   const [list, setList] = useState<CurrencyBaseInfoProps[]>();
 
-  const { data } = useSWR(
+  const { data } = useSWRImmutable(
     {
       url: '/config/list'
     },

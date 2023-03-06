@@ -433,6 +433,7 @@ function PorfolioItem() {
   const props = {
     isSupply,
     setIsSupply,
+    nowToken,
     detailAmount: isSupply ? supplyAmount : borrowAmount,
     detailValue: isSupply ? supplyValue : borrowValue,
     todayDate: formatDate(showingDate.current),
