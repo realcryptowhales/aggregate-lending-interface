@@ -21,7 +21,7 @@ function Layout() {
   return (
     <div className="w-full">
       <Header />
-      {/* <Test /> */}
+      <Test />
       <Outlet />
     </div>
   );
