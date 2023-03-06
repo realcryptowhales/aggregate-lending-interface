@@ -26,7 +26,6 @@ function PorfolioItem() {
   let tokenAddr = searchParams.get('address');
   // TODO: remove test
   tokenAddr = mockUSDTAddr;
-  console.log(tokenAddr, 'tokenAddr');
 
   const dataList = [
     {

@@ -1,13 +1,10 @@
-import { mockUSDTAddr } from '@/constant/contract';
 import BigNumber from 'bignumber.js';
 import { BigNumberish } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import { makeAutoObservable } from 'mobx';
-import { queryHelperContract } from './marketStore';
-import { multicall } from '@wagmi/core';
 import { formatContractData } from '@/utils/format';
-const unmeaningAddr = '0x0000000000000000000000000000000000000000';
-export interface SuppliedInfo {
+import { RootStore } from '.';
+export interface SuppliedInfo extends Array<any> {
   availableBalance: BigNumberish;
   collateral: boolean;
   dailyEstProfit: BigNumberish;
@@ -33,6 +30,7 @@ export interface UserInfo {
 }
 export type PorfolioData = [SuppliedInfo[], BorrowedInfo[], UserInfo];
 export default class PorfolioStore {
+  rootStore: RootStore;
   userSuppliedList: any = [];
   userBorrowedList: any = [];
   borrowLimit = '';
@@ -48,15 +46,73 @@ export default class PorfolioStore {
 
   dailyEstProfit = ''; //今日预估总收益率
   totalBorrowInterest = ''; // 借款利息
-  a = 1;
-  constructor() {
+  constructor(rootStore: RootStore) {
     makeAutoObservable(this, {}, { autoBind: true });
+    this.rootStore = rootStore;
   }
-  setSuppliedList(contractData: any[]) {
-    this.userSuppliedList = contractData.map(formatContractData);
+  setSuppliedList(contractData: SuppliedInfo[]) {
+    if (contractData === null) return;
+
+    const { tokenMap } = this.rootStore.commonStore;
+    this.userSuppliedList = contractData
+      .map(formatContractData)
+      .map(
+        ({
+          depositValue,
+          depositAmount,
+          availableBalance,
+          dailyEstProfit,
+          depositApr,
+          underlying,
+          ...rest
+        }) => {
+          const decimal = tokenMap[underlying.toLocaleLowerCase()]?.decimal;
+          const symbol = tokenMap[underlying.toLocaleLowerCase()]?.symbol;
+
+          return {
+            depositValue: formatUnits(depositValue, 6),
+            depositAmount: formatUnits(depositAmount, decimal),
+            availableBalance: formatUnits(availableBalance, decimal),
+            dailyEstProfit: formatUnits(dailyEstProfit, 6),
+            depositApr: formatUnits(depositApr, 6),
+            symbol,
+            underlying,
+            ...rest
+          };
+        }
+      );
   }
   setBorrowedList(contractData: any[]) {
-    this.userBorrowedList = contractData.map(formatContractData);
+    if (contractData === null) return;
+
+    const { tokenMap } = this.rootStore.commonStore;
+
+    this.userBorrowedList = contractData
+      .map(formatContractData)
+      .map(
+        ({
+          underlying,
+          borrowAmount,
+          borrowValue,
+          borrowApr,
+          borrowLimit,
+          dailyEstInterest,
+          ...rest
+        }) => {
+          const decimal = tokenMap[underlying.toLocaleLowerCase()]?.decimal;
+          const symbol = tokenMap[underlying.toLocaleLowerCase()]?.symbol;
+          return {
+            borrowAmount: formatUnits(borrowAmount, decimal),
+            borrowValue: formatUnits(borrowValue, 6),
+            borrowApr: formatUnits(borrowApr, 6),
+            borrowLimit: formatUnits(borrowLimit, decimal),
+            dailyEstInterest: formatUnits(dailyEstInterest, 6),
+            symbol,
+            underlying,
+            ...rest
+          };
+        }
+      );
   }
   async computePorfolioData(data: PorfolioData) {
     let suppliedList: SuppliedInfo[],
@@ -64,7 +120,6 @@ export default class PorfolioStore {
       userInfo: UserInfo;
     // eslint-disable-next-line prefer-const
     [suppliedList = [], borrowedList = [], userInfo] = data;
-    console.log('suppliedList', suppliedList);
     this.setSuppliedList(suppliedList);
     this.setBorrowedList(borrowedList);
     if (!this.userSuppliedList.length) {
@@ -92,44 +147,34 @@ export default class PorfolioStore {
             )
             .toString(10)
         : '';
-    console.log(new BigNumber(0).toString(), 'sdasdad');
-
-    console.log('this.borrowLimit', this.borrowLimit);
-    console.log('this.userTotalBorrowed', this.userTotalBorrowed);
-    console.log('this.collateralValue', this.collateralValue);
-    console.log('this.usedRatio', this.usedRatio);
   }
   computeTotalSupAprAndTotalSup(suppliedList: SuppliedInfo[] = []) {
     let totalSupplied = new BigNumber(0),
       suppliedInterest = new BigNumber(0);
-
-    suppliedList.forEach(({ depositValue, depositApr }: SuppliedInfo) => {
-      console.log('depositValue.toString()', depositValue.toString());
-      console.log(formatUnits(depositApr, 6), 'sadadadsadas');
-
-      totalSupplied = totalSupplied.plus(
-        new BigNumber(formatUnits(depositValue, 6))
-      );
-
-      suppliedInterest = suppliedInterest.plus(
-        new BigNumber(formatUnits(depositValue, 6)).multipliedBy(
-          new BigNumber(formatUnits(depositApr, 6))
-        )
-      );
-    });
-    console.log('suppliedInterest', suppliedInterest.toFixed());
-    this.dailyEstProfit = suppliedInterest.toFixed();
-    console.log('this.dailyEstProfit', this.dailyEstProfit);
+    // totalDailyEstProfit = new BigNumber(0);
+    suppliedList.forEach(
+      ({ depositValue, depositApr, dailyEstProfit }: SuppliedInfo) => {
+        totalSupplied = totalSupplied.plus(
+          new BigNumber(formatUnits(depositValue, 6))
+        );
+        // totalDailyEstProfit = totalDailyEstProfit.plus(
+        //   new BigNumber(formatUnits(dailyEstProfit, 6))
+        // );
+        suppliedInterest = suppliedInterest.plus(
+          new BigNumber(formatUnits(depositValue, 6)).multipliedBy(
+            new BigNumber(formatUnits(depositApr, 6))
+          )
+        );
+      }
+    );
+    this.dailyEstProfit = suppliedInterest.div(new BigNumber(365)).toFixed();
     this.totalSuppliedApr = suppliedInterest.div(totalSupplied).toFixed();
     this.userTotalSupplied = totalSupplied.toFixed();
-    console.log('this.totalSuppliedApr', this.totalSuppliedApr);
-    console.log('this.userTotalSupplied', this.userTotalSupplied);
   }
   computeTotalBorAprAndTotalBor(borrowedList: BorrowedInfo[] = []) {
     let totalBorrowed = new BigNumber(0),
       borrowedInterest = new BigNumber(0);
     borrowedList.forEach(({ borrowValue, borrowApr }: BorrowedInfo) => {
-      console.log('depositValue.toString()', borrowValue.toString());
       totalBorrowed = totalBorrowed.plus(
         new BigNumber(formatUnits(borrowValue, 6))
       );
@@ -144,16 +189,15 @@ export default class PorfolioStore {
     this.totalBorrowedApr = borrowedInterest.div(totalBorrowed).toFixed();
 
     // this.userTotalBorrowed = totalBorrowed.toFixed();
-    console.log('this.totalBorrowedApr', this.totalBorrowedApr);
-    console.log('this.userTotalBorrowed', this.userTotalBorrowed);
   }
   // 净收益率
   get netProfit() {
     if (!this.userSuppliedList.length) return '0';
     const netInterest = new BigNumber(this.dailyEstProfit).minus(
-      new BigNumber(this.totalBorrowInterest ? this.totalBorrowInterest : '0')
+      new BigNumber(
+        this.totalBorrowInterest ? this.totalBorrowInterest : '0'
+      ).div(365)
     );
-    console.log('borInterest', this.userTotalSupplied);
     return netInterest.div(this.userTotalSupplied).toFixed();
   }
 }

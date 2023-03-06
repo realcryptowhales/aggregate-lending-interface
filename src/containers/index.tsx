@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '@/components/Header';
 import useSWR from 'swr';
@@ -20,8 +20,9 @@ function Layout() {
     // refreshInterval: 3000
     // }
   );
-  !isLoading && setTokenMap(data);
-  console.log(data, 'restRes');
+  useEffect(() => {
+    !isLoading && setTokenMap(data);
+  }, [isLoading, data]);
   return (
     <div className="w-full">
       <Header />

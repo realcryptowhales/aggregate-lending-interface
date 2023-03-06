@@ -64,8 +64,6 @@ const AssetInfo: React.FC = ({}) => {
     return thousandCurrency(+collateralValue, 4);
   }, [collateralValue]);
   const percentUsedRatio = useMemo(() => {
-    console.log('usedRatio', typeof usedRatio);
-
     if (Number.isNaN(+usedRatio)) return '0%';
     return formatPercent(+usedRatio);
   }, [usedRatio]);
@@ -73,7 +71,6 @@ const AssetInfo: React.FC = ({}) => {
     if (Number.isNaN(+borrowLimit) || !borrowLimit) return '--';
     return thousandCurrency(+borrowLimit, 4);
   }, [borrowLimit]);
-  console.log('userTotalSupplied', userTotalSupplied);
   return (
     <div className={cls(style.container)}>
       <InfoItem

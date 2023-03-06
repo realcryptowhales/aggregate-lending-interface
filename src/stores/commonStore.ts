@@ -4,7 +4,7 @@ interface TokenInfo {
   symbol: string;
   name: string;
   icon: string;
-  deciaml: number;
+  decimal: number;
 }
 type TokenMap = Record<string, TokenInfo>;
 export default class CommonStore {
@@ -18,6 +18,5 @@ export default class CommonStore {
     tokenList.map(({ address, ...rest }) => {
       this.tokenMap[address] = { address, ...rest };
     });
-    console.log('this.tokenMap', this.tokenMap);
   }
 }

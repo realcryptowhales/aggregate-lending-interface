@@ -7,10 +7,29 @@ import { PurpleButton } from '@/containers/Porfolio/BorrowTableRows';
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import { currencyList, TOKENSYMBOL } from '@/constant';
-import { MarketCurrencyInfo } from '@/stores/marketStore';
-import { rawToPercent, rawToThousandCurrency } from '@/utils/format';
+
+import {
+  formatPercent,
+  rawToPercent,
+  rawToThousandCurrency,
+  thousandCurrency
+} from '@/utils/format';
 import { useStore } from '@/stores';
-export type Data = MarketCurrencyInfo;
+export type Data = {
+  underlying: string;
+  borrowRate: string;
+  supplyRate: string;
+  totalBorrowed: string;
+  totalMatched: string;
+  totalSupplied: string;
+  symbol: string;
+  matchedSupplyPercentage: string;
+  aaveSupplyPercentage: string;
+  compoundSupplyPercentage: string;
+  matchedBorrowPercentage: string;
+  aaveBorrowPercentage: string;
+  compoundBorrowPercentage: string;
+};
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -41,18 +60,27 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
     totalSupplied,
     totalMatched,
     supplyRate,
-    borrowRate
+    borrowRate,
+    matchedSupplyPercentage,
+    aaveSupplyPercentage,
+    compoundSupplyPercentage,
+    matchedBorrowPercentage,
+    aaveBorrowPercentage,
+    compoundBorrowPercentage
   } = row;
   const navigate = useNavigate();
   const {
     commonStore: { tokenMap }
   } = useStore();
 
-  const [icon = '', symbol = '', decimal = 6] = [
-    tokenMap[underlying]?.icon,
-    tokenMap[underlying]?.symbol,
-    tokenMap[underlying]?.deciaml
+  const currentToken = tokenMap?.[underlying.toLocaleLowerCase()];
+  const [icon = '', symbol = '', decimal = 6, name] = [
+    currentToken?.icon,
+    currentToken?.symbol,
+    currentToken?.decimal,
+    currentToken?.name
   ];
+  console.log('matchedSupplyPercentage', matchedSupplyPercentage);
   return (
     <StyledTableRow
       sx={{
@@ -65,7 +93,7 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
       key={symbol}
       className={cls('cursor-pointer', style.row)}
       onClick={() => {
-        navigate(`/markets/token?address=${underlying}`);
+        navigate(`/markets/token?address=${underlying.toLocaleLowerCase()}`);
       }}
     >
       <TableCell
@@ -79,30 +107,41 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
           <img
             style={{ width: 30, height: 30, marginRight: 8 }}
             src={icon}
+            alt={symbol}
           ></img>
           <div>
             <div className={style.name}> {symbol}</div>
 
-            <span className={style.font12}> {symbol}</span>
+            <span className={style.font12}> {name}</span>
           </div>
         </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 140 }}>
-        <div className={style.cell}>{rawToThousandCurrency(totalSupplied)}</div>
+        <div className={style.cell}>{thousandCurrency(totalSupplied)}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 163 }}>
-        <div className={style.cell}>{rawToPercent(supplyRate)}</div>
-        <span className={style.font12}>{'match'}</span>
+        <div className={style.cell}>{formatPercent(supplyRate)}</div>
+        <span className={style.font12}>
+          {`(${formatPercent(matchedSupplyPercentage, 0)}撮合 ${formatPercent(
+            aaveSupplyPercentage,
+            0
+          )}Aave ${formatPercent(compoundSupplyPercentage, 0)}Compound)`}
+        </span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 146 }}>
-        <div className={style.cell}>{rawToThousandCurrency(totalBorrowed)}</div>
+        <div className={style.cell}>{thousandCurrency(totalBorrowed)}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 182 }}>
-        <div>{rawToPercent(borrowRate)}</div>
-        <span className={style.font12}>{'match'}</span>
+        <div>{formatPercent(borrowRate)}</div>
+        <span className={style.font12}>
+          {`(${formatPercent(matchedBorrowPercentage, 0)}撮合 ${formatPercent(
+            aaveBorrowPercentage,
+            0
+          )}Aave ${formatPercent(compoundBorrowPercentage, 0)}Compound)`}
+        </span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 256 }}>
-        <div>{rawToThousandCurrency(totalMatched)}</div>
+        <div>{thousandCurrency(totalMatched)}</div>
       </TableCell>
       <TableCell
         padding="none"

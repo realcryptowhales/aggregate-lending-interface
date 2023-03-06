@@ -503,7 +503,13 @@ export const queryHelperABI = [
     type: 'function'
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_quote',
+        type: 'address'
+      }
+    ],
     name: 'getBorrowMarkets',
     outputs: [
       {
@@ -704,9 +710,9 @@ export const queryHelperABI = [
             type: 'address'
           },
           {
-            internalType: 'uint256',
-            name: 'totalSupplied',
-            type: 'uint256'
+            internalType: 'uint256[]',
+            name: 'supplies',
+            type: 'uint256[]'
           },
           {
             internalType: 'uint256',
@@ -714,9 +720,9 @@ export const queryHelperABI = [
             type: 'uint256'
           },
           {
-            internalType: 'uint256',
-            name: 'totalBorrowed',
-            type: 'uint256'
+            internalType: 'uint256[]',
+            name: 'borrows',
+            type: 'uint256[]'
           },
           {
             internalType: 'uint256',
@@ -760,9 +766,9 @@ export const queryHelperABI = [
             type: 'address'
           },
           {
-            internalType: 'uint256',
-            name: 'totalSupplied',
-            type: 'uint256'
+            internalType: 'uint256[]',
+            name: 'supplies',
+            type: 'uint256[]'
           },
           {
             internalType: 'uint256',
@@ -770,9 +776,9 @@ export const queryHelperABI = [
             type: 'uint256'
           },
           {
-            internalType: 'uint256',
-            name: 'totalBorrowed',
-            type: 'uint256'
+            internalType: 'uint256[]',
+            name: 'borrows',
+            type: 'uint256[]'
           },
           {
             internalType: 'uint256',
@@ -794,8 +800,53 @@ export const queryHelperABI = [
     type: 'function'
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_underlying',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_quote',
+        type: 'address'
+      }
+    ],
     name: 'getPlatformInfo',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: 'depositedValue',
+        type: 'uint256'
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalBorrowedValue',
+        type: 'uint256'
+      },
+      {
+        internalType: 'uint256',
+        name: 'matchAmountValue',
+        type: 'uint256'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: '_underlyings',
+        type: 'address[]'
+      },
+      {
+        internalType: 'address',
+        name: '_quote',
+        type: 'address'
+      }
+    ],
+    name: 'getPlatformsInfo',
     outputs: [
       {
         internalType: 'uint256',
@@ -841,7 +892,13 @@ export const queryHelperABI = [
     type: 'function'
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_quote',
+        type: 'address'
+      }
+    ],
     name: 'getSupplyMarkets',
     outputs: [
       {
@@ -1016,6 +1073,97 @@ export const queryHelperABI = [
         internalType: 'uint256',
         name: 'borrowLimit',
         type: 'uint256'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_account',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_asset',
+        type: 'address'
+      }
+    ],
+    name: 'getUserStatus',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'assetPrice',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'userBalance',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'borrowed',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'supplied',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'totalBorrowed',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'tatalCollateral',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'borrowLimit',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateThreashold',
+            type: 'uint256'
+          },
+          {
+            internalType: 'bool',
+            name: 'usingAsCollateral',
+            type: 'bool'
+          },
+          {
+            internalType: 'uint256',
+            name: 'supplyRate',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'borrowRate',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'supplyRates',
+            type: 'uint256[]'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'borrowRates',
+            type: 'uint256[]'
+          }
+        ],
+        internalType: 'struct QueryHelper.UserStatus',
+        name: 'userStatus',
+        type: 'tuple'
       }
     ],
     stateMutability: 'view',
@@ -3613,6 +3761,365 @@ export const sTokenABI = [
       }
     ],
     name: 'unscaledAmount',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  }
+];
+export const configABI = [
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address'
+      },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'maxLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'maxLiquidateRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateRewardRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'feeRate',
+            type: 'uint256'
+          }
+        ],
+        indexed: false,
+        internalType: 'struct Types.AssetConfig',
+        name: 'oldConfig',
+        type: 'tuple'
+      },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'maxLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'maxLiquidateRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateRewardRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'feeRate',
+            type: 'uint256'
+          }
+        ],
+        indexed: false,
+        internalType: 'struct Types.AssetConfig',
+        name: 'newConfig',
+        type: 'tuple'
+      }
+    ],
+    name: 'AssetConfigSet',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'previousOwner',
+        type: 'address'
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address'
+      }
+    ],
+    name: 'OwnershipTransferred',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'oldRouter',
+        type: 'address'
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'newRouter',
+        type: 'address'
+      }
+    ],
+    name: 'RouterSet',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'account',
+        type: 'address'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'oldUserDebtAndCollateral',
+        type: 'uint256'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'newUserDebtAndCollateral',
+        type: 'uint256'
+      }
+    ],
+    name: 'UserDebtAndCollateralSet',
+    type: 'event'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_token',
+        type: 'address'
+      }
+    ],
+    name: 'assetConfigs',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'maxLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'maxLiquidateRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateRewardRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'feeRate',
+            type: 'uint256'
+          }
+        ],
+        internalType: 'struct Types.AssetConfig',
+        name: '',
+        type: 'tuple'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'owner',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'router',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_token',
+        type: 'address'
+      },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'maxLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'maxLiquidateRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateRewardRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'feeRate',
+            type: 'uint256'
+          }
+        ],
+        internalType: 'struct Types.AssetConfig',
+        name: '_config',
+        type: 'tuple'
+      }
+    ],
+    name: 'setAssetConfig',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_account',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_underlying',
+        type: 'address'
+      },
+      {
+        internalType: 'bool',
+        name: '_borrowing',
+        type: 'bool'
+      }
+    ],
+    name: 'setBorrowing',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_router',
+        type: 'address'
+      }
+    ],
+    name: 'setRouter',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_account',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_underlying',
+        type: 'address'
+      },
+      {
+        internalType: 'bool',
+        name: '_usingAsCollateral',
+        type: 'bool'
+      }
+    ],
+    name: 'setUsingAsCollateral',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address'
+      }
+    ],
+    name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address'
+      }
+    ],
+    name: 'userDebtAndCollateral',
     outputs: [
       {
         internalType: 'uint256',
