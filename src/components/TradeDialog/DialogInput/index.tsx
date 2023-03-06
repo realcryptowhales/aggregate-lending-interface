@@ -17,7 +17,7 @@ interface DialogInputType {
   onChangeActiveCurrency: (name: string) => void;
   formValue: FormValuesProps;
   handleInputChange: (obj: { [key: string]: any }) => void;
-  balance?: number;
+  balance?: string;
   dolors?: number;
   type: DialogTypeProps;
 }

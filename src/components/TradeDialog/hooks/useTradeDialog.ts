@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, ReactNode } from 'react';
 import {
   useAccount,
   useContractReads,
-  useBalance,
   useContractWrite,
   usePrepareContractWrite
 } from 'wagmi';
@@ -11,7 +10,7 @@ import {
   ContractsArgsProps,
   CurrencyBaseInfoProps
 } from '@/constant/type';
-import { utils, BigNumber, FixedNumber } from 'ethers';
+import { utils, BigNumber } from 'ethers';
 import BN from 'bignumber.js';
 import { routerAddr, queryHelperContractAddr } from '@/constant/contract';
 import { sTokenABI, routerABI, queryHelperABI } from '@/constant/abi';
@@ -19,18 +18,16 @@ import useCurrencyList from '@/hooks/useCurrencyList';
 import { TRANSACTION_DETAIL_URL } from '../constant';
 
 export interface CurrencyInfoProps {
-  symbol: string;
-  icon: string;
-  optimization: number; // 内部撮合
-  aave: number; // AAVE
-  compound: number; // Compound
+  optimization?: string; // 内部撮合
+  aave?: string; // AAVE
+  compound?: string; // Compound
   borrowAPRPercent?: string; // 借款APR百分数
-  borrowAmount?: number; // 借款数量
+  borrowAmount?: string; // 借款数量
   depositAPRPercent?: string; // 存款APR百分数
-  depositAmount?: number; // 存款余额
-  maxLTV?: number; // 最高抵押率
-  liquidation?: number; // 清算域值
-  usedBorrowLimit?: number; // 已用借款限额
+  depositAmount?: string; // 存款余额
+  maxLTV?: string; // 最高抵押率
+  liquidation?: string; // 清算域值
+  usedBorrowLimit?: string; // 已用借款限额
 }
 
 export interface UseTradeDialogProps {
@@ -97,10 +94,10 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   const [tabs, setTabs] = useState<tabsItemProps[]>();
   const [open, setOpen] = useState(true);
   const [infosTop, setInfosTop] = useState<InfosTopItemProps[]>();
-  const [balance, setBalance] = useState<number>();
+  const [balance, setBalance] = useState<string>();
   const [dolors, setDolors] = useState<number>(0);
   const [aprInfo, setAprInfo] = useState<AprInfoProps>();
-  const [willBecomeBorrowLimit, setWillBecomeBorrowLimit] = useState<number>();
+  const [willBecomeBorrowLimit, setWillBecomeBorrowLimit] = useState<string>();
   const [formValue, setFormValues] = useState<FormValuesProps>({
     number: '',
     asCollateral: true
@@ -138,16 +135,59 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   // 获取用户钱包地址
   const { address } = useAccount();
 
+  const toPercent = (num?: string) => {
+    return num ? `${BN(num).times(100)}%` : '0%';
+  };
+
+  const cutZero = (old: string) => {
+    //拷贝一份 返回去掉零的新串
+    let newStr = old;
+    //循环变量 小数部分长度
+    const leng = old.length - old.indexOf('.') - 1;
+    //判断是否有效数
+    if (old.indexOf('.') > -1) {
+      //循环小数部分
+      for (let i = leng; i > 0; i--) {
+        //如果newstr末尾有0
+        if (
+          newStr.lastIndexOf('0') > -1 &&
+          newStr.substr(newStr.length - 1, 1) === '0'
+        ) {
+          const k = newStr.lastIndexOf('0');
+          //如果小数点后只有一个0 去掉小数点
+          if (newStr.charAt(k - 1) == '.') {
+            return newStr.substring(0, k - 1);
+          } else {
+            //否则 去掉一个0
+            newStr = newStr.substring(0, k);
+          }
+        } else {
+          //如果末尾没有0
+          return newStr;
+        }
+      }
+    }
+    return old;
+  };
+
   // bigNumber to percent
-  const bigNumberToPercent = (big: BigNumber) => {
-    return `${FixedNumber.fromString(utils.formatUnits(big, 4))
-      .round(2)
-      .toString()}%`;
+  const formatRatePercent = (big: BigNumber) => {
+    return toPercent(BN(utils.formatUnits(big, 6)).toFixed(4, 1));
+  };
+
+  const formatRateNumber = (big: BigNumber) => {
+    return cutZero(BN(utils.formatUnits(big, 6)).toFixed(4, 1));
+  };
+
+  const formatPriceNumber = (big: BigNumber) => {
+    return cutZero(utils.formatUnits(big, 8));
   };
 
   // bigNumber to number
-  const bigNumberToNumber = (big: BigNumber) => {
-    return utils.formatUnits(big, activeCurrencyBaseInfo?.decimal);
+  const formatCurrencyNumber = (big: BigNumber) => {
+    return cutZero(
+      BN(utils.formatUnits(big, activeCurrencyBaseInfo?.decimal)).toFixed(4, 1)
+    );
   };
 
   // 更新当前币种的详细信息
@@ -167,55 +207,39 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
       supplyRates, // 底层协议存款利率
       borrowRates // 底层协议借款利率
     } = info;
-    // setActiveCurrencyInfo({
-    //   optimization, // 内部撮合
-    //   aave, // AAVE
-    //   compound, // Compound
-    //   outstandingLoan, // 贷款余额
-    //   borrowAPRPercent, // 借款APR百分数
-    //   borrowAmount, // 借款数量
-    //   depositAPRPercent, // 存款APR百分数
-    //   depositAmount, // 存款余额
-    //   maxLTV, // 最高抵押率
-    //   liquidation, // 清算域值
-    //   usedBorrowLimit // 已用借款限额
-    // });
-    const depositAPRPercent = bigNumberToPercent(supplyRate); // `${FixedNumber.fromString(utils.formatUnits(supplyRate, 4)).round(2).toString()}%`;
-    const borrowAPRPercent = bigNumberToPercent(borrowRate);
-    const optimization = [
+    const depositAmount = formatCurrencyNumber(supplied); // 存款余额
+    switch (type) {
+      case DialogTypeProps.withdraw:
+        setBalance(depositAmount);
+        break;
+      case DialogTypeProps.borrow:
+        setBalance(formatCurrencyNumber(borrowLimit));
+        break;
+      default:
+        setBalance(formatCurrencyNumber(userBalance));
+        break;
+    }
+    const isWithdrawAndDeposit = [
       DialogTypeProps.withdraw,
       DialogTypeProps.deposit
-    ].includes(type)
-      ? depositAPRPercent
-      : borrowAPRPercent;
-    const aave = [DialogTypeProps.withdraw, DialogTypeProps.deposit].includes(
-      type
-    )
-      ? bigNumberToPercent(supplyRates[0])
-      : bigNumberToPercent(borrowRates[0]);
-    const compound = [
-      DialogTypeProps.withdraw,
-      DialogTypeProps.deposit
-    ].includes(type)
-      ? bigNumberToPercent(supplyRates[1])
-      : bigNumberToPercent(borrowRates[1]);
-    const borrowAmount = bigNumberToNumber(borrowed);
-    const depositAmount = bigNumberToNumber(supplied);
-    const a = BigNumber.from(borrowLimit);
-    console.log('borrowLimit', a, borrowLimit);
-    console.log('tatalCollateral', tatalCollateral);
-    // const maxLTV = // borrowLimit.div(tatalCollateral);
-    console.log('active', {
-      optimization, // 内部撮合
-      aave, // AAVE
-      compound, // Compound
-      borrowAPRPercent, // 借款APR百分数
-      borrowAmount, // 借款数量
-      depositAPRPercent, // 存款APR百分数
+    ].includes(type);
+    setActiveCurrencyInfo({
+      optimization: formatRateNumber(
+        isWithdrawAndDeposit ? supplyRate : borrowRate
+      ), // 内部撮合
+      aave: formatRateNumber(
+        isWithdrawAndDeposit ? supplyRates[0] : borrowRates[0]
+      ), // AAVE
+      compound: formatRateNumber(
+        isWithdrawAndDeposit ? supplyRates[1] : borrowRates[1]
+      ), // Compound
+      borrowAPRPercent: formatRatePercent(borrowRate), // 借款APR百分数
+      borrowAmount: formatCurrencyNumber(borrowed), // 借款数量
+      depositAPRPercent: formatRatePercent(supplyRate), // 存款APR百分数
       depositAmount, // 存款余额
-      maxLTV // 最高抵押率
-      // liquidation, // 清算域值
-      // usedBorrowLimit // 已用借款限额
+      maxLTV: formatRateNumber(borrowLimit.mod(tatalCollateral)), // 最高抵押率
+      liquidation: formatRateNumber(liquidateThreashold.mod(tatalCollateral)), // 清算域值
+      usedBorrowLimit: formatRateNumber(borrowed.mod(tatalCollateral)) // 已用借款限额
     });
   };
 
@@ -261,75 +285,26 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
           );
         }
         if (data[1]) {
-          const {
-            assetPrice, // 资产价格
-            userBalance, // 用户余额
-            borrowed, // 借款数量
-            supplied, // 存款数量
-            totalBorrowed, //总借款
-            tatalCollateral, //总抵押
-            borrowLimit, // 借款上限
-            liquidateThreashold, // 清算阈值
-            usingAsCollateral, //是否用作抵押资产
-            supplyRate, // 存款利率
-            borrowRate, //借款利率
-            supplyRates, // 底层协议存款利率
-            borrowRates // 底层协议借款利率
-          } = data[1];
-          // console.log('data[1]', {
-          //   assetPrice, // 资产价格
-          //   userBalance, // 用户余额
-          //   borrowed, // 借款数量
-          //   supplied, // 存款数量
-          //   totalBorrowed, //总借款
-          //   tatalCollateral, //总抵押
-          //   borrowLimit, // 借款上限
-          //   liquidateThreashold, // 清算阈值
-          //   usingAsCollateral, //是否用作抵押资产
-          //   supplyRate, // 存款利率
-          //   borrowRate, //借款利率
-          //   supplyRates, // 底层协议存款利率
-          //   borrowRates // 底层协议借款利率
-          // });
           updateActiveCurrencyInfo(data[1]);
         }
       }
     }
   });
 
-  // 获取用户当前币种的资产
-  useBalance({
-    address,
-    watch: true,
-    token: activeCurrencyBaseInfo?.address,
-    onSuccess({ value, decimals }: UseBalanceDataProps) {
-      // 仅在存款弹窗的时候更新balance
-      if (
-        activeCurrency &&
-        type === DialogTypeProps.deposit &&
-        activeCurrencyBaseInfo?.address &&
-        value
-      ) {
-        setBalance(Number(utils.formatUnits(value, decimals)));
-      }
-    }
-  });
-
   // 更新balance
   const updateBalance = () => {
-    setBalance(0);
+    setBalance('0');
     // type === DialogTypeProps.deposit 通过 useBalance更新
   };
 
-  const getBestApr = (num?: number) => {
+  const getBestApr = (num?: string) => {
     if (num && optimization && aave && compound) {
-      return num === Math.max(optimization, aave, compound);
+      const bigger = BN(compound).comparedTo(aave) === 1 ? compound : aave;
+      const biggest =
+        BN(optimization).comparedTo(bigger) === 1 ? optimization : bigger;
+      return num === biggest;
     }
     return false;
-  };
-
-  const toPercent = (num?: number) => {
-    return num ? `${parseFloat(Number(num * 100).toFixed(2))}%` : '0%';
   };
 
   const init = () => {
@@ -829,7 +804,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   // 更新借款限额 和 美元价值
   useEffect(() => {
     formValue?.number && setDolors(Number(formValue.number));
-    setWillBecomeBorrowLimit(0.9);
+    setWillBecomeBorrowLimit('0.9');
   }, [formValue.number]);
 
   // 更新ActiveCurrencyBaseInfo

@@ -15,8 +15,9 @@ export default class CommonStore {
   }
   setTokenMap(tokenList: TokenInfo[] = []) {
     this.tokenList = tokenList;
-    tokenList.map(({ address, ...rest }) => {
-      this.tokenMap[address] = { address, ...rest };
-    });
+    tokenList &&
+      tokenList.map(({ address, ...rest }) => {
+        this.tokenMap[address] = { address, ...rest };
+      });
   }
 }
