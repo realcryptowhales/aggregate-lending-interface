@@ -1,24 +1,19 @@
 import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '@/components/Header';
-import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable';
 import { fetcher } from '@api/index';
 import { useStore } from '@/stores';
+import Test from './Test';
 function Layout() {
   const {
     commonStore: { setTokenMap }
   } = useStore();
-  const { data, isLoading } = useSWR(
+  const { data, isLoading } = useSWRImmutable(
     {
-      url: 'http://35.220.222.252/aggregate-lending/config/list'
+      url: '/config/list'
     },
-    fetcher,
-    {
-      refreshInterval: 0
-    }
-    // {
-    // refreshInterval: 3000
-    // }
+    fetcher
   );
   useEffect(() => {
     !isLoading && setTokenMap(data);
@@ -26,6 +21,7 @@ function Layout() {
   return (
     <div className="w-full">
       <Header />
+      <Test />
       <Outlet />
     </div>
   );

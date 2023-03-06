@@ -14,7 +14,7 @@ export interface TabItemProps {
   text: string;
 }
 
-export interface LendingDialogProps extends UseTradeDialogProps {
+export interface TradeDialogProps extends UseTradeDialogProps {
   open: boolean;
   onClose: () => void;
   onChangeTab: (dialogType: DialogTypeProps) => void;
@@ -24,12 +24,11 @@ export interface LendingDialogProps extends UseTradeDialogProps {
 function TradeDialog({
   type,
   open,
-  currencyDetailList,
   onClose,
   onChangeTab,
   onChangeActiveCurrency,
   activeCurrency
-}: LendingDialogProps) {
+}: TradeDialogProps) {
   const {
     tabs,
     infosTop,
@@ -55,8 +54,7 @@ function TradeDialog({
     onBorrow
   } = useTradeDialog({
     type,
-    activeCurrency,
-    currencyDetailList
+    activeCurrency
   });
 
   const onDialogClose = () => {
@@ -79,7 +77,7 @@ function TradeDialog({
             balance={balance}
             formValue={formValue}
             handleInputChange={handleFormChange}
-            currencyDetailList={currencyDetailList}
+            // currencyDetailList={currencyDetailList}
             activeCurrency={activeCurrency}
             dolors={dolors}
             onChangeActiveCurrency={onChangeActiveCurrency}

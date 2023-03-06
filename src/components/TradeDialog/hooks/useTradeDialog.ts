@@ -6,10 +6,11 @@ import {
   useContractWrite,
   usePrepareContractWrite
 } from 'wagmi';
-import { DialogTypeProps } from '@/constant/type';
-import { BigNumber, utils } from 'ethers';
-import { routerAddr } from '@/constant/contract';
-import { sTokenABI, routerABI } from '@/constant/abi';
+import { DialogTypeProps, ContractsArgsProps } from '@/constant/type';
+import { utils } from 'ethers';
+import Bignumber from 'bignumber.js';
+import { routerAddr, queryHelperContractAddr } from '@/constant/contract';
+import { sTokenABI, routerABI, queryHelperABI } from '@/constant/abi';
 import useCurrencyList, {
   CurrencyBaseInfoProps
 } from '@/hooks/useCurrencyList';
@@ -34,7 +35,7 @@ export interface CurrencyInfoProps {
 export interface UseTradeDialogProps {
   type: DialogTypeProps;
   activeCurrency: string;
-  currencyDetailList: CurrencyInfoProps[];
+  // currencyDetailList: CurrencyInfoProps[];
 }
 
 export interface InfosTopItemProps {
@@ -87,11 +88,7 @@ export interface SnackbarProps {
   type?: 'error' | 'info' | 'success' | 'warning';
 }
 
-const useTradeDialog = ({
-  type,
-  activeCurrency,
-  currencyDetailList
-}: UseTradeDialogProps) => {
+const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   const [activeCurrencyInfo, setActiveCurrencyInfo] =
     useState<CurrencyInfoProps>();
   const [activeCurrencyBaseInfo, setActiveCurrencyBaseInfo] =
@@ -128,18 +125,6 @@ const useTradeDialog = ({
   const a = Math.pow(2, 256).toString();
   // console.log('num', BigNumber.from(a));
 
-  const getActiveCurrencyInfo = (name: string) => {
-    return currencyDetailList.find((item) => {
-      return item.symbol === name;
-    });
-  };
-
-  const updateActiveCurrencyInfo = () => {
-    if (activeCurrency && currencyDetailList) {
-      setActiveCurrencyInfo(getActiveCurrencyInfo(activeCurrency));
-    }
-  };
-
   const handleFormChange = (obj: { [key: string]: any }) => {
     setFormValues({
       ...formValue,
@@ -153,9 +138,47 @@ const useTradeDialog = ({
   // 获取用户钱包地址
   const { address } = useAccount();
 
+  // 更新当前币种的详细信息
+  const updateActiveCurrencyInfo = (info: { [key: string]: any }) => {
+    const {
+      assetPrice, // 资产价格
+      userBalance, // 用户余额
+      borrowed, // 借款数量
+      supplied, // 存款数量
+      totalBorrowed, //总借款
+      tatalCollateral, //总抵押
+      borrowLimit, // 借款上限
+      liquidateThreashold, // 清算阈值
+      usingAsCollateral, //是否用作抵押资产
+      supplyRate, // 存款利率
+      borrowRate, //借款利率
+      supplyRates, // 底层协议存款利率
+      borrowRates // 底层协议借款利率
+    } = info;
+    // setActiveCurrencyInfo({
+    //   optimization, // 内部撮合
+    //   aave, // AAVE
+    //   compound, // Compound
+    //   outstandingLoan, // 贷款余额
+    //   borrowAPRPercent, // 借款APR百分数
+    //   borrowAmount, // 借款数量
+    //   depositAPRPercent, // 存款APR百分数
+    //   depositAmount, // 存款余额
+    //   maxLTV, // 最高抵押率
+    //   liquidation, // 清算域值
+    //   usedBorrowLimit // 已用借款限额
+    // });
+    const depositAPRPercent = new Bignumber(supplyRate).toFormat(2);
+    console.log('depositAPRPercent', depositAPRPercent);
+  };
+
+  // 合约请求参数
   const contractsArgs = useMemo(() => {
+    let res: ContractsArgsProps[] = [];
+    // 获取当前active币种的授权数量
     if (address && activeCurrencyBaseInfo?.sToken) {
-      return [
+      res = [
+        ...res,
         {
           address: activeCurrencyBaseInfo?.address,
           abi: sTokenABI,
@@ -164,18 +187,65 @@ const useTradeDialog = ({
         }
       ];
     }
-    return [];
+    // 获取当前币种的详细数据
+    if (address && activeCurrencyBaseInfo?.address) {
+      res = [
+        ...res,
+        {
+          address: queryHelperContractAddr,
+          abi: queryHelperABI,
+          functionName: 'getUserStatus',
+          args: [address, activeCurrencyBaseInfo?.address]
+        }
+      ];
+    }
+    return res;
   }, [address, activeCurrencyBaseInfo]);
 
-  // 获取当前active币种的授权数量
+  // 获取当前active币种的授权数量 & 获取当前币种的详细数据
   useContractReads({
     contracts: contractsArgs,
     watch: true,
     onSuccess(data: any[]) {
-      if (data && data.length && data[0]) {
-        setAllowance(
-          Number(utils.formatUnits(data[0], activeCurrencyBaseInfo?.decimal))
-        );
+      if (data && data.length) {
+        if (data[0]) {
+          setAllowance(
+            Number(utils.formatUnits(data[0], activeCurrencyBaseInfo?.decimal))
+          );
+        }
+        if (data[1]) {
+          const {
+            assetPrice, // 资产价格
+            userBalance, // 用户余额
+            borrowed, // 借款数量
+            supplied, // 存款数量
+            totalBorrowed, //总借款
+            tatalCollateral, //总抵押
+            borrowLimit, // 借款上限
+            liquidateThreashold, // 清算阈值
+            usingAsCollateral, //是否用作抵押资产
+            supplyRate, // 存款利率
+            borrowRate, //借款利率
+            supplyRates, // 底层协议存款利率
+            borrowRates // 底层协议借款利率
+          } = data[1];
+          console.log('data[1]', {
+            assetPrice, // 资产价格
+            userBalance, // 用户余额
+            borrowed, // 借款数量
+            supplied, // 存款数量
+            totalBorrowed, //总借款
+            tatalCollateral, //总抵押
+            borrowLimit, // 借款上限
+            liquidateThreashold, // 清算阈值
+            usingAsCollateral, //是否用作抵押资产
+            supplyRate, // 存款利率
+            borrowRate, //借款利率
+            supplyRates, // 底层协议存款利率
+            borrowRates // 底层协议借款利率
+          });
+          updateActiveCurrencyInfo(data[1]);
+        }
       }
     }
   });
@@ -711,9 +781,8 @@ const useTradeDialog = ({
 
   // 更新ActiveCurrencyBaseInfo
   useEffect(() => {
-    if (currencyBaseInfoList.data && activeCurrency) {
-      const { data } = currencyBaseInfoList;
-      const activeCurrencyBaseInfo = data.find((item) => {
+    if (currencyBaseInfoList && activeCurrency) {
+      const activeCurrencyBaseInfo = currencyBaseInfoList.find((item) => {
         return item.symbol === activeCurrency;
       });
       setActiveCurrencyBaseInfo(activeCurrencyBaseInfo);
@@ -724,8 +793,8 @@ const useTradeDialog = ({
   useEffect(() => {
     updateBalance();
     init();
-    updateActiveCurrencyInfo();
-  }, [type, activeCurrency, currencyDetailList]);
+    // updateActiveCurrencyInfo();
+  }, [type, activeCurrency]);
 
   return {
     tabs,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 import TradeDialog from '@/components/TradeDialog';
-import { DialogTypeProps, openDialogProps } from '@/constant/type';
+import { DialogTypeProps, OpenDialogProps } from '@/constant/type';
 
 const Markets = () => {
   const [open, setOpen] = useState(false);
@@ -116,7 +116,7 @@ const Markets = () => {
     setActiveCurrency(symbol);
   };
 
-  const openDialog = ({ type, activeCurrency }: openDialogProps) => {
+  const openDialog = ({ type, activeCurrency }: OpenDialogProps) => {
     setOpen(true);
     setType(type);
     setActiveCurrency(activeCurrency);
@@ -146,7 +146,6 @@ const Markets = () => {
         open={open}
         onClose={onClose}
         type={type!}
-        currencyDetailList={currencyList}
         onChangeActiveCurrency={onChangeActiveCurrency}
         activeCurrency={activeCurrency}
         onChangeTab={onChangeTab}
