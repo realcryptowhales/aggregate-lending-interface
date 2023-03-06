@@ -3,24 +3,8 @@ import { useState, useMemo } from 'react';
 import { fetcher } from '@api/index';
 import { useContractReads } from 'wagmi';
 import { routerAddr } from '@/constant/contract';
-import { ContractsArgsProps } from '@/constant/type';
+import { ContractsArgsProps, CurrencyBaseInfoProps } from '@/constant/type';
 import { routerABI } from '@/constant/abi';
-
-export interface CurrencyBaseInfoProps {
-  address: string;
-  configId: number;
-  decimal: number;
-  gmtCreate: string;
-  gmtModified: string;
-  icon: string;
-  name: string;
-  symbol: string;
-  index: number;
-  collateralable: boolean;
-  paused: boolean;
-  sToken: string;
-  dToken: string;
-}
 
 export interface AssetProps {
   index: number;
