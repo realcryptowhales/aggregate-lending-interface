@@ -104,48 +104,62 @@ export default class MarketStore {
 
           const supplyAaveAmount = new BN(supplies[0].toString());
           const supplyCompoundAmount = new BN(supplies[1].toString());
-          console.log(
-            symbol,
-            matchedAmount.toFixed(),
-            supplyAaveAmount.toFixed(),
-            supplyCompoundAmount.toFixed()
-          );
+          const supplyProtocolAmount =
+            supplyAaveAmount.plus(supplyCompoundAmount);
+
           const supplyTotalAmount = supplyAaveAmount
             .plus(supplyCompoundAmount)
             .plus(matchedAmount);
-
-          const matchedSupplyPercentage = matchedAmount
-            .div(supplyTotalAmount)
-            .toFixed();
-          const aaveSupplyPercentage = supplyAaveAmount
-            .div(supplyTotalAmount)
-            .toFixed();
-          const compoundSupplyPercentage = supplyCompoundAmount
-            .div(supplyTotalAmount)
-            .toFixed();
-          console.log(
-            '1231313',
-            supplyTotalAmount.toFixed(),
-            matchedSupplyPercentage,
-            aaveSupplyPercentage,
-            compoundSupplyPercentage
-          );
-
+          let matchedSupplyPercentage;
+          // let aaveSupplyPercentage;
+          // let compoundSupplyPercentage;
+          let protocolSupplyPercentage;
+          if (supplyTotalAmount.isZero()) {
+            matchedSupplyPercentage = '0';
+            protocolSupplyPercentage = '1';
+          } else {
+            matchedSupplyPercentage = matchedAmount
+              .div(supplyTotalAmount)
+              .toFixed();
+            // aaveSupplyPercentage = supplyAaveAmount
+            //   .div(supplyTotalAmount)
+            //   .toFixed();
+            // compoundSupplyPercentage = supplyCompoundAmount
+            //   .div(supplyTotalAmount)
+            //   .toFixed();
+            protocolSupplyPercentage = supplyProtocolAmount
+              .div(supplyTotalAmount)
+              .toFixed();
+          }
           const borrowAaveAmount = new BN(borrows[0].toString());
           const borrowCompoundAmount = new BN(borrows[1].toString());
+          const borrowProtocolAmount =
+            borrowAaveAmount.plus(borrowCompoundAmount);
           const borrowTotalAmount = borrowAaveAmount
             .plus(borrowCompoundAmount)
             .plus(matchedAmount);
-
-          const matchedBorrowPercentage = matchedAmount
-            .div(borrowTotalAmount)
-            .toFixed();
-          const aaveBorrowPercentage = borrowAaveAmount
-            .div(borrowTotalAmount)
-            .toFixed();
-          const compoundBorrowPercentage = borrowCompoundAmount
-            .div(borrowTotalAmount)
-            .toFixed();
+          let matchedBorrowPercentage;
+          // let aaveBorrowPercentage;
+          // let compoundBorrowPercentage;
+          let protocolBorrowPercentage;
+          if (borrowTotalAmount.isZero()) {
+            console.log('symbol', symbol);
+            matchedBorrowPercentage = '0';
+            protocolBorrowPercentage = '1';
+          } else {
+            matchedBorrowPercentage = matchedAmount
+              .div(borrowTotalAmount)
+              .toFixed();
+            // aaveBorrowPercentage = borrowAaveAmount
+            //   .div(borrowTotalAmount)
+            //   .toFixed();
+            // compoundBorrowPercentage = borrowCompoundAmount
+            //   .div(borrowTotalAmount)
+            //   .toFixed();
+            protocolBorrowPercentage = borrowProtocolAmount
+              .div(borrowTotalAmount)
+              .toFixed();
+          }
           totalSuppliedValue = totalSuppliedValue.plus(supplyTotalAmount);
           totalBorrowedValue = totalBorrowedValue.plus(borrowTotalAmount);
           totalMatchValue = totalMatchValue.plus(matchedAmount);
@@ -160,11 +174,13 @@ export default class MarketStore {
             symbol,
             underlying,
             matchedSupplyPercentage,
-            aaveSupplyPercentage,
-            compoundSupplyPercentage,
+            // aaveSupplyPercentage,
+            // compoundSupplyPercentage,
+            protocolSupplyPercentage,
             matchedBorrowPercentage,
-            aaveBorrowPercentage,
-            compoundBorrowPercentage
+            // aaveBorrowPercentage,
+            // compoundBorrowPercentage,
+            protocolBorrowPercentage
           };
         }
       );

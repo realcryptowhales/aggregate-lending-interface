@@ -1026,6 +1026,16 @@ export const queryHelperABI = [
             type: 'uint256'
           },
           {
+            internalType: 'uint256[]',
+            name: 'borrows',
+            type: 'uint256[]'
+          },
+          {
+            internalType: 'uint256',
+            name: 'totalMatched',
+            type: 'uint256'
+          },
+          {
             internalType: 'uint256',
             name: 'borrowLimit',
             type: 'uint256'
@@ -1204,6 +1214,16 @@ export const queryHelperABI = [
           {
             internalType: 'uint256',
             name: 'depositApr',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'supplies',
+            type: 'uint256[]'
+          },
+          {
+            internalType: 'uint256',
+            name: 'totalMatched',
             type: 'uint256'
           },
           {

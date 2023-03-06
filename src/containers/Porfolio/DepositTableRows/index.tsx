@@ -74,7 +74,9 @@ export const DepositTableRows = observer(
       availableBalance,
       dailyEstProfit,
       collateral,
-      depositAmount
+      depositAmount,
+      matchedSupplyPercentage,
+      protocolSupplyPercentage
     } = row;
     const {
       commonStore: { tokenMap }
@@ -134,7 +136,12 @@ export const DepositTableRows = observer(
           </TableCell>
           <TableCell padding="none" align="left" sx={{ width: 163 }}>
             <div>{formatPercent(depositApr)}</div>
-            <span className={style.font12}>APR组成</span>
+            <span className={style.font12}>
+              {`(${formatPercent(
+                matchedSupplyPercentage,
+                0
+              )}撮合+${formatPercent(protocolSupplyPercentage, 0)}底层协议)`}
+            </span>
           </TableCell>
           <TableCell padding="none" align="left" sx={{ width: 146 }}>
             <div>{thousandNumber(availableBalance)}</div>

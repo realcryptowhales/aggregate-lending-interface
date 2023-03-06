@@ -29,6 +29,8 @@ export type Data = {
   matchedBorrowPercentage: string;
   aaveBorrowPercentage: string;
   compoundBorrowPercentage: string;
+  protocolSupplyPercentage: string;
+  protocolBorrowPercentage: string;
 };
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
@@ -62,11 +64,14 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
     supplyRate,
     borrowRate,
     matchedSupplyPercentage,
-    aaveSupplyPercentage,
-    compoundSupplyPercentage,
+    // aaveSupplyPercentage,
+    // compoundSupplyPercentage,
     matchedBorrowPercentage,
-    aaveBorrowPercentage,
-    compoundBorrowPercentage
+
+    // aaveBorrowPercentage,
+    // compoundBorrowPercentage,
+    protocolSupplyPercentage,
+    protocolBorrowPercentage
   } = row;
   const navigate = useNavigate();
   const {
@@ -122,10 +127,10 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
       <TableCell padding="none" align="left" sx={{ width: 163 }}>
         <div className={style.cell}>{formatPercent(supplyRate)}</div>
         <span className={style.font12}>
-          {`(${formatPercent(matchedSupplyPercentage, 0)}撮合 ${formatPercent(
-            aaveSupplyPercentage,
+          {`(${formatPercent(matchedSupplyPercentage, 0)}撮合+${formatPercent(
+            protocolSupplyPercentage,
             0
-          )}Aave ${formatPercent(compoundSupplyPercentage, 0)}Compound)`}
+          )}底层协议)`}
         </span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 146 }}>
@@ -134,10 +139,10 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
       <TableCell padding="none" align="left" sx={{ width: 182 }}>
         <div>{formatPercent(borrowRate)}</div>
         <span className={style.font12}>
-          {`(${formatPercent(matchedBorrowPercentage, 0)}撮合 ${formatPercent(
-            aaveBorrowPercentage,
+          {`(${formatPercent(matchedBorrowPercentage, 0)}撮合+${formatPercent(
+            protocolBorrowPercentage,
             0
-          )}Aave ${formatPercent(compoundBorrowPercentage, 0)}Compound)`}
+          )}底层协议)`}
         </span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 256 }}>

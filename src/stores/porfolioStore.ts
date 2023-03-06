@@ -4,6 +4,8 @@ import { formatUnits } from 'ethers/lib/utils.js';
 import { makeAutoObservable } from 'mobx';
 import { formatContractData } from '@/utils/format';
 import { RootStore } from '.';
+import BN from 'bignumber.js';
+
 export interface SuppliedInfo extends Array<any> {
   availableBalance: BigNumberish;
   collateral: boolean;
@@ -64,10 +66,43 @@ export default class PorfolioStore {
           dailyEstProfit,
           depositApr,
           underlying,
+          supplies,
+          totalMatched,
           ...rest
         }) => {
           const decimal = tokenMap[underlying.toLocaleLowerCase()]?.decimal;
           const symbol = tokenMap[underlying.toLocaleLowerCase()]?.symbol;
+          const matchedAmount = new BN(totalMatched.toString());
+
+          const supplyAaveAmount = new BN(supplies[0].toString());
+          const supplyCompoundAmount = new BN(supplies[1].toString());
+          const supplyProtocolAmount =
+            supplyAaveAmount.plus(supplyCompoundAmount);
+
+          const supplyTotalAmount = supplyAaveAmount
+            .plus(supplyCompoundAmount)
+            .plus(matchedAmount);
+          let matchedSupplyPercentage;
+          // let aaveSupplyPercentage;
+          // let compoundSupplyPercentage;
+          let protocolSupplyPercentage;
+          if (supplyTotalAmount.isZero()) {
+            matchedSupplyPercentage = '0';
+            protocolSupplyPercentage = '1';
+          } else {
+            matchedSupplyPercentage = matchedAmount
+              .div(supplyTotalAmount)
+              .toFixed();
+            // aaveSupplyPercentage = supplyAaveAmount
+            //   .div(supplyTotalAmount)
+            //   .toFixed();
+            // compoundSupplyPercentage = supplyCompoundAmount
+            //   .div(supplyTotalAmount)
+            //   .toFixed();
+            protocolSupplyPercentage = supplyProtocolAmount
+              .div(supplyTotalAmount)
+              .toFixed();
+          }
 
           return {
             depositValue: formatUnits(depositValue, 6),
@@ -77,6 +112,10 @@ export default class PorfolioStore {
             depositApr: formatUnits(depositApr, 6),
             symbol,
             underlying,
+            matchedSupplyPercentage,
+            // aaveSupplyPercentage,
+            // compoundSupplyPercentage,
+            protocolSupplyPercentage,
             ...rest
           };
         }
@@ -87,32 +126,68 @@ export default class PorfolioStore {
 
     const { tokenMap } = this.rootStore.commonStore;
 
-    this.userBorrowedList = contractData
-      .map(formatContractData)
-      .map(
-        ({
-          underlying,
-          borrowAmount,
-          borrowValue,
-          borrowApr,
-          borrowLimit,
-          dailyEstInterest,
-          ...rest
-        }) => {
-          const decimal = tokenMap[underlying.toLocaleLowerCase()]?.decimal;
-          const symbol = tokenMap[underlying.toLocaleLowerCase()]?.symbol;
-          return {
-            borrowAmount: formatUnits(borrowAmount, decimal),
-            borrowValue: formatUnits(borrowValue, 6),
-            borrowApr: formatUnits(borrowApr, 6),
-            borrowLimit: formatUnits(borrowLimit, decimal),
-            dailyEstInterest: formatUnits(dailyEstInterest, 6),
-            symbol,
-            underlying,
-            ...rest
-          };
+    this.userBorrowedList = contractData.map(formatContractData).map(
+      ({
+        underlying,
+        borrowAmount,
+        borrowValue,
+        borrowApr,
+        borrowLimit,
+        dailyEstInterest,
+        borrows,
+        totalMatched,
+
+        ...rest
+      }) => {
+        const decimal = tokenMap[underlying.toLocaleLowerCase()]?.decimal;
+        const symbol = tokenMap[underlying.toLocaleLowerCase()]?.symbol;
+        const matchedAmount = new BN(totalMatched.toString());
+
+        const borrowAaveAmount = new BN(borrows[0].toString());
+        const borrowCompoundAmount = new BN(borrows[1].toString());
+        const borrowProtocolAmount =
+          borrowAaveAmount.plus(borrowCompoundAmount);
+        const borrowTotalAmount = borrowAaveAmount
+          .plus(borrowCompoundAmount)
+          .plus(matchedAmount);
+        let matchedBorrowPercentage;
+        // let aaveBorrowPercentage;
+        // let compoundBorrowPercentage;
+        let protocolBorrowPercentage;
+        if (borrowTotalAmount.isZero()) {
+          console.log('symbol', symbol);
+          matchedBorrowPercentage = '0';
+          protocolBorrowPercentage = '1';
+        } else {
+          matchedBorrowPercentage = matchedAmount
+            .div(borrowTotalAmount)
+            .toFixed();
+          // aaveBorrowPercentage = borrowAaveAmount
+          //   .div(borrowTotalAmount)
+          //   .toFixed();
+          // compoundBorrowPercentage = borrowCompoundAmount
+          //   .div(borrowTotalAmount)
+          //   .toFixed();
+          protocolBorrowPercentage = borrowProtocolAmount
+            .div(borrowTotalAmount)
+            .toFixed();
         }
-      );
+        return {
+          borrowAmount: formatUnits(borrowAmount, decimal),
+          borrowValue: formatUnits(borrowValue, 6),
+          borrowApr: formatUnits(borrowApr, 6),
+          borrowLimit: formatUnits(borrowLimit, decimal),
+          dailyEstInterest: formatUnits(dailyEstInterest, 6),
+          symbol,
+          underlying,
+          matchedBorrowPercentage,
+          // aaveBorrowPercentage,
+          // compoundBorrowPercentage,
+          protocolBorrowPercentage,
+          ...rest
+        };
+      }
+    );
   }
   async computePorfolioData(data: PorfolioData) {
     let suppliedList: SuppliedInfo[],

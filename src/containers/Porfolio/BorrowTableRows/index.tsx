@@ -1,13 +1,10 @@
-import { Button, styled, Switch, TableCell, TableRow } from '@mui/material';
+import { Button, styled, TableCell, TableRow } from '@mui/material';
 import style from './index.module.less';
 import cls from 'classnames';
 import { BorrowData } from '..';
 import { useNavigate } from 'react-router-dom';
 import {
   formatPercent,
-  rawToPercent,
-  rawToThousandCurrency,
-  rawToThousandNumber,
   thousandCurrency,
   thousandNumber
 } from '@/utils/format';
@@ -63,7 +60,9 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
     borrowApr,
     borrowLimit,
     dailyEstInterest,
-    borrowAmount
+    borrowAmount,
+    matchedBorrowPercentage,
+    protocolBorrowPercentage
   } = row;
   const navigate = useNavigate();
   const currentToken = tokenMap?.[underlying.toLocaleLowerCase()];
@@ -114,7 +113,12 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 163 }}>
         <div>{formatPercent(borrowApr)}</div>
-        <span className={style.font12}>APR组成</span>
+        <span className={style.font12}>
+          {`(${formatPercent(matchedBorrowPercentage, 0)}撮合+${formatPercent(
+            protocolBorrowPercentage,
+            0
+          )}底层协议)`}
+        </span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 146 }}>
         <div>{thousandNumber(borrowLimit)}</div>

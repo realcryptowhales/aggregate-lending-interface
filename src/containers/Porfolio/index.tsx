@@ -25,7 +25,11 @@ export interface DepositData {
   depositAmount: string;
   availableBalance: string;
   dailyEstProfit: string;
+  protocolSupplyPercentage: string;
+  matchedSupplyPercentage: string;
   collateral: boolean;
+  matchedBorrowPercentage: string;
+  protocolBorrowPercentage: string;
   action: React.ReactNode;
 }
 
@@ -102,6 +106,8 @@ export interface BorrowData {
   borrowApr: string;
   borrowLimit: string;
   dailyEstInterest: string;
+  matchedBorrowPercentage: string;
+  protocolBorrowPercentage: string;
   action: React.ReactNode;
 }
 const BorrowHeadCells: HeadCell<BorrowData>[] = [
