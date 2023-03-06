@@ -6,14 +6,16 @@ import {
   useContractWrite,
   usePrepareContractWrite
 } from 'wagmi';
-import { DialogTypeProps, ContractsArgsProps } from '@/constant/type';
+import {
+  DialogTypeProps,
+  ContractsArgsProps,
+  CurrencyBaseInfoProps
+} from '@/constant/type';
 import { utils } from 'ethers';
 import Bignumber from 'bignumber.js';
 import { routerAddr, queryHelperContractAddr } from '@/constant/contract';
 import { sTokenABI, routerABI, queryHelperABI } from '@/constant/abi';
-import useCurrencyList, {
-  CurrencyBaseInfoProps
-} from '@/hooks/useCurrencyList';
+import useCurrencyList from '@/hooks/useCurrencyList';
 import { TRANSACTION_DETAIL_URL } from '../constant';
 
 export interface CurrencyInfoProps {
@@ -585,14 +587,16 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     abi: routerABI,
     functionName: 'redeem',
     args: [
-      activeCurrencyBaseInfo?.address,
-      formValue.number
-        ? utils.parseUnits(
-            formValue.number.toString(),
-            activeCurrencyBaseInfo?.decimal
-          )
-        : '0',
-      address,
+      {
+        asset: activeCurrencyBaseInfo?.address,
+        amount: formValue.number
+          ? utils.parseUnits(
+              formValue.number.toString(),
+              activeCurrencyBaseInfo?.decimal
+            )
+          : '0',
+        to: address
+      },
       formValue.asCollateral,
       true
     ]
@@ -647,14 +651,16 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     abi: routerABI,
     functionName: 'borrow',
     args: [
-      activeCurrencyBaseInfo?.address,
-      formValue.number
-        ? utils.parseUnits(
-            formValue.number.toString(),
-            activeCurrencyBaseInfo?.decimal
-          )
-        : '0',
-      address,
+      {
+        asset: activeCurrencyBaseInfo?.address,
+        amount: formValue.number
+          ? utils.parseUnits(
+              formValue.number.toString(),
+              activeCurrencyBaseInfo?.decimal
+            )
+          : '0',
+        to: address
+      },
       true
     ]
   });
@@ -708,14 +714,16 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     abi: routerABI,
     functionName: 'borrow',
     args: [
-      activeCurrencyBaseInfo?.address,
-      formValue.number
-        ? utils.parseUnits(
-            formValue.number.toString(),
-            activeCurrencyBaseInfo?.decimal
-          )
-        : '0',
-      address,
+      {
+        asset: activeCurrencyBaseInfo?.address,
+        amount: formValue.number
+          ? utils.parseUnits(
+              formValue.number.toString(),
+              activeCurrencyBaseInfo?.decimal
+            )
+          : '0',
+        to: address
+      },
       true
     ]
   });
@@ -821,7 +829,8 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     onDeposit,
     onWithdraw,
     onRepay,
-    onBorrow
+    onBorrow,
+    currencyBaseInfoList
   };
 };
 

@@ -51,7 +51,8 @@ function TradeDialog({
     onDeposit,
     onWithdraw,
     onRepay,
-    onBorrow
+    onBorrow,
+    currencyBaseInfoList
   } = useTradeDialog({
     type,
     activeCurrency
@@ -77,7 +78,7 @@ function TradeDialog({
             balance={balance}
             formValue={formValue}
             handleInputChange={handleFormChange}
-            // currencyDetailList={currencyDetailList}
+            currencyBaseInfoList={currencyBaseInfoList}
             activeCurrency={activeCurrency}
             dolors={dolors}
             onChangeActiveCurrency={onChangeActiveCurrency}

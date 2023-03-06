@@ -8,11 +8,11 @@ import {
 } from '@mui/material';
 // import { useFormContext } from '@mui/material/FormControl';
 import styles from './index.module.less';
-import { DialogTypeProps } from '@/constant/type';
-import { CurrencyInfoProps, FormValuesProps } from '../hooks/useTradeDialog';
+import { DialogTypeProps, CurrencyBaseInfoProps } from '@/constant/type';
+import { FormValuesProps } from '../hooks/useTradeDialog';
 
 interface DialogInputType {
-  // currencyDetailList: CurrencyInfoProps[];
+  currencyBaseInfoList?: CurrencyBaseInfoProps[];
   activeCurrency: string;
   onChangeActiveCurrency: (name: string) => void;
   formValue: FormValuesProps;
@@ -23,7 +23,7 @@ interface DialogInputType {
 }
 
 const DialogInput = ({
-  // currencyDetailList,
+  currencyBaseInfoList,
   activeCurrency,
   onChangeActiveCurrency,
   formValue,
@@ -37,13 +37,11 @@ const DialogInput = ({
   };
 
   const getRenderValue = (value: any) => {
-    // const item = currencyDetailList.find((currency) => {
-    //   return currency.symbol === value;
-    // });
-    const item = {
-      symbol: 'USDT',
-      icon: ''
-    };
+    const item =
+      currencyBaseInfoList &&
+      currencyBaseInfoList.find((currency) => {
+        return currency.symbol === value;
+      });
     const { symbol, icon } = item || {};
     return (
       <div className={styles.render}>
@@ -112,8 +110,8 @@ const DialogInput = ({
               className={styles.select}
               renderValue={getRenderValue}
             >
-              {/* {currencyDetailList &&
-                currencyDetailList.map((item) => {
+              {currencyBaseInfoList &&
+                currencyBaseInfoList.map((item) => {
                   const { symbol, icon } = item;
                   return (
                     <MenuItem value={symbol} key={symbol}>
@@ -121,7 +119,7 @@ const DialogInput = ({
                       <span className={styles.symbol}>{symbol}</span>
                     </MenuItem>
                   );
-                })} */}
+                })}
             </Select>
           </div>
           <div className={styles.bottom}>
