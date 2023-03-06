@@ -9,6 +9,7 @@ import {
   thousandNumber
 } from '@/utils/format';
 import { useStore } from '@/stores';
+import { DialogTypeProps } from '@/constant';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -139,8 +140,10 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
             onClick={(e: any) => {
               e.stopPropagation();
 
-              //   todo
-              //openBorrowDialog
+              window.aggregate.openDialog({
+                type: DialogTypeProps.borrow,
+                activeCurrency: symbol
+              });
             }}
           >
             借款
@@ -149,8 +152,10 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
             sx={{ border: '1px solid #000000', color: '#3D3E3E' }}
             onClick={(e: any) => {
               e.stopPropagation();
-              //   todo
-              //openDepositDialog
+              window.aggregate.openDialog({
+                type: DialogTypeProps.repay,
+                activeCurrency: symbol
+              });
             }}
           >
             还款

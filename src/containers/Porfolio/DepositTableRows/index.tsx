@@ -17,6 +17,7 @@ import {
 } from '@/utils/format';
 import { useStore } from '@/stores';
 import { BorderButton } from '../BorrowTableRows';
+import { DialogTypeProps } from '@/constant/type';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -171,8 +172,10 @@ export const DepositTableRows = observer(
                 sx={{ mr: '12px', background: '#F98A6B' }}
                 onClick={(e: any) => {
                   e.stopPropagation();
-                  //   todo
-                  //openDepositDialog
+                  window.aggregate.openDialog({
+                    type: DialogTypeProps.deposit,
+                    activeCurrency: symbol
+                  });
                 }}
               >
                 存款
@@ -182,8 +185,10 @@ export const DepositTableRows = observer(
                 onClick={(e: any) => {
                   e.stopPropagation();
 
-                  //   todo
-                  //openBorrowDialog
+                  window.aggregate.openDialog({
+                    type: DialogTypeProps.withdraw,
+                    activeCurrency: symbol
+                  });
                 }}
               >
                 取款

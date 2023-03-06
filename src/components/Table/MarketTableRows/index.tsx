@@ -6,7 +6,7 @@ import { PinkButton } from '@/containers/Porfolio/DepositTableRows';
 import { PurpleButton } from '@/containers/Porfolio/BorrowTableRows';
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
-import { currencyList, TOKENSYMBOL } from '@/constant';
+import { currencyList, DialogTypeProps, TOKENSYMBOL } from '@/constant';
 
 import {
   formatPercent,
@@ -160,8 +160,10 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
             sx={{ mr: '12px', background: '#F98A6B' }}
             onClick={(e: any) => {
               e.stopPropagation();
-              //   todo
-              //openDepositDialog
+              window.aggregate.openDialog({
+                type: DialogTypeProps.deposit,
+                activeCurrency: symbol
+              });
             }}
           >
             存款
@@ -171,9 +173,10 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
             sx={{ background: '#51459D' }}
             onClick={(e: any) => {
               e.stopPropagation();
-
-              //   todo
-              //openBorrowDialog
+              window.aggregate.openDialog({
+                type: DialogTypeProps.borrow,
+                activeCurrency: symbol
+              });
             }}
           >
             借款

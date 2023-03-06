@@ -3,7 +3,7 @@ import cls from 'classnames';
 import AssetInfo from './AssetInfo';
 import EnhancedTable, { HeadCell } from '@/components/Table';
 import { DepositTableRows } from './DepositTableRows';
-import { Button, Tooltip } from '@mui/material';
+import { Alert, Button, Snackbar, Tooltip } from '@mui/material';
 import Tab, { Tabs } from './Tab';
 import { useMemo, useState } from 'react';
 import { BorrowTableRows } from './BorrowTableRows';
@@ -227,7 +227,10 @@ const Porfolio = () => {
   //     true
   //   ]
   // });
-
+  const [messageVisible, setMessageVisible] = useState(false);
+  const [messageStatus, setMessagestatus] = useState<'success' | 'error'>(
+    'success'
+  );
   const {
     tokenSymbol,
     onCancel,
@@ -235,7 +238,17 @@ const Porfolio = () => {
     openModalAction,
     collateralStatus,
     modalVisible
-  } = useCollateralModal();
+  } = useCollateralModal(
+    () => {
+      setMessageVisible(true);
+      setMessagestatus('success');
+    },
+    () => {
+      setMessageVisible(true);
+
+      setMessagestatus('error');
+    }
+  );
   const modalInfo = useMemo(() => {
     return collateralStatus === 'openCollateral'
       ? {
@@ -264,7 +277,11 @@ const Porfolio = () => {
             <div className="flex flex-col items-center justify-center min-w-85.75 min-h-47 text-3.5 leading-4">
               {`请确定以${tokenSymbol}作为抵押品 作为抵押品的资产可以用于借贷`}
             </div>
-          )
+          ),
+          message: {
+            success: '开启抵押成功',
+            error: '开启抵押失败'
+          }
         }
       : {
           title: '关闭抵押',
@@ -313,7 +330,11 @@ const Porfolio = () => {
               <span>关闭按钮会增加您的资产清算风险，</span>
               <div>若需关闭，建议存入更多资产或归还部分借款</div>
             </div>
-          )
+          ),
+          message: {
+            success: '关闭抵押成功',
+            error: '关闭抵押失败'
+          }
         };
   }, [collateralStatus, tokenSymbol, onCancel, onConfirm]);
   // console.log('address', address);
@@ -332,45 +353,70 @@ const Porfolio = () => {
   // });
   // const { isLoading, isSuccess, write, data } = useContractWrite(config);
   // console.log('data', data);
+
   return (
-    <div className={cls(style.container)}>
-      <div className={cls(style['container-head'])}>
-        <div
-          onClick={() => {
-            // write?.();
-          }}
-        >
-          我的资产
-        </div>
-        <Link to="/porfolio/liquidation" style={{ textDecoration: 'none' }}>
-          <div className={cls('flex items-center cursor-pointer')}>
-            <i
-              className={cls('iconfont icon-Records')}
-              style={{ fontSize: 24, marginRight: 8 }}
-            />
-            资产清算记录
+    <>
+      <div className={cls(style.container)}>
+        <div className={cls(style['container-head'])}>
+          <div
+            onClick={() => {
+              // write?.();
+            }}
+          >
+            我的资产
           </div>
-        </Link>
+          <Link to="/porfolio/liquidation" style={{ textDecoration: 'none' }}>
+            <div className={cls('flex items-center cursor-pointer')}>
+              <i
+                className={cls('iconfont icon-Records')}
+                style={{ fontSize: 24, marginRight: 8 }}
+              />
+              资产清算记录
+            </div>
+          </Link>
+        </div>
+        <main>
+          <AssetInfo />
+          <Tab
+            curValue={curTab}
+            option={options}
+            onChange={(tab) => {
+              setCurTab(tab);
+            }}
+          />
+          <EnhancedTable<any>
+            headCells={curHeadCells}
+            rows={curTableRow}
+            TableRows={renderCurTableRows as any}
+            defaultOrderBy={defaultOrderBy}
+            openCollateralModal={openModalAction}
+          />
+        </main>
+        <SmallDialog
+          open={modalVisible}
+          handleClose={onCancel}
+          {...modalInfo}
+        />
       </div>
-      <main>
-        <AssetInfo />
-        <Tab
-          curValue={curTab}
-          option={options}
-          onChange={(tab) => {
-            setCurTab(tab);
-          }}
-        />
-        <EnhancedTable<any>
-          headCells={curHeadCells}
-          rows={curTableRow}
-          TableRows={renderCurTableRows as any}
-          defaultOrderBy={defaultOrderBy}
-          openCollateralModal={openModalAction}
-        />
-      </main>
-      <SmallDialog open={modalVisible} handleClose={onCancel} {...modalInfo} />
-    </div>
+      <Snackbar
+        open={messageVisible}
+        autoHideDuration={5000}
+        onClose={() => {
+          setMessageVisible(false);
+        }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert severity={messageStatus} sx={{ width: '100%' }}>
+          <div className={style.snackbarContent}>
+            <div className={style.snackbarText}>
+              {messageStatus === 'success'
+                ? modalInfo.message.success
+                : modalInfo.message.error}
+            </div>
+          </div>
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

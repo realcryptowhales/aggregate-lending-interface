@@ -5,7 +5,10 @@ export enum Action {
   openCollateral = 'openCollateral',
   closeCollateral = 'closeCollateral'
 }
-export const useCollateralModal = () => {
+export const useCollateralModal = (
+  successCall: () => void,
+  errorCall: () => void
+) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [collateralStatus, setCollateralStatus] = useState<Action>(
     Action.closeCollateral
@@ -28,6 +31,7 @@ export const useCollateralModal = () => {
     },
     onError(error) {
       console.log('Error', error);
+      alert(1);
     },
     onSettled(data, error) {
       console.log('Settled', { data, error });
@@ -35,8 +39,17 @@ export const useCollateralModal = () => {
   });
   console.log('config', config);
   const { isLoading, isSuccess, write } = useContractWrite({
-    mode: '',
-    ...config
+    ...config,
+    onSuccess(data) {
+      console.log('Success', data);
+      successCall();
+    },
+    onError(error) {
+      errorCall();
+    },
+    onSettled(data, error) {
+      console.log('Settled', { data, error });
+    }
   });
   const openModalAction = useCallback(
     (symbol: string, tokenAddress: string, action: string) => {
