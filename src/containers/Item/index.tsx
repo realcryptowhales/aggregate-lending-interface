@@ -62,14 +62,17 @@ function PorfolioItem() {
   // set date
   const todayDate = useRef<any>(null);
   const lastThirtyDate = useRef<any>(null);
+  const showingDate = useRef<any>(null);
   useEffect(() => {
     todayDate.current = new Date().getTime();
+    showingDate.current = new Date().getTime();
     lastThirtyDate.current = new Date(
       todayDate.current - 1000 * 60 * 60 * 24 * 30
     ).getTime();
     return () => {
       todayDate.current = null;
       lastThirtyDate.current = null;
+      showingDate.current = null;
     };
   }, []);
 
@@ -78,7 +81,13 @@ function PorfolioItem() {
     ...queryHelperContract,
     functionName: isSupply ? 'getCurrentSupplyRates' : 'getCurrentBorrowRates',
     args: [tokenAddr],
-    enabled: Boolean(tokenAddr)
+    enabled: Boolean(tokenAddr),
+    watch: true,
+    onSuccess(data) {
+      // console.log(data, 'success');
+      // update showing date;
+      showingDate.current = new Date().getTime();
+    }
   });
   const { currentMatchAPR, currentAaveAPR, currentCompoundAPR } =
     useMemo(() => {
@@ -191,8 +200,8 @@ function PorfolioItem() {
   }, [address, tokenAddr]);
 
   const { data, isError, isLoading } = useContractReads({
-    contracts: contractsArgs
-    // watch: true
+    contracts: contractsArgs,
+    watch: true
   });
   // console.log(data, isError, isLoading, 'multicall');
 
@@ -422,7 +431,7 @@ function PorfolioItem() {
     setIsSupply,
     detailAmount: isSupply ? supplyAmount : borrowAmount,
     detailValue: isSupply ? supplyValue : borrowValue,
-    todayDate: formatDate(todayDate.current),
+    todayDate: formatDate(showingDate.current),
     matchAmount: isSupply ? supplyMatchAmount : borrowMatchAmount,
     aaveAmount: isSupply ? supplyAaveAmount : borrowAaveAmount,
     compoundAmount: isSupply ? supplyCompoundAmount : borrowCompoundAmount,
