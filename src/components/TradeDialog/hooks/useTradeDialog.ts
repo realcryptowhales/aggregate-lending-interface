@@ -11,8 +11,8 @@ import {
   ContractsArgsProps,
   CurrencyBaseInfoProps
 } from '@/constant/type';
-import { utils } from 'ethers';
-import Bignumber from 'bignumber.js';
+import { utils, BigNumber, FixedNumber } from 'ethers';
+import BN from 'bignumber.js';
 import { routerAddr, queryHelperContractAddr } from '@/constant/contract';
 import { sTokenABI, routerABI, queryHelperABI } from '@/constant/abi';
 import useCurrencyList from '@/hooks/useCurrencyList';
@@ -24,7 +24,6 @@ export interface CurrencyInfoProps {
   optimization: number; // 内部撮合
   aave: number; // AAVE
   compound: number; // Compound
-  outstandingLoan?: number; // 贷款余额
   borrowAPRPercent?: string; // 借款APR百分数
   borrowAmount?: number; // 借款数量
   depositAPRPercent?: string; // 存款APR百分数
@@ -112,7 +111,6 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     optimization, // 内部撮合
     aave, // AAVE
     compound, // Compound
-    outstandingLoan, // 贷款余额
     borrowAPRPercent, // 借款APR百分数
     borrowAmount, // 借款数量
     depositAPRPercent, // 存款APR百分数
@@ -139,6 +137,18 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
 
   // 获取用户钱包地址
   const { address } = useAccount();
+
+  // bigNumber to percent
+  const bigNumberToPercent = (big: BigNumber) => {
+    return `${FixedNumber.fromString(utils.formatUnits(big, 4))
+      .round(2)
+      .toString()}%`;
+  };
+
+  // bigNumber to number
+  const bigNumberToNumber = (big: BigNumber) => {
+    return utils.formatUnits(big, activeCurrencyBaseInfo?.decimal);
+  };
 
   // 更新当前币种的详细信息
   const updateActiveCurrencyInfo = (info: { [key: string]: any }) => {
@@ -170,8 +180,43 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     //   liquidation, // 清算域值
     //   usedBorrowLimit // 已用借款限额
     // });
-    const depositAPRPercent = new Bignumber(supplyRate).toFormat(2);
-    console.log('depositAPRPercent', depositAPRPercent);
+    const depositAPRPercent = bigNumberToPercent(supplyRate); // `${FixedNumber.fromString(utils.formatUnits(supplyRate, 4)).round(2).toString()}%`;
+    const borrowAPRPercent = bigNumberToPercent(borrowRate);
+    const optimization = [
+      DialogTypeProps.withdraw,
+      DialogTypeProps.deposit
+    ].includes(type)
+      ? depositAPRPercent
+      : borrowAPRPercent;
+    const aave = [DialogTypeProps.withdraw, DialogTypeProps.deposit].includes(
+      type
+    )
+      ? bigNumberToPercent(supplyRates[0])
+      : bigNumberToPercent(borrowRates[0]);
+    const compound = [
+      DialogTypeProps.withdraw,
+      DialogTypeProps.deposit
+    ].includes(type)
+      ? bigNumberToPercent(supplyRates[1])
+      : bigNumberToPercent(borrowRates[1]);
+    const borrowAmount = bigNumberToNumber(borrowed);
+    const depositAmount = bigNumberToNumber(supplied);
+    const a = BigNumber.from(borrowLimit);
+    console.log('borrowLimit', a, borrowLimit);
+    console.log('tatalCollateral', tatalCollateral);
+    // const maxLTV = // borrowLimit.div(tatalCollateral);
+    console.log('active', {
+      optimization, // 内部撮合
+      aave, // AAVE
+      compound, // Compound
+      borrowAPRPercent, // 借款APR百分数
+      borrowAmount, // 借款数量
+      depositAPRPercent, // 存款APR百分数
+      depositAmount, // 存款余额
+      maxLTV // 最高抵押率
+      // liquidation, // 清算域值
+      // usedBorrowLimit // 已用借款限额
+    });
   };
 
   // 合约请求参数
@@ -231,21 +276,21 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
             supplyRates, // 底层协议存款利率
             borrowRates // 底层协议借款利率
           } = data[1];
-          console.log('data[1]', {
-            assetPrice, // 资产价格
-            userBalance, // 用户余额
-            borrowed, // 借款数量
-            supplied, // 存款数量
-            totalBorrowed, //总借款
-            tatalCollateral, //总抵押
-            borrowLimit, // 借款上限
-            liquidateThreashold, // 清算阈值
-            usingAsCollateral, //是否用作抵押资产
-            supplyRate, // 存款利率
-            borrowRate, //借款利率
-            supplyRates, // 底层协议存款利率
-            borrowRates // 底层协议借款利率
-          });
+          // console.log('data[1]', {
+          //   assetPrice, // 资产价格
+          //   userBalance, // 用户余额
+          //   borrowed, // 借款数量
+          //   supplied, // 存款数量
+          //   totalBorrowed, //总借款
+          //   tatalCollateral, //总抵押
+          //   borrowLimit, // 借款上限
+          //   liquidateThreashold, // 清算阈值
+          //   usingAsCollateral, //是否用作抵押资产
+          //   supplyRate, // 存款利率
+          //   borrowRate, //借款利率
+          //   supplyRates, // 底层协议存款利率
+          //   borrowRates // 底层协议借款利率
+          // });
           updateActiveCurrencyInfo(data[1]);
         }
       }
@@ -293,7 +338,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
         setInfosTop([
           {
             title: `贷款余额(${activeCurrency})`,
-            value: outstandingLoan!
+            value: borrowAmount!
           }
         ]);
         setTabs([
