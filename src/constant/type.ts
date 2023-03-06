@@ -4,3 +4,8 @@ export enum DialogTypeProps {
   borrow,
   repay
 }
+
+export interface openDialogProps {
+  type: DialogTypeProps;
+  activeCurrency: string;
+}

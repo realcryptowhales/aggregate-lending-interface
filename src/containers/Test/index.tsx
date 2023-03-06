@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 import TradeDialog from '@/components/TradeDialog';
-import { DialogTypeProps } from '@/constant/type';
+import { DialogTypeProps, openDialogProps } from '@/constant/type';
 
 const Markets = () => {
   const [open, setOpen] = useState(false);
@@ -94,7 +94,7 @@ const Markets = () => {
   };
 
   const onClickDeposit = () => {
-    openDialog(DialogTypeProps.deposit);
+    openDialog({ type: DialogTypeProps.deposit, activeCurrency: 'USDT' });
   };
 
   const onClickRepay = () => {
@@ -116,9 +116,10 @@ const Markets = () => {
     setActiveCurrency(symbol);
   };
 
-  const openDialog = (type: DialogTypeProps) => {
+  const openDialog = ({ type, activeCurrency }: openDialogProps) => {
     setOpen(true);
     setType(type);
+    setActiveCurrency(activeCurrency);
   };
 
   useEffect(() => {
