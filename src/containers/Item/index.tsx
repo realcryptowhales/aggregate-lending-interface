@@ -7,6 +7,8 @@ import Tooltip from '@mui/material/Tooltip';
 import Detail from '@/components/Detail';
 import { queryHelperContractAddr, queryHelperABI } from '@constant/index';
 import { useContractReads, useAccount, useContractRead } from 'wagmi';
+import { mockUSDTAddr } from '@/constant/contract';
+
 import {
   rawToThousandNumber,
   rawToPercent,
@@ -182,11 +184,13 @@ function PorfolioItem() {
     const options: any = [
       {
         ...queryHelperContract,
-        functionName: 'getSupplyMarkets'
+        functionName: 'getSupplyMarkets',
+        args: [mockUSDTAddr]
       },
       {
         ...queryHelperContract,
-        functionName: 'getBorrowMarkets'
+        functionName: 'getBorrowMarkets',
+        args: [mockUSDTAddr]
       }
     ];
     if (address) {
