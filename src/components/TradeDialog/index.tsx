@@ -6,20 +6,8 @@ import DialogInput from './DialogInput';
 import InfoDetails from './InfoDetails';
 import TradeTable from './TradeTable';
 import Tabs from './Tabs';
-import { DialogTypeProps } from '@/constant/type';
-import useTradeDialog, { UseTradeDialogProps } from './hooks/useTradeDialog';
-
-export interface TabItemProps {
-  key: number;
-  text: string;
-}
-
-export interface TradeDialogProps extends UseTradeDialogProps {
-  open: boolean;
-  onClose: () => void;
-  onChangeTab: (dialogType: DialogTypeProps) => void;
-  onChangeActiveCurrency: (name: string) => void;
-}
+import { TradeDialogProps } from '@/constant/type';
+import useTradeDialog from './hooks/useTradeDialog';
 
 function TradeDialog({
   type,
@@ -99,6 +87,7 @@ function TradeDialog({
             onWithdraw={onWithdraw}
             onRepay={onRepay}
             onBorrow={onBorrow}
+            onChangeTab={onChangeTab}
           />
         </section>
         <section className={styles.right}>

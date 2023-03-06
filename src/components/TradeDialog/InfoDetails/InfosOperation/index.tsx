@@ -2,26 +2,8 @@ import React from 'react';
 import { Switch, Tooltip } from '@mui/material';
 import clsx from 'classnames';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
-import { DialogTypeProps } from '@/constant/type';
-import { FormValuesProps } from '../../hooks/useTradeDialog';
+import { DialogTypeProps, OperationProps } from '@/constant/type';
 import styles from './index.module.less';
-
-interface OperationProps {
-  maxLTVPercent?: string;
-  formValue?: FormValuesProps;
-  handleFormChange?: (obj: { [key: string]: any }) => void;
-  isOverLiquidation?: boolean;
-  type?: DialogTypeProps;
-  isHighRisk?: boolean;
-  willBecomeBorrowLimitPercent?: string;
-  balance?: number | string;
-}
-
-// interface InfosDepositOperation {
-//   maxLTVPercent?: string;
-//   formValue: FormValuesProps;
-//   handleFormChange: (obj: { [key: string]: any }) => void;
-// }
 
 const InfosDepositOperation = ({
   maxLTVPercent,

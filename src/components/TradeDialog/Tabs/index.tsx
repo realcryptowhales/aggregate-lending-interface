@@ -1,13 +1,6 @@
 import styles from './index.module.less';
 import clsx from 'classnames';
-import { TabItemProps } from '..';
-import { DialogTypeProps } from '@/constant/type';
-
-interface TipProps {
-  tabs?: TabItemProps[];
-  activeTab?: DialogTypeProps;
-  onChangeTab: (num: number) => void;
-}
+import { TipProps } from '@/constant/type';
 
 function Tips({ activeTab, tabs, onChangeTab }: TipProps) {
   return (

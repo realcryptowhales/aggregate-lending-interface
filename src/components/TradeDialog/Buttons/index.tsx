@@ -1,25 +1,9 @@
 import Button from '@mui/material/Button';
 import { LoadingButton } from '@mui/lab';
 import clsx from 'classnames';
-import { DialogTypeProps } from '@/constant/type';
-import { FormValuesProps } from '../hooks/useTradeDialog';
+import BN from 'bignumber.js';
+import { DialogTypeProps, ButtonProps } from '@/constant/type';
 import styles from './index.module.less';
-import { UseContractWriteProps } from '../InfoDetails';
-
-interface ButtonProps {
-  activeCurrency: string;
-  auth: boolean;
-  formValue: FormValuesProps;
-  isHighRisk?: boolean;
-  isOverLiquidation?: boolean;
-  type?: DialogTypeProps;
-  balance?: number | string;
-  onApprove?: UseContractWriteProps;
-  onDeposit?: UseContractWriteProps;
-  onWithdraw?: UseContractWriteProps;
-  onRepay?: UseContractWriteProps;
-  onBorrow?: UseContractWriteProps;
-}
 
 function DepositButtons({
   activeCurrency,
@@ -63,7 +47,8 @@ function DepositButtons({
 function WithdrawButtons({
   isOverLiquidation,
   formValue,
-  isHighRisk
+  isHighRisk,
+  onWithdraw
 }: ButtonProps) {
   return (
     <div
@@ -77,6 +62,9 @@ function WithdrawButtons({
         variant="contained"
         className={clsx(styles.button, styles.lineButton)}
         disabled={!formValue.number || isOverLiquidation}
+        onClick={() => {
+          onWithdraw?.write?.();
+        }}
       >
         取款
       </Button>
@@ -89,7 +77,9 @@ function BorrowButtons({
   balance,
   isHighRisk,
   isOverLiquidation,
-  formValue
+  formValue,
+  onChangeTab,
+  onBorrow
 }: ButtonProps) {
   if (isOverLiquidation) {
     return (
@@ -109,8 +99,8 @@ function BorrowButtons({
     <div
       className={clsx(
         styles.buttons,
-        Number(balance) === 0 ? styles.shortBorrowButtonsMargin : '',
-        Number(balance) > 0 && isHighRisk
+        balance === '0' ? styles.shortBorrowButtonsMargin : '',
+        BN(balance || '0').comparedTo(0) === 1 && isHighRisk
           ? styles.shortButtonsMargin
           : styles.buttonsMargin
       )}
@@ -119,15 +109,26 @@ function BorrowButtons({
         variant="contained"
         className={clsx(styles.button, styles.lineButton)}
         color="blue"
-        disabled={!formValue.number && Number(balance) > 0}
+        disabled={!formValue.number && BN(balance || '0').comparedTo(0) === 1}
+        onClick={() => {
+          balance === '0'
+            ? onChangeTab?.(DialogTypeProps.deposit)
+            : onBorrow?.write?.();
+        }}
       >
-        {Number(balance) === 0 ? '去存款' : '借款'}
+        {balance === '0' ? '去存款' : '借款'}
       </Button>
     </div>
   );
 }
 
-function RepayButtons({ activeCurrency, auth, formValue }: ButtonProps) {
+function RepayButtons({
+  activeCurrency,
+  auth,
+  formValue,
+  onRepay,
+  onApprove
+}: ButtonProps) {
   return (
     <div
       className={clsx(
@@ -136,20 +137,27 @@ function RepayButtons({ activeCurrency, auth, formValue }: ButtonProps) {
       )}
     >
       {!auth ? (
-        <Button
+        <LoadingButton
           color="blue"
           variant="contained"
           className={styles.button}
           sx={{ marginRight: '16px' }}
+          loading={onApprove?.isLoading}
+          onClick={() => {
+            onApprove?.write?.();
+          }}
         >
           授权 {activeCurrency}
-        </Button>
+        </LoadingButton>
       ) : null}
       <Button
         variant="contained"
         className={clsx(styles.button, auth ? styles.lineButton : '')}
         color={auth ? 'blue' : 'gray'}
         disabled={!auth || !formValue.number}
+        onClick={() => {
+          onRepay?.write?.();
+        }}
       >
         还款
       </Button>
@@ -169,7 +177,8 @@ export default function Buttons({
   onDeposit,
   onWithdraw,
   onRepay,
-  onBorrow
+  onBorrow,
+  onChangeTab
 }: ButtonProps) {
   switch (type) {
     case DialogTypeProps.deposit:
@@ -205,6 +214,7 @@ export default function Buttons({
           isHighRisk={isHighRisk}
           isOverLiquidation={isOverLiquidation}
           onBorrow={onBorrow}
+          onChangeTab={onChangeTab}
         />
       );
       break;
@@ -215,6 +225,7 @@ export default function Buttons({
           auth={auth}
           formValue={formValue}
           onRepay={onRepay}
+          onApprove={onApprove}
         />
       );
   }

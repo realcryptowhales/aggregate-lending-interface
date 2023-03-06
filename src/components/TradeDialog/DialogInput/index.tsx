@@ -1,4 +1,3 @@
-// import { useEffect } from 'react';
 import {
   Select,
   MenuItem,
@@ -6,21 +5,8 @@ import {
   FormControl,
   FormHelperText
 } from '@mui/material';
-// import { useFormContext } from '@mui/material/FormControl';
 import styles from './index.module.less';
-import { DialogTypeProps, CurrencyBaseInfoProps } from '@/constant/type';
-import { FormValuesProps } from '../hooks/useTradeDialog';
-
-interface DialogInputType {
-  currencyBaseInfoList?: CurrencyBaseInfoProps[];
-  activeCurrency: string;
-  onChangeActiveCurrency: (name: string) => void;
-  formValue: FormValuesProps;
-  handleInputChange: (obj: { [key: string]: any }) => void;
-  balance?: string;
-  dolors?: number;
-  type: DialogTypeProps;
-}
+import { DialogTypeProps, DialogInputType } from '@/constant/type';
 
 const DialogInput = ({
   currencyBaseInfoList,
@@ -56,7 +42,7 @@ const DialogInput = ({
   };
 
   const onClickMax = () => {
-    handleInputChange({ number: balance || 0 });
+    handleInputChange({ number: balance || '0' });
   };
 
   const OperationText = () => {

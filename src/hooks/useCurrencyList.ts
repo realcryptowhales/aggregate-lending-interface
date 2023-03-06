@@ -3,19 +3,12 @@ import { useState, useMemo } from 'react';
 import { fetcher } from '@api/index';
 import { useContractReads } from 'wagmi';
 import { routerAddr } from '@/constant/contract';
-import { ContractsArgsProps, CurrencyBaseInfoProps } from '@/constant/type';
+import {
+  ContractsArgsProps,
+  CurrencyBaseInfoProps,
+  AssetProps
+} from '@/constant/type';
 import { routerABI } from '@/constant/abi';
-
-export interface AssetProps {
-  index: number;
-  collateralable: boolean;
-  paused: boolean;
-  sToken: string;
-  dToken: string;
-  address: string;
-}
-
-export type str = string;
 
 export default function useCurrencyList() {
   const [list, setList] = useState<CurrencyBaseInfoProps[]>();

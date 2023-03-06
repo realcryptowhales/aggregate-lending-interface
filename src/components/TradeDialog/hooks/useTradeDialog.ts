@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, ReactNode } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   useAccount,
   useContractReads,
@@ -8,83 +8,22 @@ import {
 import {
   DialogTypeProps,
   ContractsArgsProps,
-  CurrencyBaseInfoProps
+  CurrencyBaseInfoProps,
+  UseTradeDialogProps,
+  CurrencyInfoProps,
+  InfosTopItemProps,
+  tabsItemProps,
+  AprInfoProps,
+  FormValuesProps,
+  TipDialogProps,
+  SnackbarProps
 } from '@/constant/type';
-import { utils, BigNumber } from 'ethers';
+import { utils, BigNumber, constants } from 'ethers';
 import BN from 'bignumber.js';
 import { routerAddr, queryHelperContractAddr } from '@/constant/contract';
 import { sTokenABI, routerABI, queryHelperABI } from '@/constant/abi';
 import useCurrencyList from '@/hooks/useCurrencyList';
 import { TRANSACTION_DETAIL_URL } from '../constant';
-
-export interface CurrencyInfoProps {
-  optimization?: string; // 内部撮合
-  aave?: string; // AAVE
-  compound?: string; // Compound
-  borrowAPRPercent?: string; // 借款APR百分数
-  borrowAmount?: string; // 借款数量
-  depositAPRPercent?: string; // 存款APR百分数
-  depositAmount?: string; // 存款余额
-  maxLTV?: string; // 最高抵押率
-  liquidation?: string; // 清算域值
-  usedBorrowLimit?: string; // 已用借款限额
-}
-
-export interface UseTradeDialogProps {
-  type: DialogTypeProps;
-  activeCurrency: string;
-  // currencyDetailList: CurrencyInfoProps[];
-}
-
-export interface InfosTopItemProps {
-  title: string;
-  value: string | number;
-}
-
-interface tabsItemProps {
-  text: string;
-  key: DialogTypeProps;
-}
-
-interface AprItemProps {
-  title: string;
-  value: string;
-  isBest?: boolean;
-}
-
-export interface AprInfoProps {
-  aprTitle: string;
-  list: AprItemProps[];
-}
-
-export interface FormValuesProps {
-  number?: string;
-  asCollateral: boolean;
-}
-
-export interface UseBalanceDataProps {
-  decimals: number;
-  formatted: string;
-  symbol: string;
-  value: number;
-}
-
-export interface TipDialogProps {
-  content?: ReactNode;
-  title?: string;
-  onClose?: () => void;
-  onConfirm?: () => void;
-  buttonText?: string;
-  open: boolean;
-}
-
-export interface SnackbarProps {
-  open: boolean;
-  onClose?: () => void;
-  message?: string;
-  viewDetailUrl?: string;
-  type?: 'error' | 'info' | 'success' | 'warning';
-}
 
 const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   const [activeCurrencyInfo, setActiveCurrencyInfo] =
@@ -95,7 +34,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   const [open, setOpen] = useState(true);
   const [infosTop, setInfosTop] = useState<InfosTopItemProps[]>();
   const [balance, setBalance] = useState<string>();
-  const [dolors, setDolors] = useState<number>(0);
+  const [dolors, setDolors] = useState<string>('0');
   const [aprInfo, setAprInfo] = useState<AprInfoProps>();
   const [willBecomeBorrowLimit, setWillBecomeBorrowLimit] = useState<string>();
   const [formValue, setFormValues] = useState<FormValuesProps>({
@@ -103,7 +42,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     asCollateral: true
   });
   const [auth, setAuth] = useState(true);
-  const [allowance, setAllowance] = useState<number>(0);
+  const [allowance, setAllowance] = useState<string>('0');
   const {
     optimization, // 内部撮合
     aave, // AAVE
@@ -114,13 +53,11 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     depositAmount, // 存款余额
     maxLTV, // 最高抵押率
     liquidation, // 清算域值
-    usedBorrowLimit // 已用借款限额
+    usedBorrowLimit, // 已用借款限额
+    assetPrice
   } = activeCurrencyInfo || {};
   const [tipDialog, setTipDialog] = useState<TipDialogProps>({ open: false });
   const [snackbar, setSnackBar] = useState<SnackbarProps>({ open: false });
-
-  const a = Math.pow(2, 256).toString();
-  // console.log('num', BigNumber.from(a));
 
   const handleFormChange = (obj: { [key: string]: any }) => {
     setFormValues({
@@ -190,6 +127,10 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     );
   };
 
+  const parseUnits = (num?: string) => {
+    return num ? utils.parseUnits(num, activeCurrencyBaseInfo?.decimal) : '0';
+  };
+
   // 更新当前币种的详细信息
   const updateActiveCurrencyInfo = (info: { [key: string]: any }) => {
     const {
@@ -239,7 +180,8 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
       depositAmount, // 存款余额
       maxLTV: formatRateNumber(borrowLimit.mod(tatalCollateral)), // 最高抵押率
       liquidation: formatRateNumber(liquidateThreashold.mod(tatalCollateral)), // 清算域值
-      usedBorrowLimit: formatRateNumber(borrowed.mod(tatalCollateral)) // 已用借款限额
+      usedBorrowLimit: formatRateNumber(borrowed.mod(tatalCollateral)), // 已用借款限额
+      assetPrice: formatPriceNumber(assetPrice) // 资产价格
     });
   };
 
@@ -280,9 +222,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     onSuccess(data: any[]) {
       if (data && data.length) {
         if (data[0]) {
-          setAllowance(
-            Number(utils.formatUnits(data[0], activeCurrencyBaseInfo?.decimal))
-          );
+          setAllowance(formatCurrencyNumber(data[0]));
         }
         if (data[1]) {
           updateActiveCurrencyInfo(data[1]);
@@ -482,16 +422,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     address: activeCurrencyBaseInfo?.address,
     abi: sTokenABI,
     functionName: 'approve',
-    // args: [routerAddr, formValue.number ? utils.parseUnits(formValue.number.toString(), activeCurrencyBaseInfo?.decimal) : '0'],
-    args: [
-      routerAddr,
-      formValue.number
-        ? utils.parseUnits(
-            formValue.number.toString(),
-            activeCurrencyBaseInfo?.decimal
-          )
-        : '0'
-    ]
+    args: [routerAddr, constants.MaxUint256]
   });
   const onApprove = useContractWrite(approveConfig.config);
 
@@ -545,12 +476,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     args: [
       {
         asset: activeCurrencyBaseInfo?.address,
-        amount: formValue.number
-          ? utils.parseUnits(
-              formValue.number.toString(),
-              activeCurrencyBaseInfo?.decimal
-            )
-          : '0',
+        amount: parseUnits(formValue.number),
         to: address
       },
       formValue.asCollateral,
@@ -561,42 +487,37 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
 
   // 处理存款结果
   useEffect(() => {
-    const { isError, error, isSuccess, data } = onApprove;
+    const { isError, error, isSuccess, data, write } = onDeposit;
     const { message } = error || {};
     console.log(data);
     if (isError && message && message.indexOf('User rejected request') > -1) {
-      setSnackBar({
+      setTipDialog({
         open: true,
-        message: `授权${activeCurrency}交易被拒绝`,
+        title: '交易已拒绝',
+        content: `你已在钱包内拒绝存款 ${formValue.number} ${activeCurrencyBaseInfo?.symbol} 请再次尝试`,
         onClose: () => {
-          setSnackBar({ open: false });
+          setTipDialog({ open: false });
         },
-        type: 'error'
+        onConfirm: () => {
+          setTipDialog({ open: false });
+          write?.();
+        },
+        buttonText: '再次尝试'
       });
-
-      // setTipDialog({
-      //   open: true,
-      //   title: '交易已拒绝',
-      //   content: '你已在钱包内拒绝授权，请再次尝试',
-      //   onClose: () => {
-      //     setTipDialog({ open: false });
-      //   },
-      //   onConfirm: () => {
-      //     setTipDialog({ open: false });
-      //     write?.();
-      //   },
-      //   buttonText: '再次尝试',
-      // });
     } else if (isSuccess) {
       const { hash } = data;
-      setSnackBar({
+      setTipDialog({
         open: true,
-        message: `授权${activeCurrency}交易已提交`,
+        title: '交易已提交',
+        content: `${activeCurrencyBaseInfo?.symbol} 存款交易已提交上链，请等待交易结果`,
         onClose: () => {
-          setSnackBar({ open: false });
+          setTipDialog({ open: false });
         },
-        viewDetailUrl: `${TRANSACTION_DETAIL_URL}/${hash}`,
-        type: 'success'
+        onConfirm: () => {
+          setTipDialog({ open: false });
+          write?.();
+        },
+        buttonText: '将ib{Token}添加进钱包'
       });
     }
   }, [onDeposit.status]);
@@ -609,12 +530,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     args: [
       {
         asset: activeCurrencyBaseInfo?.address,
-        amount: formValue.number
-          ? utils.parseUnits(
-              formValue.number.toString(),
-              activeCurrencyBaseInfo?.decimal
-            )
-          : '0',
+        amount: parseUnits(formValue.number),
         to: address
       },
       formValue.asCollateral,
@@ -625,9 +541,9 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
 
   // 处理取款结果
   useEffect(() => {
-    const { isError, error, isSuccess, data } = onWithdraw;
+    const { isError, error, isSuccess, data, isLoading, status } = onWithdraw;
     const { message } = error || {};
-    console.log(data);
+    console.log('onWithdraw', data, isLoading, status);
     if (isError && message && message.indexOf('User rejected request') > -1) {
       setSnackBar({
         open: true,
@@ -673,12 +589,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     args: [
       {
         asset: activeCurrencyBaseInfo?.address,
-        amount: formValue.number
-          ? utils.parseUnits(
-              formValue.number.toString(),
-              activeCurrencyBaseInfo?.decimal
-            )
-          : '0',
+        amount: parseUnits(formValue.number),
         to: address
       },
       true
@@ -736,12 +647,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     args: [
       {
         asset: activeCurrencyBaseInfo?.address,
-        amount: formValue.number
-          ? utils.parseUnits(
-              formValue.number.toString(),
-              activeCurrencyBaseInfo?.decimal
-            )
-          : '0',
+        amount: parseUnits(formValue.number),
         to: address
       },
       true
@@ -794,8 +700,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   // 更新auth状态
   useEffect(() => {
     if (formValue.number) {
-      console.log('allowance', allowance);
-      // setAuth(formValue.number <= allowance);
+      setAuth(BN(formValue.number).isLessThan(allowance));
     } else {
       setAuth(true);
     }
@@ -803,7 +708,9 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
 
   // 更新借款限额 和 美元价值
   useEffect(() => {
-    formValue?.number && setDolors(Number(formValue.number));
+    formValue?.number &&
+      assetPrice &&
+      setDolors(cutZero(BN(formValue.number).times(assetPrice).toFixed(2, 1)));
     setWillBecomeBorrowLimit('0.9');
   }, [formValue.number]);
 

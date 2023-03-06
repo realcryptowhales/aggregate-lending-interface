@@ -1,11 +1,7 @@
 import { Tooltip } from '@mui/material';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
-import { DialogTypeProps } from '@/constant/type';
+import { DialogTypeProps, TipsProps } from '@/constant/type';
 import styles from './index.module.less';
-
-interface TipsProps {
-  type: DialogTypeProps;
-}
 
 function Tips({ type }: TipsProps) {
   if ([DialogTypeProps.deposit, DialogTypeProps.borrow].includes(type)) {

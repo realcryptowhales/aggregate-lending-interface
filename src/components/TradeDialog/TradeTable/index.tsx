@@ -3,26 +3,8 @@ import { Tooltip } from '@mui/material';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
 import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
 import clsx from 'classnames';
-import { DialogTypeProps } from '@/constant/type';
-import {
-  InfosTopItemProps,
-  AprInfoProps,
-  FormValuesProps
-} from '../hooks/useTradeDialog';
+import { DialogTypeProps, InfosProps } from '@/constant/type';
 import styles from './index.module.less';
-
-interface InfosProps {
-  infosTop?: InfosTopItemProps[];
-  aprInfo?: AprInfoProps;
-  showMaxLTV: boolean;
-  isOverLiquidation: boolean;
-  maxLTVPercent: string;
-  usedBorrowLimitPercent: string;
-  liquidationPercent: string;
-  willBecomeBorrowLimitPercent: string;
-  type: DialogTypeProps;
-  formValue: FormValuesProps;
-}
 
 function Infos({
   infosTop,

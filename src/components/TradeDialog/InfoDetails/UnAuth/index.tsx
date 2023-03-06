@@ -1,11 +1,7 @@
 import styles from './index.module.less';
-import { DialogTypeProps } from '@/constant/type';
+import { DialogTypeProps, UnAuthProps } from '@/constant/type';
 
-interface UnAuth {
-  type: DialogTypeProps;
-}
-
-function UnAuth({ type }: UnAuth) {
+function UnAuth({ type }: UnAuthProps) {
   if ([DialogTypeProps.deposit, DialogTypeProps.repay].includes(type)) {
     return (
       <div className={styles.auth}>
