@@ -102,9 +102,9 @@ function PorfolioItem() {
       const [currentMatchAPR, currentAaveAPR, currentCompoundAPR] =
         currentAPRList;
       return {
-        currentMatchAPR: rawToPercent(currentMatchAPR, 6, 4),
-        currentAaveAPR: rawToPercent(currentAaveAPR, 6, 4),
-        currentCompoundAPR: rawToPercent(currentCompoundAPR, 6, 4)
+        currentMatchAPR: rawToPercent(currentMatchAPR, 6, 2),
+        currentAaveAPR: rawToPercent(currentAaveAPR, 6, 2),
+        currentCompoundAPR: rawToPercent(currentCompoundAPR, 6, 2)
       };
     }, [currentAPRList]);
   // , isSupply, tokenAddr
@@ -128,7 +128,7 @@ function PorfolioItem() {
   const aggAPRFormat = useMemo(() => {
     if (!aggAPR) return [];
     return aggAPR.map((item: any) => {
-      return [item.calcTime, Number(item.apr).toFixed(4)];
+      return [item.calcTime, Number(item.apr).toFixed(2)];
     });
   }, [aggAPR]);
   // console.log(aggAPR, 'aggAPR');
@@ -151,7 +151,7 @@ function PorfolioItem() {
   const aaveAPRFormat = useMemo(() => {
     if (!aaveAPR) return [];
     return aaveAPR.map((item: any) => {
-      return [item.calcTime, Number(item.apr).toFixed(4)];
+      return [item.calcTime, Number(item.apr).toFixed(2)];
     });
   }, [aaveAPR]);
   // console.log(aaveAPR, 'aaveAPR');
@@ -174,7 +174,7 @@ function PorfolioItem() {
   const compAPRFormat = useMemo(() => {
     if (!compAPR) return [];
     return compAPR.map((item: any) => {
-      return [item.calcTime, Number(item.apr).toFixed(4)];
+      return [item.calcTime, Number(item.apr).toFixed(2)];
     });
   }, [compAPR]);
   // console.log(compAPR, 'compAPR');
@@ -238,7 +238,7 @@ function PorfolioItem() {
       {
         key: 'index1',
         title: '价格',
-        text: `$ ${rawToThousandNumber(tokenPrice, 8, 4)}` || '--'
+        text: `$ ${rawToThousandNumber(tokenPrice, 8, 2)}` || '--'
       },
       {
         key: 'index2',
@@ -267,7 +267,7 @@ function PorfolioItem() {
             </Tooltip>
           </div>
         ),
-        text: rawToPercent(maxLTV, 6, 4) || '--'
+        text: rawToPercent(maxLTV, 6, 2) || '--'
       },
       {
         key: 'index6',
@@ -281,7 +281,7 @@ function PorfolioItem() {
             </Tooltip>
           </div>
         ),
-        text: rawToPercent(liquidationThreshold, 6, 4) || '--'
+        text: rawToPercent(liquidationThreshold, 6, 2) || '--'
       }
     ];
   }, [userData, tokenAddr]);
@@ -325,7 +325,7 @@ function PorfolioItem() {
     ).div(new BigNumber(totalSupplyAmount.toString()));
     const supplyMatchPercent = formatPercent(
       supplyMatchBignumber.isNaN() ? '0' : supplyMatchBignumber.toString(),
-      0
+      2
     );
 
     const supplyAaveBignumber = new BigNumber(supplyAaveAmount.toString()).div(
@@ -333,7 +333,7 @@ function PorfolioItem() {
     );
     const supplyAavePercent = formatPercent(
       supplyAaveBignumber.isNaN() ? '0' : supplyAaveBignumber.toString(),
-      0
+      2
     );
 
     const supplyCompoundBignumber = new BigNumber(
@@ -343,12 +343,12 @@ function PorfolioItem() {
       supplyCompoundBignumber.isNaN()
         ? '0'
         : supplyCompoundBignumber.toString(),
-      0
+      2
     );
 
     return [
       rawToThousandNumber(supplyAmount, nowToken.decimal, 4),
-      rawToThousandNumber(supplyValue, nowToken.decimal, 4),
+      rawToThousandNumber(supplyValue, nowToken.decimal, 2),
       rawToThousandNumber(supplyMatchAmount, nowToken.decimal, 4),
       rawToThousandNumber(supplyAaveAmount, nowToken.decimal, 4),
       rawToThousandNumber(supplyCompoundAmount, nowToken.decimal, 4),
@@ -397,7 +397,7 @@ function PorfolioItem() {
     ).div(new BigNumber(totalBorrowAmount.toString()));
     const borrowMatchPercent = formatPercent(
       borrowMatchBignumber.isNaN() ? '0' : borrowMatchBignumber.toString(),
-      0
+      2
     );
 
     const borrowAaveBignumber = new BigNumber(borrowAaveAmount.toString()).div(
@@ -405,7 +405,7 @@ function PorfolioItem() {
     );
     const borrowAavePercent = formatPercent(
       borrowAaveBignumber.isNaN() ? '0' : borrowAaveBignumber.toString(),
-      0
+      2
     );
 
     const borrowCompoundBignumber = new BigNumber(
@@ -415,12 +415,12 @@ function PorfolioItem() {
       borrowCompoundBignumber.isNaN()
         ? '0'
         : borrowCompoundBignumber.toString(),
-      0
+      2
     );
 
     return [
       rawToThousandNumber(borrowAmount, nowToken.decimal, 4),
-      rawToThousandNumber(borrowValue, nowToken.decimal, 4),
+      rawToThousandNumber(borrowValue, nowToken.decimal, 2),
       rawToThousandNumber(borrowMatchAmount, nowToken.decimal, 4),
       rawToThousandNumber(borrowAaveAmount, nowToken.decimal, 4),
       rawToThousandNumber(borrowCompoundAmount, nowToken.decimal, 4),

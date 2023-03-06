@@ -130,18 +130,7 @@ const Detail: React.FC<any> = (props) => {
         const value = param.value[1] + '%';
         return `APR: ${value}`;
       }
-    },
-    color: [
-      '#000000',
-      '#7B7B7B',
-      '#CECECE',
-      '#ee6666',
-      '#73c0de',
-      '#3ba272',
-      '#fc8452',
-      '#9a60b4',
-      '#ea7ccc'
-    ]
+    }
   };
   const pieOption = {
     series: {
@@ -166,18 +155,7 @@ const Detail: React.FC<any> = (props) => {
           show: false
         }
       }
-    },
-    color: [
-      '#000000',
-      '#7B7B7B',
-      '#CECECE',
-      '#ee6666',
-      '#73c0de',
-      '#3ba272',
-      '#fc8452',
-      '#9a60b4',
-      '#ea7ccc'
-    ]
+    }
   };
   // init echart
   useEffect(() => {
