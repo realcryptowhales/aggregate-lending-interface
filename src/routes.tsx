@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Layout from '@/containers';
 // import MarketItem from '@/containers/Markets/MarketItem';
-import PorfolioItem from './containers/Porfolio/PorfolioItem';
+import Item from './containers/Item';
 import Liquidation from './containers/Liquidation';
 import NoMatch from '@/components/NoMatch';
 import Redirect from '@/components/Redirect';
@@ -21,7 +21,7 @@ const routes: RouteObject[] = [
         path: '/markets',
         children: [
           { index: true, element: <Markets /> },
-          { path: '/markets/token', element: <PorfolioItem /> }
+          { path: '/markets/token', element: <Item /> }
         ]
       },
       {
@@ -29,7 +29,7 @@ const routes: RouteObject[] = [
         children: [
           { index: true, element: <Porfolio /> },
           { path: '/porfolio/liquidation', element: <Liquidation /> },
-          { path: '/porfolio/token', element: <PorfolioItem /> }
+          { path: '/porfolio/token', element: <Item /> }
         ]
       },
       {

@@ -103,7 +103,7 @@ const Liquidation = () => {
     address &&
     (useSWR(
       {
-        url: '/aggregate-lending/liquidator/list',
+        url: '/liquidator/list',
         params: {
           pageNo: pageNo + 1,
           assetAddress: '0x23335657622Dcc27bB1914E51cDc30871D6d04d3',

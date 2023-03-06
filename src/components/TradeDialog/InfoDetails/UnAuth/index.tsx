@@ -1,5 +1,5 @@
 import styles from './index.module.less';
-import { DialogTypeProps } from '../../hooks/useTradeDialog';
+import { DialogTypeProps } from '@/constant/type';
 
 interface UnAuth {
   type: DialogTypeProps;

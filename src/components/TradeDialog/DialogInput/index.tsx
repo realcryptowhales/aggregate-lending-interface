@@ -8,11 +8,8 @@ import {
 } from '@mui/material';
 // import { useFormContext } from '@mui/material/FormControl';
 import styles from './index.module.less';
-import {
-  CurrencyInfoProps,
-  FormValuesProps,
-  DialogTypeProps
-} from '../hooks/useTradeDialog';
+import { DialogTypeProps } from '@/constant/type';
+import { CurrencyInfoProps, FormValuesProps } from '../hooks/useTradeDialog';
 
 interface DialogInputType {
   currencyDetailList: CurrencyInfoProps[];
@@ -20,8 +17,8 @@ interface DialogInputType {
   onChangeActiveCurrency: (name: string) => void;
   formValue: FormValuesProps;
   handleInputChange: (obj: { [key: string]: any }) => void;
-  balance?: number | string;
-  dolors?: number | string;
+  balance?: number;
+  dolors?: number;
   type: DialogTypeProps;
 }
 

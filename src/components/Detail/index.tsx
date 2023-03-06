@@ -1,41 +1,58 @@
 import * as React from 'react';
 import clsx from 'classnames';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { echarts } from '@utils/echart';
 import Tab from './Tab';
 import Button from '@mui/material/Button';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Tooltip from '@mui/material/Tooltip';
+import moment from 'moment';
 
-interface DetailProps {
-  test?: any;
-}
-
-const Detail: React.FC<DetailProps> = () => {
+const Detail: React.FC<any> = (props) => {
+  const {
+    isSupply,
+    setIsSupply,
+    detailAmount,
+    detailValue,
+    todayDate,
+    matchAmount,
+    aaveAmount,
+    compoundAmount,
+    matchPercent,
+    aavePercent,
+    compoundPercent,
+    matchAPR,
+    aaveAPR,
+    compoundAPR,
+    currentMatchAPR,
+    currentAaveAPR,
+    currentCompoundAPR
+  } = props;
   const summary = {
-    title: '存款总数',
-    text: 290.45612378,
-    desc: '$ 19,290.49'
+    title: isSupply ? '存款总数' : '借款总数',
+    text: detailAmount,
+    desc: `$ ${detailValue}`
   };
   const pieTextList = [
-    { title: '内部撮合', data: '65%' },
-    { title: 'AAVE', data: '35%' }
+    { title: '内部撮合', data: matchPercent },
+    { title: 'AAVE', data: aavePercent },
+    { title: 'Compound', data: compoundPercent }
   ];
   const detail = {
-    text1: '三平台存款APR实时数据 {YY MM DD}',
+    text1: `三平台${isSupply ? '存款' : '借款'}APR实时数据 ${todayDate}`,
     text2: (
       <>
         <span>平台 </span>
-        <span className="color-#F98A6B">6%</span>
-        <span>（20%撮合+80%AAVE）、AAVE </span>
-        <span className="color-#F98A6B">5%</span>
+        <span className="color-#F98A6B">{currentMatchAPR}</span>
+        <span>、AAVE </span>
+        <span className="color-#F98A6B">{currentAaveAPR}</span>
         <span>、Compound </span>
-        <span className="color-#F98A6B">4%</span>
+        <span className="color-#F98A6B">{currentCompoundAPR}</span>
       </>
     ),
     desc: '这是desc内容'
   };
-  const middleTitle = '存款APR折线图';
+  const middleTitle = `${isSupply ? '存款' : '借款'}APR折线图`;
   const [options, setOptions] = useState([
     {
       name: '存款市场',
@@ -48,138 +65,139 @@ const Detail: React.FC<DetailProps> = () => {
   ]);
   const lineChartNodeRef = useRef<any>(null);
   const pieChartNodeRef = useRef<any>(null);
-
-  useEffect(() => {
-    const lineOption = {
-      // 右上角图例
-      legend: {
-        orient: 'horizontal',
-        right: 60,
-        padding: [15, 10, 5, 10]
+  const lineOption = {
+    // 右上角图例
+    legend: {
+      orient: 'horizontal',
+      right: 60,
+      padding: [15, 10, 5, 10]
+    },
+    // 图的边距
+    grid: {
+      x: 60, //默认是80px
+      y: 60, //默认是60px
+      x2: 80, //默认80px
+      y2: 60 //默认60px
+    },
+    xAxis: {
+      type: 'time',
+      splitLine: {
+        show: false
       },
-      // 图的边距
-      grid: {
-        x: 40, //默认是80px
-        y: 60, //默认是60px
-        x2: 80, //默认80px
-        y2: 60 //默认60px
-      },
-      xAxis: {
-        type: 'time',
-        splitLine: {
-          show: false
+      axisLabel: {
+        formatter: function (value: any) {
+          return moment(Number(value)).format('MM-DD');
         }
+      }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'APR',
+      axisLabel: {
+        formatter: '{value}%'
       },
-      yAxis: {
-        type: 'value',
-        name: 'APR',
-        axisLabel: {
-          formatter: '{value}%'
-        },
-        nameTextStyle: {
-          fontWeight: 400,
-          fontSize: 14,
-          lineHeight: 25,
-          align: 'right',
-          padding: [0, 7, 5, 0] // 上右下左
-        }
+      nameTextStyle: {
+        fontWeight: 400,
+        fontSize: 14,
+        lineHeight: 25,
+        align: 'right',
+        padding: [0, 7, 5, 0] // 上右下左
+      }
+    },
+    series: [
+      {
+        name: '平台',
+        // data格式[时间戳，数据]
+        data: matchAPR,
+        type: 'line'
       },
-      series: [
+      {
+        name: 'AAVE',
+        data: aaveAPR,
+        type: 'line'
+      },
+      {
+        name: 'compound',
+        data: compoundAPR,
+        type: 'line'
+      }
+    ],
+    tooltip: {
+      formatter: function (param: any) {
+        const time = param.value[0];
+        const value = param.value[1] + '%';
+        return `APR: ${value}`;
+      }
+    },
+    color: [
+      '#000000',
+      '#7B7B7B',
+      '#CECECE',
+      '#ee6666',
+      '#73c0de',
+      '#3ba272',
+      '#fc8452',
+      '#9a60b4',
+      '#ea7ccc'
+    ]
+  };
+  const pieOption = {
+    series: {
+      type: 'pie',
+      data: [
         {
-          name: '平台',
-          data: [
-            // data格式[时间戳，数据]
-            [1675392178742, 5],
-            [1675393178742, 10],
-            [1675394178742, 30]
-          ],
-          type: 'line'
+          value: matchAmount,
+          name: 'matchPercent'
         },
         {
-          name: 'AAVE',
-          data: [
-            [1675392178742, 7],
-            [1675393178742, 15],
-            [1675394178742, 10]
-          ],
-          type: 'line'
+          value: aaveAmount,
+          name: 'aavePercent'
         },
         {
-          name: 'compound',
-          data: [
-            [1675392178742, 3],
-            [1675393178742, 5],
-            [1675394178742, 15]
-          ],
-          type: 'line'
+          value: compoundAmount,
+          name: 'compoundPercent'
         }
       ],
-      // tooltip: {
-      //   formatter: function (param) {
-      //     const time = param.value[0];
-      //     const value = param.value[1] + '%';
-      //     return value;
-      //   }
-      // },
-      // default ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc']
-      color: [
-        '#000000',
-        '#7B7B7B',
-        '#CECECE',
-        '#ee6666',
-        '#73c0de',
-        '#3ba272',
-        '#fc8452',
-        '#9a60b4',
-        '#ea7ccc'
-      ]
-    };
-    const lineChart = echarts.init(lineChartNodeRef.current);
-    lineChart.setOption(lineOption);
-
-    const pieOption = {
-      series: {
-        type: 'pie',
-        data: [
-          {
-            value: 335,
-            name: 'a'
-          },
-          {
-            value: 234,
-            name: 'b'
-          },
-          {
-            value: 1548,
-            name: 'c'
-          }
-        ],
-        // 隐藏饼图的引导线
-        label: {
-          normal: {
-            show: false
-          }
+      // 隐藏饼图的引导线
+      label: {
+        normal: {
+          show: false
         }
-      },
-      color: [
-        '#000000',
-        '#7B7B7B',
-        '#CECECE',
-        '#ee6666',
-        '#73c0de',
-        '#3ba272',
-        '#fc8452',
-        '#9a60b4',
-        '#ea7ccc'
-      ]
-    };
+      }
+    },
+    color: [
+      '#000000',
+      '#7B7B7B',
+      '#CECECE',
+      '#ee6666',
+      '#73c0de',
+      '#3ba272',
+      '#fc8452',
+      '#9a60b4',
+      '#ea7ccc'
+    ]
+  };
+  // init echart
+  useEffect(() => {
+    const lineChart = echarts.init(lineChartNodeRef.current);
     const pieChart = echarts.init(pieChartNodeRef.current);
-    pieChart.setOption(pieOption);
     return () => {
       lineChart.dispose();
       pieChart.dispose();
     };
   }, []);
+  // auto set line chart
+  useEffect(() => {
+    const lineChart = echarts.getInstanceByDom(lineChartNodeRef.current);
+    lineChart && lineChart.setOption(lineOption);
+  }, [isSupply, lineOption]);
+
+  // auto set pie chart
+  useEffect(() => {
+    const pieChart = echarts.getInstanceByDom(pieChartNodeRef.current);
+    pieChart && pieChart.setOption(pieOption);
+  }, [isSupply, pieOption]);
+
   return (
     <div
       className={clsx(
@@ -195,7 +213,7 @@ const Detail: React.FC<DetailProps> = () => {
               return option;
             })
           );
-          console.log(`switch to ${options[index].name}`);
+          setIsSupply(index === 0);
         }}
       />
       <div className=" pl-8 pr-25">
@@ -227,12 +245,14 @@ const Detail: React.FC<DetailProps> = () => {
               variant="contained"
               sx={{
                 width: '86px',
-                background: '#F98A6B',
+                background: isSupply ? '#F98A6B' : '#51459D',
                 color: 'white',
-                '&:hover': { background: '#ff9800' }
+                '&:hover': {
+                  background: isSupply ? '#ff9800' : '#9c27b0'
+                }
               }}
             >
-              存款
+              {isSupply ? '存款' : '借款'}
             </Button>
             <Button
               variant="outlined"
@@ -243,7 +263,7 @@ const Detail: React.FC<DetailProps> = () => {
                 borderColor: '#000'
               }}
             >
-              取款
+              {isSupply ? '取款' : '还款'}
             </Button>
           </div>
         </div>
@@ -260,12 +280,12 @@ const Detail: React.FC<DetailProps> = () => {
           <div className="min-w-46.25">
             <div>
               <div className="text-4 leading-6.25 mb-5.25 font-400 color-#000000">
-                存款分布图
+                {isSupply ? '存款分布图' : '借款分布图'}
               </div>
               <div className="text-3.5 leading-5.5 color-#000000 font-400">
                 <div className="flex justify-between mt-1">
                   <span>平台</span>
-                  <span>存款占比</span>
+                  <span>{isSupply ? '存款占比' : '借款占比'}</span>
                 </div>
                 {pieTextList.map(({ title, data }) => {
                   return (

@@ -9,6 +9,7 @@ declare module '*.tiff';
 declare interface Window {
   okexchain: any;
   ethereum: any;
+  aggregate: any;
 }
 
 declare module '@mui/system';

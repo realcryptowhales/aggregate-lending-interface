@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 import TradeDialog from '@/components/TradeDialog';
-import { DialogTypeProps } from '@/components/TradeDialog/hooks/useTradeDialog';
+import { DialogTypeProps, openDialogProps } from '@/constant/type';
 
 const Markets = () => {
   const [open, setOpen] = useState(false);
@@ -60,11 +60,11 @@ const Markets = () => {
       outstandingLoan: 1222, // number | string | undefined; // 贷款余额
       borrowAPRPercent: '6%', // string | undefined; // 借款APR百分数
       borrowAmount: 124, // number | string | undefined; // 借款数量
-      depositAPRPercent: '7%', // string | undefined; // 存款APR百分数
-      depositAmount: 34, // number | string | undefined; // 存款余额
+      depositAPRPercent: '7%', // string | undefined; // 存款APR百分数 *
+      depositAmount: 34, // number | string | undefined; // 存款余额 ? 在哪取
       maxLTV: 0.82, // number | undefined; // 最高抵押率
       liquidation: 0.85, // number | undefined; // 清算域值
-      usedBorrowLimit: 0.6 // number | undefined; // 已用借款限额
+      usedBorrowLimit: 0.6 // number | undefined; // 已用借款限额 ？
     }
   ];
   const [type, setType] = useState<DialogTypeProps>(DialogTypeProps.withdraw);
@@ -94,8 +94,7 @@ const Markets = () => {
   };
 
   const onClickDeposit = () => {
-    setOpen(true);
-    setType(DialogTypeProps.deposit);
+    openDialog({ type: DialogTypeProps.deposit, activeCurrency: 'USDT' });
   };
 
   const onClickRepay = () => {
@@ -116,6 +115,18 @@ const Markets = () => {
   const onChangeActiveCurrency = (symbol: string) => {
     setActiveCurrency(symbol);
   };
+
+  const openDialog = ({ type, activeCurrency }: openDialogProps) => {
+    setOpen(true);
+    setType(type);
+    setActiveCurrency(activeCurrency);
+  };
+
+  useEffect(() => {
+    window.aggregate = {
+      openDialog: openDialog
+    };
+  }, []);
 
   return (
     <div>
