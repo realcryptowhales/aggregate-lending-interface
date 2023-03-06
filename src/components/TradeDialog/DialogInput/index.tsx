@@ -12,7 +12,7 @@ import { DialogTypeProps } from '@/constant/type';
 import { CurrencyInfoProps, FormValuesProps } from '../hooks/useTradeDialog';
 
 interface DialogInputType {
-  currencyDetailList: CurrencyInfoProps[];
+  // currencyDetailList: CurrencyInfoProps[];
   activeCurrency: string;
   onChangeActiveCurrency: (name: string) => void;
   formValue: FormValuesProps;
@@ -23,7 +23,7 @@ interface DialogInputType {
 }
 
 const DialogInput = ({
-  currencyDetailList,
+  // currencyDetailList,
   activeCurrency,
   onChangeActiveCurrency,
   formValue,
@@ -37,9 +37,13 @@ const DialogInput = ({
   };
 
   const getRenderValue = (value: any) => {
-    const item = currencyDetailList.find((currency) => {
-      return currency.symbol === value;
-    });
+    // const item = currencyDetailList.find((currency) => {
+    //   return currency.symbol === value;
+    // });
+    const item = {
+      symbol: 'USDT',
+      icon: ''
+    };
     const { symbol, icon } = item || {};
     return (
       <div className={styles.render}>
@@ -108,7 +112,7 @@ const DialogInput = ({
               className={styles.select}
               renderValue={getRenderValue}
             >
-              {currencyDetailList &&
+              {/* {currencyDetailList &&
                 currencyDetailList.map((item) => {
                   const { symbol, icon } = item;
                   return (
@@ -117,7 +121,7 @@ const DialogInput = ({
                       <span className={styles.symbol}>{symbol}</span>
                     </MenuItem>
                   );
-                })}
+                })} */}
             </Select>
           </div>
           <div className={styles.bottom}>

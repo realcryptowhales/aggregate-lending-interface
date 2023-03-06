@@ -5,7 +5,14 @@ export enum DialogTypeProps {
   repay
 }
 
-export interface openDialogProps {
+export interface OpenDialogProps {
   type: DialogTypeProps;
   activeCurrency: string;
+}
+
+export interface ContractsArgsProps {
+  address: string;
+  abi: any[];
+  functionName: string;
+  args?: any[];
 }

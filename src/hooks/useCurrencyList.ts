@@ -1,8 +1,9 @@
 import useSWR from 'swr';
-import { useEffect, useState } from 'react';
+import { useState, useMemo } from 'react';
 import { fetcher } from '@api/index';
-import { readContract } from '@wagmi/core';
+import { useContractReads } from 'wagmi';
 import { routerAddr } from '@/constant/contract';
+import { ContractsArgsProps } from '@/constant/type';
 import { routerABI } from '@/constant/abi';
 
 export interface CurrencyBaseInfoProps {
@@ -35,40 +36,15 @@ export type str = string;
 export default function useCurrencyList() {
   const [list, setList] = useState<CurrencyBaseInfoProps[]>();
 
-  const { data, error, isLoading } = useSWR(
+  const { data } = useSWR(
     {
       url: '/config/list'
     },
     fetcher
   );
 
-  const getUnderlyings = async () => {
-    return await readContract({
-      address: routerAddr,
-      abi: routerABI,
-      functionName: 'getUnderlyings'
-    });
-  };
-  const getAssets = async () => {
-    return await readContract({
-      address: routerAddr,
-      abi: routerABI,
-      functionName: 'getAssets'
-    });
-  };
-
-  if (error) {
-    return {
-      data: null,
-      error,
-      isLoading
-    };
-  }
-
-  const getList = async () => {
+  const getList = (addressList: any[], assets: AssetProps[]) => {
     if (data && data.length) {
-      const addressList = await getUnderlyings();
-      const assets = await getAssets();
       const assetsList = assets.map((address: AssetProps, num: number) => {
         const { index, paused, collateralable, sToken, dToken } = address;
         return {
@@ -96,13 +72,33 @@ export default function useCurrencyList() {
     }
   };
 
-  useEffect(() => {
-    getList();
+  const contractsArgs = useMemo(() => {
+    let res: ContractsArgsProps[] = [];
+    if (data && data.length) {
+      res = [
+        {
+          address: routerAddr,
+          abi: routerABI,
+          functionName: 'getUnderlyings'
+        },
+        {
+          address: routerAddr,
+          abi: routerABI,
+          functionName: 'getAssets'
+        }
+      ];
+    }
+    return res;
   }, [data]);
 
-  return {
-    data: list,
-    error,
-    isLoading
-  };
+  useContractReads({
+    contracts: contractsArgs,
+    onSuccess(data: any[]) {
+      if (data && data.length === 2) {
+        getList(data[0], data[1]);
+      }
+    }
+  });
+
+  return list;
 }
