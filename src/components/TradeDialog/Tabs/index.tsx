@@ -1,7 +1,7 @@
 import styles from './index.module.less';
 import clsx from 'classnames';
 import { TabItemProps } from '..';
-import { DialogTypeProps } from '../hooks/useTradeDialog';
+import { DialogTypeProps } from '@/constant/type';
 
 interface TipProps {
   tabs?: TabItemProps[];

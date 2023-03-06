@@ -3,10 +3,10 @@ import { Tooltip } from '@mui/material';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
 import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
 import clsx from 'classnames';
+import { DialogTypeProps } from '@/constant/type';
 import {
   InfosTopItemProps,
   AprInfoProps,
-  DialogTypeProps,
   FormValuesProps
 } from '../hooks/useTradeDialog';
 import styles from './index.module.less';

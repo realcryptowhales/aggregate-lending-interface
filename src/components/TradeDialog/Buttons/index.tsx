@@ -1,7 +1,10 @@
 import Button from '@mui/material/Button';
+import { LoadingButton } from '@mui/lab';
 import clsx from 'classnames';
-import { DialogTypeProps, FormValuesProps } from '../hooks/useTradeDialog';
+import { DialogTypeProps } from '@/constant/type';
+import { FormValuesProps } from '../hooks/useTradeDialog';
 import styles from './index.module.less';
+import { UseContractWriteProps } from '../InfoDetails';
 
 interface ButtonProps {
   activeCurrency: string;
@@ -11,29 +14,48 @@ interface ButtonProps {
   isOverLiquidation?: boolean;
   type?: DialogTypeProps;
   balance?: number | string;
+  onApprove?: UseContractWriteProps;
+  onDeposit?: UseContractWriteProps;
+  onWithdraw?: UseContractWriteProps;
+  onRepay?: UseContractWriteProps;
+  onBorrow?: UseContractWriteProps;
 }
 
-function DepositButtons({ activeCurrency, auth, formValue }: ButtonProps) {
+function DepositButtons({
+  activeCurrency,
+  auth,
+  formValue,
+  onApprove,
+  onDeposit
+}: ButtonProps) {
   return (
     <div className={styles.buttons}>
       {!auth ? (
-        <Button
+        <LoadingButton
           color="orange"
           variant="contained"
+          loading={onApprove?.isLoading}
           className={styles.button}
           sx={{ marginRight: '16px' }}
+          onClick={() => {
+            onApprove?.write?.();
+          }}
         >
           授权 {activeCurrency}
-        </Button>
+        </LoadingButton>
       ) : null}
-      <Button
+      <LoadingButton
         variant="contained"
         className={clsx(styles.button, auth ? styles.lineButton : '')}
         color={auth ? 'orange' : 'gray'}
         disabled={!auth || !formValue.number}
+        loading={onDeposit?.isLoading}
+        onClick={() => {
+          onDeposit?.write?.();
+        }}
       >
         存款
-      </Button>
+      </LoadingButton>
     </div>
   );
 }
@@ -142,7 +164,12 @@ export default function Buttons({
   formValue,
   isHighRisk,
   isOverLiquidation,
-  balance
+  balance,
+  onApprove,
+  onDeposit,
+  onWithdraw,
+  onRepay,
+  onBorrow
 }: ButtonProps) {
   switch (type) {
     case DialogTypeProps.deposit:
@@ -151,6 +178,8 @@ export default function Buttons({
           activeCurrency={activeCurrency}
           auth={auth}
           formValue={formValue}
+          onApprove={onApprove}
+          onDeposit={onDeposit}
         />
       );
       break;
@@ -162,6 +191,7 @@ export default function Buttons({
           formValue={formValue}
           isHighRisk={isHighRisk}
           isOverLiquidation={isOverLiquidation}
+          onWithdraw={onWithdraw}
         />
       );
       break;
@@ -174,6 +204,7 @@ export default function Buttons({
           balance={balance}
           isHighRisk={isHighRisk}
           isOverLiquidation={isOverLiquidation}
+          onBorrow={onBorrow}
         />
       );
       break;
@@ -183,6 +214,7 @@ export default function Buttons({
           activeCurrency={activeCurrency}
           auth={auth}
           formValue={formValue}
+          onRepay={onRepay}
         />
       );
   }

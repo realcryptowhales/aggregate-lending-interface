@@ -1,6 +1,6 @@
 import { Tooltip } from '@mui/material';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
-import { DialogTypeProps } from '../hooks/useTradeDialog';
+import { DialogTypeProps } from '@/constant/type';
 import styles from './index.module.less';
 
 interface TipsProps {

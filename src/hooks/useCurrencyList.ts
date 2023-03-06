@@ -5,7 +5,7 @@ import { readContract } from '@wagmi/core';
 import { routerAddr } from '@/constant/contract';
 import { routerABI } from '@/constant/abi';
 
-export interface CurrencyInfoProps {
+export interface CurrencyBaseInfoProps {
   address: string;
   configId: number;
   decimal: number;
@@ -33,7 +33,7 @@ export interface AssetProps {
 export type str = string;
 
 export default function useCurrencyList() {
-  const [list, setList] = useState<CurrencyInfoProps[]>();
+  const [list, setList] = useState<CurrencyBaseInfoProps[]>();
 
   const { data, error, isLoading } = useSWR(
     {
@@ -85,7 +85,7 @@ export default function useCurrencyList() {
         const { address } = item;
         obj[address] = item;
       });
-      const currencies = data.map((item: CurrencyInfoProps) => {
+      const currencies = data.map((item: CurrencyBaseInfoProps) => {
         const { address } = item;
         return {
           ...item,

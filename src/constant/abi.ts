@@ -503,7 +503,13 @@ export const queryHelperABI = [
     type: 'function'
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_quote',
+        type: 'address'
+      }
+    ],
     name: 'getBorrowMarkets',
     outputs: [
       {
@@ -685,7 +691,12 @@ export const queryHelperABI = [
     inputs: [
       {
         internalType: 'address',
-        name: 'underlying',
+        name: '_underlying',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_quote',
         type: 'address'
       }
     ],
@@ -694,9 +705,14 @@ export const queryHelperABI = [
       {
         components: [
           {
-            internalType: 'uint256',
-            name: 'totalSupplied',
-            type: 'uint256'
+            internalType: 'address',
+            name: 'underlying',
+            type: 'address'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'supplies',
+            type: 'uint256[]'
           },
           {
             internalType: 'uint256',
@@ -704,9 +720,9 @@ export const queryHelperABI = [
             type: 'uint256'
           },
           {
-            internalType: 'uint256',
-            name: 'totalBorrowed',
-            type: 'uint256'
+            internalType: 'uint256[]',
+            name: 'borrows',
+            type: 'uint256[]'
           },
           {
             internalType: 'uint256',
@@ -733,6 +749,11 @@ export const queryHelperABI = [
         internalType: 'address[]',
         name: '_underlyings',
         type: 'address[]'
+      },
+      {
+        internalType: 'address',
+        name: '_quote',
+        type: 'address'
       }
     ],
     name: 'getMarketsInfo',
@@ -740,9 +761,14 @@ export const queryHelperABI = [
       {
         components: [
           {
-            internalType: 'uint256',
-            name: 'totalSupplied',
-            type: 'uint256'
+            internalType: 'address',
+            name: 'underlying',
+            type: 'address'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'supplies',
+            type: 'uint256[]'
           },
           {
             internalType: 'uint256',
@@ -750,9 +776,9 @@ export const queryHelperABI = [
             type: 'uint256'
           },
           {
-            internalType: 'uint256',
-            name: 'totalBorrowed',
-            type: 'uint256'
+            internalType: 'uint256[]',
+            name: 'borrows',
+            type: 'uint256[]'
           },
           {
             internalType: 'uint256',
@@ -774,8 +800,53 @@ export const queryHelperABI = [
     type: 'function'
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_underlying',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_quote',
+        type: 'address'
+      }
+    ],
     name: 'getPlatformInfo',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: 'depositedValue',
+        type: 'uint256'
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalBorrowedValue',
+        type: 'uint256'
+      },
+      {
+        internalType: 'uint256',
+        name: 'matchAmountValue',
+        type: 'uint256'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: '_underlyings',
+        type: 'address[]'
+      },
+      {
+        internalType: 'address',
+        name: '_quote',
+        type: 'address'
+      }
+    ],
+    name: 'getPlatformsInfo',
     outputs: [
       {
         internalType: 'uint256',
@@ -821,7 +892,13 @@ export const queryHelperABI = [
     type: 'function'
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_quote',
+        type: 'address'
+      }
+    ],
     name: 'getSupplyMarkets',
     outputs: [
       {
@@ -935,6 +1012,11 @@ export const queryHelperABI = [
           },
           {
             internalType: 'uint256',
+            name: 'borrowAmount',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
             name: 'borrowValue',
             type: 'uint256'
           },
@@ -1000,6 +1082,97 @@ export const queryHelperABI = [
     inputs: [
       {
         internalType: 'address',
+        name: '_account',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_asset',
+        type: 'address'
+      }
+    ],
+    name: 'getUserStatus',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'assetPrice',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'userBalance',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'borrowed',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'supplied',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'totalBorrowed',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'tatalCollateral',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'borrowLimit',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateThreashold',
+            type: 'uint256'
+          },
+          {
+            internalType: 'bool',
+            name: 'usingAsCollateral',
+            type: 'bool'
+          },
+          {
+            internalType: 'uint256',
+            name: 'supplyRate',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'borrowRate',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'supplyRates',
+            type: 'uint256[]'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'borrowRates',
+            type: 'uint256[]'
+          }
+        ],
+        internalType: 'struct QueryHelper.UserStatus',
+        name: 'userStatus',
+        type: 'tuple'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
         name: 'user',
         type: 'address'
       },
@@ -1017,6 +1190,11 @@ export const queryHelperABI = [
             internalType: 'address',
             name: 'underlying',
             type: 'address'
+          },
+          {
+            internalType: 'uint256',
+            name: 'depositAmount',
+            type: 'uint256'
           },
           {
             internalType: 'uint256',

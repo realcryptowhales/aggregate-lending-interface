@@ -2,7 +2,8 @@ import React from 'react';
 import { Switch, Tooltip } from '@mui/material';
 import clsx from 'classnames';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
-import { DialogTypeProps, FormValuesProps } from '../../hooks/useTradeDialog';
+import { DialogTypeProps } from '@/constant/type';
+import { FormValuesProps } from '../../hooks/useTradeDialog';
 import styles from './index.module.less';
 
 interface OperationProps {

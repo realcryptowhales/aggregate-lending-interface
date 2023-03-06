@@ -10,10 +10,10 @@ import CloseIcon from '@mui/icons-material/Close';
 
 interface SmallDialogProps {
   open: boolean;
-  handleClose: () => void;
-  title: string;
-  content: React.ReactNode;
-  button: React.ReactNode;
+  handleClose?: () => void;
+  title?: string;
+  content?: React.ReactNode;
+  button?: React.ReactNode;
 }
 
 const SmallDialog: React.FC<SmallDialogProps> = ({

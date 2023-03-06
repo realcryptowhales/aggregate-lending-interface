@@ -3,7 +3,21 @@ import UnAuth from './UnAuth';
 import InfosOperation from './InfosOperation';
 import Buttons from '../Buttons';
 import Tips from '../Tips';
-import { DialogTypeProps, FormValuesProps } from '../hooks/useTradeDialog';
+import { DialogTypeProps } from '@/constant/type';
+import { FormValuesProps } from '../hooks/useTradeDialog';
+
+export interface UseContractWriteProps {
+  data?: any;
+  error?: Error | null;
+  isError: boolean;
+  isIdle: boolean;
+  isLoading: boolean;
+  isSuccess: boolean;
+  write: ((args?: any) => void) | undefined;
+  writeAsync: ((args?: any) => Promise<any>) | undefined;
+  reset: () => void;
+  status: 'idle' | 'error' | 'loading' | 'success';
+}
 
 export interface InfoDetailsProps {
   type: DialogTypeProps;
@@ -16,6 +30,11 @@ export interface InfoDetailsProps {
   isHighRisk: boolean;
   isOverLiquidation: boolean;
   willBecomeBorrowLimitPercent: string;
+  onApprove?: UseContractWriteProps;
+  onDeposit?: UseContractWriteProps;
+  onWithdraw?: UseContractWriteProps;
+  onRepay?: UseContractWriteProps;
+  onBorrow?: UseContractWriteProps;
 }
 
 function InfoDetails({
@@ -28,7 +47,12 @@ function InfoDetails({
   isHighRisk,
   isOverLiquidation,
   willBecomeBorrowLimitPercent,
-  balance
+  balance,
+  onApprove,
+  onDeposit,
+  onWithdraw,
+  onRepay,
+  onBorrow
 }: InfoDetailsProps) {
   return (
     <Fragment>
@@ -55,6 +79,11 @@ function InfoDetails({
         isHighRisk={isHighRisk}
         isOverLiquidation={isOverLiquidation}
         balance={balance}
+        onApprove={onApprove}
+        onDeposit={onDeposit}
+        onWithdraw={onWithdraw}
+        onRepay={onRepay}
+        onBorrow={onBorrow}
       />
     </Fragment>
   );

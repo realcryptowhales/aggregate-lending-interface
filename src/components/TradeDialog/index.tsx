@@ -1,13 +1,13 @@
-import { Dialog } from '@mui/material';
+import { Dialog, Snackbar, Alert } from '@mui/material';
+import SmallDialog from '@/components/SmallDialog';
+import Button from '@mui/material/Button';
 import styles from './index.module.less';
 import DialogInput from './DialogInput';
 import InfoDetails from './InfoDetails';
 import TradeTable from './TradeTable';
 import Tabs from './Tabs';
-import useTradeDialog, {
-  UseTradeDialogProps,
-  DialogTypeProps
-} from './hooks/useTradeDialog';
+import { DialogTypeProps } from '@/constant/type';
+import useTradeDialog, { UseTradeDialogProps } from './hooks/useTradeDialog';
 
 export interface TabItemProps {
   key: number;
@@ -45,7 +45,14 @@ function TradeDialog({
     isHighRisk,
     balance,
     dolors,
-    auth
+    auth,
+    onApprove,
+    tipDialog,
+    snackbar,
+    onDeposit,
+    onWithdraw,
+    onRepay,
+    onBorrow
   } = useTradeDialog({
     type,
     activeCurrency,
@@ -54,7 +61,7 @@ function TradeDialog({
 
   const onDialogClose = () => {
     handleFormChange({
-      number: '',
+      number: undefined,
       asCollateral: true
     });
     onClose();
@@ -88,6 +95,11 @@ function TradeDialog({
             willBecomeBorrowLimitPercent={willBecomeBorrowLimitPercent}
             handleFormChange={handleFormChange}
             auth={auth}
+            onApprove={onApprove}
+            onDeposit={onDeposit}
+            onWithdraw={onWithdraw}
+            onRepay={onRepay}
+            onBorrow={onBorrow}
           />
         </section>
         <section className={styles.right}>
@@ -105,6 +117,48 @@ function TradeDialog({
           />
         </section>
       </div>
+      <SmallDialog
+        open={tipDialog.open}
+        handleClose={tipDialog?.onClose}
+        title={tipDialog?.title}
+        button={
+          <Button
+            sx={{
+              background: '#000000',
+              color: '#ffffff',
+              '&:hover': { background: 'gray' }
+            }}
+            onClick={tipDialog?.onConfirm}
+          >
+            {tipDialog?.buttonText}
+          </Button>
+        }
+        content={
+          <div className={styles.tipDialogContent}>{tipDialog?.content}</div>
+        }
+      />
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={5000}
+        onClose={snackbar.onClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert severity={snackbar.type} sx={{ width: '100%' }}>
+          <div className={styles.snackbarContent}>
+            <div className={styles.snackbarText}>{snackbar.message}</div>
+            {snackbar.viewDetailUrl ? (
+              <a
+                href={snackbar.viewDetailUrl}
+                target="_blank"
+                className={styles.snackbarUrl}
+                rel="noreferrer"
+              >
+                查看详情
+              </a>
+            ) : null}
+          </div>
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 }
