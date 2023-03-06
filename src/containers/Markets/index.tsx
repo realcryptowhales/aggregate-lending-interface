@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import style from './index.module.less';
 import cls from 'classnames';
 import Card from './Card';
@@ -20,9 +20,10 @@ import { PorfolioData } from '@/stores/porfolioStore';
 import { useContractReads } from 'wagmi';
 import { observer } from 'mobx-react-lite';
 import { routerABI } from '@/constant';
+import { BigNumber, ethers } from 'ethers';
 const headCells: HeadCell<any>[] = [
   {
-    id: 'underlying',
+    id: 'symbol',
     label: '资产',
     needSort: true
   },
@@ -63,91 +64,88 @@ const headCells: HeadCell<any>[] = [
     needSort: false
   }
 ];
-const currencyList = [
-  {
-    icon: 'https://static.okx.com/cdn/assets/imgs/221/C25FE324914596B9.png',
-    symbol: 'BTC'
-  },
-  {
-    icon: 'https://static.okx.com/cdn/assets/imgs/221/5F33E3F751873296.png',
-    symbol: 'ETH'
-  },
-  {
-    icon: 'https://static.okx.com/cdn/announce/20220119/1642588815382f0fd4a29-ba95-4ba9-ab33-23c1258ce96a.png',
-    symbol: 'OKB'
-  },
-  {
-    icon: 'https://static.okx.com/cdn/assets/imgs/221/8EC634AF717771B6.png',
-    symbol: 'LTC'
-  },
-  {
-    icon: 'https://static.okx.com/cdn/assets/imgs/221/5F74EB20302D7761.png',
-    symbol: 'USDT'
-  }
-];
+
 const Markets: React.FC = () => {
   const {
     marketStore: {
       setCurrentSupplyRates,
       setCurrentBorrowRates,
       setMarketsInfo,
-      setPlatformInfo,
-      marketTableList
-    }
+      // setPlatformInfo,
+      marketTableList,
+      totalValue,
+      matchTotalValue,
+      totalSupplyValue,
+      totalBorrowValue,
+      supplyAaveApr,
+      supplyCompoundApr,
+      supplyAggregationPlatformApr,
+      borrowAaveApr,
+      borrowCompoundApr,
+      borrowAggregationPlatformApr
+    },
+    commonStore: { tokenList }
   } = useStore();
+  console.log('supplyAggregationPlatformApr', supplyAggregationPlatformApr);
+  const [selectedSupToken, setSelectedSupToken] = useState(mockUSDTAddr);
+  const [selectedBorToken, setSelectedBorToken] = useState(mockUSDTAddr);
 
   const { data } = useContractReads({
     // watch: true,
     // cacheTime: 4_000,
     onSuccess(data: any[]) {
-      console.log('Success', data);
+      console.log('marketContractdata', data);
       // computePorfolioData(data);
       setCurrentBorrowRates(data[0]);
       setCurrentSupplyRates(data[1]);
       setMarketsInfo(data[2]);
-      setPlatformInfo(data[3]);
+      // setPlatformInfo(data[3]);
     },
     contracts: [
       {
         ...queryHelperContract,
         functionName: 'getCurrentBorrowRates',
-        args: [mockUSDTAddr]
+        args: [selectedBorToken]
       },
       {
         ...queryHelperContract,
         functionName: 'getCurrentSupplyRates',
-        args: [mockUSDTAddr]
+        args: [selectedSupToken]
       },
       {
         ...queryHelperContract,
         functionName: 'getMarketsInfo',
-        args: [[mockUSDTAddr, mockUSDCAddr, mockWBTCAddr, mockWETHAddr]]
-      },
-      {
-        ...queryHelperContract,
-        functionName: 'getPlatformInfo'
-        // args: [routerAddr, priceOracleAddr]
-      },
-      { address: routerAddr, abi: routerABI, functionName: 'getUnderlyings' }
+        args: [
+          [mockUSDTAddr, mockUSDCAddr, mockWBTCAddr, mockWETHAddr],
+          mockUSDTAddr
+        ]
+      }
+      // {
+      //   ...queryHelperContract,
+      //   functionName: 'getPlatformInfo'
+      //   // args: [routerAddr, priceOracleAddr]
+      // },
     ]
   });
+
   return (
     <div className={cls(style.container)}>
       <div className={cls(style.header)}>
         <Card title={'平台总数据'}>
           <MoneyDataDisplay
-            totalMarket="$ 534,290.4"
-            matchTotalAmount="$ 534,290.4"
-            totalDepositAmount="$ 534,290.4"
-            totalLoanAmount="$ 534,290.4"
+            totalMarket={totalValue}
+            matchTotalValue={matchTotalValue}
+            totalDepositValue={totalSupplyValue}
+            totalLoanValue={totalBorrowValue}
           />
         </Card>
         <Card
           title={
             <Title
               title="存款 APR 对比"
-              defaultValue="BTC"
-              currencyList={currencyList}
+              defaultValue="USDT"
+              currencyList={tokenList}
+              onChange={setSelectedSupToken}
             />
           }
           secondTitle="聚合平台所有币种收益率长期保持最高"
@@ -155,17 +153,18 @@ const Markets: React.FC = () => {
           {/* deposit */}
           <AprDataDisplay
             lendingPlatform="APR"
-            AggregationPlatform="6%"
-            aave="6%"
-            compound="6%"
+            AggregationPlatform={supplyAggregationPlatformApr}
+            aave={supplyAaveApr}
+            compound={supplyCompoundApr}
           />
         </Card>
         <Card
           title={
             <Title
               title="借款 APR 对比"
-              defaultValue="ETH"
-              currencyList={currencyList}
+              defaultValue="USDT"
+              currencyList={tokenList}
+              onChange={setSelectedBorToken}
             />
           }
           secondTitle="聚合平台所有币种利息长期保持最低"
@@ -173,9 +172,9 @@ const Markets: React.FC = () => {
           {/* borrow */}
           <AprDataDisplay
             lendingPlatform="APY"
-            AggregationPlatform="76%"
-            aave="6%"
-            compound="6%"
+            AggregationPlatform={borrowAggregationPlatformApr}
+            aave={borrowAaveApr}
+            compound={borrowCompoundApr}
           />
         </Card>
       </div>

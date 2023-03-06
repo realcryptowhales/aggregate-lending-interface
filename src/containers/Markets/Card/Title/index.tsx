@@ -10,13 +10,12 @@ import {
 } from '@mui/material';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { mockUSDTAddr } from '@/constant';
 interface Props {
   title: React.ReactNode;
-  // selectLabel: string;
-  // defaultSelect: string;
-  // selectOption: string[];
   defaultValue: string;
-  currencyList: { icon: string; symbol: string }[];
+  currencyList: { icon: string; symbol: string; address: string }[];
+  onChange: (tokenAddr: string) => void;
 }
 
 const BootstrapSelect = styled(Select)(({ theme }) => ({
@@ -32,10 +31,16 @@ const BootstrapSelect = styled(Select)(({ theme }) => ({
     textOverflow: 'unset'
   }
 }));
-const Title: React.FC<Props> = ({ title, defaultValue, currencyList }) => {
+const Title: React.FC<Props> = ({
+  title,
+  defaultValue,
+  currencyList,
+  onChange
+}) => {
   const [currency, setCurrency] = useState(
     defaultValue || currencyList[0].symbol
   );
+  // const [currencyAddr, setCurrencyAddr] = useState(mockUSDTAddr);
   const handleChange = (event: SelectChangeEvent) => {
     setCurrency(event.target.value);
   };
@@ -49,9 +54,12 @@ const Title: React.FC<Props> = ({ title, defaultValue, currencyList }) => {
             value={currency}
             onChange={handleChange as any}
           >
-            {currencyList.map(({ symbol }) => {
+            {currencyList.map(({ symbol, address }) => {
               return (
                 <MenuItem
+                  onClick={() => {
+                    onChange(address);
+                  }}
                   className={style.font}
                   sx={{
                     width: 72,

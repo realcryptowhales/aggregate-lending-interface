@@ -17,6 +17,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import '@/font/iconfont.css';
 import '@/font/iconfont.js';
 import '@rainbow-me/rainbowkit/styles.css';
+import { BigNumber, ethers } from 'ethers';
 
 const { chains, provider } = configureChains(chainList, [publicProvider()]);
 

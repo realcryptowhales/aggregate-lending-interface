@@ -11,6 +11,7 @@ import Paper from '@mui/material/Paper';
 // import DeleteIcon from '@mui/icons-material/Delete';
 // import FilterListIcon from '@mui/icons-material/FilterList';
 import style from './index.module.less';
+import { toJS } from 'mobx';
 export interface Asset {
   name: string;
   symbol: string;
@@ -18,13 +19,24 @@ export interface Asset {
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
+  if (Number.isNaN(+a[orderBy])) {
+    console.log(b[orderBy], a[orderBy]);
+    if (b[orderBy] < a[orderBy]) {
+      return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+      return 1;
+    }
+    return 0;
+  } else {
+    if (+b[orderBy] < +a[orderBy]) {
+      return -1;
+    }
+    if (+b[orderBy] > +a[orderBy]) {
+      return 1;
+    }
+    return 0;
   }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
 }
 
 type Order = 'asc' | 'desc';
@@ -39,9 +51,10 @@ function getComparator<T, Key extends keyof T>(
 }
 
 function stableSort<T>(array: T[], comparator: (a: T, b: T) => number): T[] {
-  return array.sort((a, b) => {
+  const res = array.sort((a, b) => {
     return comparator(a, b); //sort
   });
+  return res;
 }
 
 export interface HeadCell<T> {
@@ -112,14 +125,33 @@ function EnhancedTableHead<T>(props: EnhancedTableProps<T>) {
 interface TableProps<T> {
   headCells: HeadCell<T>[];
   rows: T[];
-  TableRows: React.JSXElementConstructor<{ row: T }>;
+  TableRows: React.JSXElementConstructor<{
+    row: T;
+    openCollateralModal?: (
+      symbol: string,
+      address: string,
+      action: string
+    ) => void;
+  }>;
   defaultOrderBy?: keyof T;
+  openCollateralModal?: (
+    symbol: string,
+    address: string,
+    action: string
+  ) => void;
 }
-export default function EnhancedTable<T extends { key: string }>({
+export default function EnhancedTable<
+  T extends {
+    underlying?: string;
+    transactionHash?: string;
+    gmtCreate?: number;
+  }
+>({
   headCells,
   rows,
   TableRows,
-  defaultOrderBy
+  defaultOrderBy,
+  openCollateralModal
 }: TableProps<T>) {
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
@@ -157,10 +189,16 @@ export default function EnhancedTable<T extends { key: string }>({
             <TableBody>
               {orderBy
                 ? stableSort(rows, getComparator(order, orderBy)).map((row) => {
-                    return <TableRows key={row.key} row={row} />;
+                    return (
+                      <TableRows
+                        key={row.underlying}
+                        row={row}
+                        openCollateralModal={openCollateralModal!}
+                      />
+                    );
                   })
                 : rows.map((row) => {
-                    return <TableRows key={row.key} row={row} />;
+                    return <TableRows key={row.gmtCreate} row={row} />;
                   })}
             </TableBody>
           </Table>

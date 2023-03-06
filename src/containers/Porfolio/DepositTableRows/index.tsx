@@ -1,31 +1,22 @@
-import {
-  Button,
-  styled,
-  Switch,
-  TableCell,
-  TableRow,
-  Tooltip
-} from '@mui/material';
+import { Button, styled, Switch, TableCell, TableRow } from '@mui/material';
 import style from './index.module.less';
 import cls from 'classnames';
-import classNames from 'classnames';
 import { useCallback, useState } from 'react';
-import { border } from '@mui/system';
 import { DepositData } from '..';
-import { BorderButton } from '../BorrowTableRows';
 import { useNavigate } from 'react-router-dom';
-import { currencyList } from '@/constant';
 import SmallDialog from '@/components/SmallDialog';
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-import { readContracts } from 'wagmi';
 import { observer } from 'mobx-react-lite';
 import { formatUnits } from 'ethers/lib/utils.js';
 import {
+  formatPercent,
   rawToPercent,
   rawToThousandCurrency,
   rawToThousandNumber,
-  thousandCurrency
+  thousandCurrency,
+  thousandNumber
 } from '@/utils/format';
+import { useStore } from '@/stores';
+import { BorderButton } from '../BorrowTableRows';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -64,203 +55,136 @@ export const PinkButton = styled(Button)({
   }
 });
 
-export const DepositTableRows = observer(({ row }: { row: DepositData }) => {
-  const {
-    underlying,
-    depositValue,
-    depositApr,
-    availableBalance,
-    dailyEstProfit,
-    collateral
-  } = row;
-  console.log(formatUnits(dailyEstProfit, 6));
+export const DepositTableRows = observer(
+  ({
+    row,
+    openCollateralModal
+  }: {
+    row: DepositData;
+    openCollateralModal: (
+      symbol: string,
+      address: string,
+      action: string
+    ) => void;
+  }) => {
+    const {
+      underlying,
+      depositValue,
+      depositApr,
+      availableBalance,
+      dailyEstProfit,
+      collateral,
+      depositAmount
+    } = row;
+    const {
+      commonStore: { tokenMap }
+    } = useStore();
+    const currentToken = tokenMap?.[underlying.toLocaleLowerCase()];
+    const [icon = '', symbol = '', decimal = 6, name] = [
+      currentToken?.icon,
+      currentToken?.symbol,
+      currentToken?.decimal,
+      currentToken?.name
+    ];
+    if (symbol === 'WETH') {
+      console.log('collateral', collateral);
+    }
+    const navigate = useNavigate();
 
-  const [icon = '', symbol = ''] = [
-    currencyList[underlying]?.icon,
-    currencyList[underlying]?.symbol
-  ];
-  const [collateralStatus, setCollateralStatus] = useState(collateral);
-  const [openCollateralModalVisible, setOpenCollateralModalVisible] =
-    useState(false);
-  const [closeCollateralModalVisible, setCloseCollateralModalVisible] =
-    useState(false);
-  const collateralBtnAction = useCallback(() => {
-    !collateralStatus && setOpenCollateralModalVisible(true);
-    collateralStatus && setCloseCollateralModalVisible(true);
-  }, [collateralStatus]);
-
-  const navigate = useNavigate();
-  return (
-    <>
-      <StyledTableRow
-        sx={{
-          height: 85,
-          background: '#F7F9FA'
-        }}
-        hover
-        onClick={() => {
-          navigate(`/porfolio/token?address=${underlying}`);
-        }}
-        tabIndex={-1}
-        key={symbol}
-        className={cls('cursor-pointer', style.row)}
-      >
-        <TableCell
-          className={style.cell}
-          padding="none"
-          component="th"
-          scope="row"
-          sx={{ width: 138, paddingLeft: '16px' }}
+    return (
+      <>
+        <StyledTableRow
+          sx={{
+            height: 85,
+            background: '#F7F9FA'
+          }}
+          hover
+          onClick={() => {
+            navigate(`/porfolio/token?address=${underlying}`);
+          }}
+          tabIndex={-1}
+          key={symbol}
+          className={cls('cursor-pointer', style.row)}
         >
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img
-              style={{ width: 30, height: 30, marginRight: 8 }}
-              src={icon}
-            ></img>
-            <div>
-              <div className={style.name}> {symbol}</div>
-
-              <span className={style.font12}> {symbol}</span>
-            </div>
-          </div>
-        </TableCell>
-        <TableCell padding="none" align="left" sx={{ width: 140 }}>
-          <div>{rawToThousandCurrency(depositValue)}</div>
-          <span className={style.font12}>美元估值</span>
-        </TableCell>
-        <TableCell padding="none" align="left" sx={{ width: 163 }}>
-          <div>{rawToPercent(depositApr)}</div>
-          <span className={style.font12}>APR组成</span>
-        </TableCell>
-        <TableCell padding="none" align="left" sx={{ width: 146 }}>
-          <div>{rawToThousandNumber(availableBalance)}</div>
-        </TableCell>
-        <TableCell padding="none" align="left" sx={{ width: 182 }}>
-          <div>{rawToThousandCurrency(dailyEstProfit)}</div>
-        </TableCell>
-        <TableCell padding="none" align="left" sx={{ width: 254 }}>
-          <BlueSwitch
-            color="secondary"
-            checked={collateralStatus}
-            onClick={(e: any) => {
-              e.stopPropagation();
-
-              collateralBtnAction();
-            }}
-          ></BlueSwitch>
-        </TableCell>
-        <TableCell padding="none" align="right">
-          <div style={{ paddingRight: 16 }}>
-            <PinkButton
-              variant="contained"
-              sx={{ mr: '12px', background: '#F98A6B' }}
-              onClick={(e: any) => {
-                e.stopPropagation();
-                //   todo
-                //openDepositDialog
-              }}
-            >
-              存款
-            </PinkButton>
-            <BorderButton
-              sx={{ border: '1px solid #000000', color: '#3D3E3E' }}
-              onClick={(e: any) => {
-                e.stopPropagation();
-
-                //   todo
-                //openBorrowDialog
-              }}
-            >
-              取款
-            </BorderButton>
-          </div>
-        </TableCell>
-      </StyledTableRow>
-      <SmallDialog
-        open={openCollateralModalVisible}
-        handleClose={() => {
-          setOpenCollateralModalVisible(false);
-        }}
-        title="开启抵押"
-        button={
-          <Button
-            style={{
-              width: '130px',
-              height: '40px'
-            }}
-            sx={{
-              background: '#000000',
-              color: '#ffffff',
-              '&:hover': { background: '#000000' }
-            }}
-            onClick={() => {
-              //todo 上链 -> 切换按钮状态 成功后关闭
-              setCollateralStatus(true);
-              setOpenCollateralModalVisible(false);
-            }}
+          <TableCell
+            className={style.cell}
+            padding="none"
+            component="th"
+            scope="row"
+            sx={{ width: 138, paddingLeft: '16px' }}
           >
-            Confirm
-          </Button>
-        }
-        content={
-          <div className="flex flex-col items-center justify-center min-w-85.75 min-h-47 text-3.5 leading-4">
-            {`请确定以${symbol}作为抵押品 作为抵押品的资产可以用于借贷`}
-          </div>
-        }
-      />
-      <SmallDialog
-        open={closeCollateralModalVisible}
-        handleClose={() => {
-          setCloseCollateralModalVisible(false);
-        }}
-        title="关闭抵押"
-        button={
-          <div className={cls('grow flex justify-center')}>
-            <Button
-              style={{
-                width: '130px',
-                height: '40px',
-                marginRight: '20px'
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <img
+                style={{ width: 30, height: 30, marginRight: 8 }}
+                src={icon}
+                alt={symbol}
+              ></img>
+              <div>
+                <div className={style.name}> {symbol}</div>
+
+                <span className={style.font12}> {name}</span>
+              </div>
+            </div>
+          </TableCell>
+          <TableCell padding="none" align="left" sx={{ width: 140 }}>
+            <div>{thousandNumber(depositAmount)}</div>
+            <span className={style.font12}>
+              {thousandCurrency(depositValue)}
+            </span>
+          </TableCell>
+          <TableCell padding="none" align="left" sx={{ width: 163 }}>
+            <div>{formatPercent(depositApr)}</div>
+            <span className={style.font12}>APR组成</span>
+          </TableCell>
+          <TableCell padding="none" align="left" sx={{ width: 146 }}>
+            <div>{thousandNumber(availableBalance)}</div>
+          </TableCell>
+          <TableCell padding="none" align="left" sx={{ width: 182 }}>
+            <div>{thousandCurrency(dailyEstProfit)}</div>
+          </TableCell>
+          <TableCell padding="none" align="left" sx={{ width: 254 }}>
+            <BlueSwitch
+              color="secondary"
+              checked={collateral}
+              onClick={(e: any) => {
+                e.stopPropagation();
+                openCollateralModal(
+                  symbol,
+                  underlying,
+                  collateral ? 'closeCollateral' : 'openCollateral'
+                );
+                // collateralBtnAction();
               }}
-              sx={{
-                border: '1px solid #000000',
-                background: '#ffffff',
-                color: '#000000',
-                '&:hover': { background: '#ffffff' }
-              }}
-              onClick={() => {
-                //todo 上链 -> 切换按钮状态 成功后关闭
-                setCollateralStatus(false);
-                setCloseCollateralModalVisible(false);
-              }}
-            >
-              关闭抵押
-            </Button>
-            <Button
-              style={{
-                width: '130px',
-                height: '40px'
-              }}
-              sx={{
-                background: '#000000',
-                color: '#ffffff',
-                '&:hover': { background: '#000000' }
-              }}
-              onClick={() => {
-                setCloseCollateralModalVisible(false);
-              }}
-            >
-              取 消
-            </Button>
-          </div>
-        }
-        content={
-          <div className="flex flex-col items-center justify-center min-w-85.75 min-h-47 text-3.5 leading-4">
-            <span>关闭按钮会增加您的资产清算风险，</span>
-            <div>若需关闭，建议存入更多资产或归还部分借款</div>
-          </div>
-        }
-      />
-    </>
-  );
-});
+            ></BlueSwitch>
+          </TableCell>
+          <TableCell padding="none" align="right">
+            <div style={{ paddingRight: 16 }}>
+              <PinkButton
+                variant="contained"
+                sx={{ mr: '12px', background: '#F98A6B' }}
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                  //   todo
+                  //openDepositDialog
+                }}
+              >
+                存款
+              </PinkButton>
+              <BorderButton
+                sx={{ border: '1px solid #000000', color: '#3D3E3E' }}
+                onClick={(e: any) => {
+                  e.stopPropagation();
+
+                  //   todo
+                  //openBorrowDialog
+                }}
+              >
+                取款
+              </BorderButton>
+            </div>
+          </TableCell>
+        </StyledTableRow>
+      </>
+    );
+  }
+);

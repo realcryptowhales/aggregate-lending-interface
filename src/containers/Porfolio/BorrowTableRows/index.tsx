@@ -3,12 +3,15 @@ import style from './index.module.less';
 import cls from 'classnames';
 import { BorrowData } from '..';
 import { useNavigate } from 'react-router-dom';
-import { currencyList } from '@/constant';
 import {
+  formatPercent,
   rawToPercent,
   rawToThousandCurrency,
-  rawToThousandNumber
+  rawToThousandNumber,
+  thousandCurrency,
+  thousandNumber
 } from '@/utils/format';
+import { useStore } from '@/stores';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -51,12 +54,24 @@ export const PurpleButton = styled(Button)({
   }
 });
 export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
-  const { underlying, borrowValue, borrowApr, borrowLimit, dailyEstInterest } =
-    row;
+  const {
+    commonStore: { tokenMap }
+  } = useStore();
+  const {
+    underlying,
+    borrowValue,
+    borrowApr,
+    borrowLimit,
+    dailyEstInterest,
+    borrowAmount
+  } = row;
   const navigate = useNavigate();
-  const [icon, symbol] = [
-    currencyList[underlying].icon,
-    currencyList[underlying].symbol
+  const currentToken = tokenMap?.[underlying.toLocaleLowerCase()];
+  const [icon = '', symbol = '', decimal = 6, name] = [
+    currentToken?.icon,
+    currentToken?.symbol,
+    currentToken?.decimal,
+    currentToken?.name
   ];
 
   return (
@@ -84,27 +99,28 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
           <img
             style={{ width: 30, height: 30, marginRight: 8 }}
             src={icon}
+            alt={symbol}
           ></img>
           <div>
             <div className={style.name}> {symbol}</div>
 
-            <span className={style.font12}> {symbol}</span>
+            <span className={style.font12}> {name}</span>
           </div>
         </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 140 }}>
-        <div>{rawToThousandCurrency(borrowValue)}</div>
-        <span className={style.font12}>美元估值</span>
+        <div>{thousandNumber(borrowAmount)}</div>
+        <span className={style.font12}>{thousandCurrency(borrowValue)}</span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 163 }}>
-        <div>{rawToPercent(borrowApr)}</div>
+        <div>{formatPercent(borrowApr)}</div>
         <span className={style.font12}>APR组成</span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 146 }}>
-        <div>{rawToThousandNumber(borrowLimit)}</div>
+        <div>{thousandNumber(borrowLimit)}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 436 }}>
-        <div>{rawToThousandCurrency(dailyEstInterest)}</div>
+        <div>{thousandCurrency(dailyEstInterest)}</div>
       </TableCell>
 
       <TableCell

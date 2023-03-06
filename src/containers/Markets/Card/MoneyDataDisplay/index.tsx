@@ -29,15 +29,15 @@ const MyTooltip = styled(({ className, ...props }: TooltipProps) => (
 }));
 interface Props {
   totalMarket: string;
-  matchTotalAmount: string;
-  totalDepositAmount: string;
-  totalLoanAmount: string;
+  matchTotalValue: string;
+  totalDepositValue: string;
+  totalLoanValue: string;
 }
 const MoneyDataDisplay: React.FC<Props> = ({
   totalMarket,
-  matchTotalAmount,
-  totalDepositAmount,
-  totalLoanAmount
+  matchTotalValue,
+  totalDepositValue,
+  totalLoanValue
 }) => {
   return (
     <div className={cls(style.container)}>
@@ -70,15 +70,15 @@ const MoneyDataDisplay: React.FC<Props> = ({
             />
           </MyTooltip>
         </div>
-        <div>{matchTotalAmount}</div>
+        <div>{matchTotalValue}</div>
       </div>
       <div>
         <div className={cls(style['container-title'])}>平台总存款金额</div>
-        <div>{totalDepositAmount}</div>
+        <div>{totalDepositValue}</div>
       </div>
       <div>
         <div className={cls(style['container-title'])}>平台总借款金额</div>
-        <div>{totalLoanAmount}</div>
+        <div>{totalLoanValue}</div>
       </div>
     </div>
   );

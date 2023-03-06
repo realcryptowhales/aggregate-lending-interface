@@ -3,33 +3,28 @@ import cls from 'classnames';
 import AssetInfo from './AssetInfo';
 import EnhancedTable, { HeadCell } from '@/components/Table';
 import { DepositTableRows } from './DepositTableRows';
-import { Tooltip } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import Tab, { Tabs } from './Tab';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { BorrowTableRows } from './BorrowTableRows';
 import { Link } from 'react-router-dom';
 import { useStore } from '@/stores';
-import { useAccount, useContractRead, useContractReads } from 'wagmi';
-import { mockUSDTAddr, queryHelperContractAddr } from '@/constant/contract';
+import { useAccount, useContractReads } from 'wagmi';
+import { mockUSDTAddr } from '@/constant/contract';
 import { queryHelperContract } from '@/stores/marketStore';
-import { queryHelperABI } from '@/constant';
-import {
-  BorrowedInfo,
-  PorfolioData,
-  SuppliedInfo,
-  UserInfo
-} from '@/stores/porfolioStore';
+import { PorfolioData } from '@/stores/porfolioStore';
 import { observer } from 'mobx-react-lite';
-import { toJS } from 'mobx';
-import { BigNumberish } from 'ethers';
+import SmallDialog from '@/components/SmallDialog';
+import { useCollateralModal } from '@/hooks/useCollateralModal';
 export interface DepositData {
   key: string;
   symbol: string;
   underlying: string;
-  depositValue: number;
-  depositApr: number;
-  availableBalance: number;
-  dailyEstProfit: number;
+  depositValue: string;
+  depositApr: string;
+  depositAmount: string;
+  availableBalance: string;
+  dailyEstProfit: string;
   collateral: boolean;
   action: React.ReactNode;
 }
@@ -96,68 +91,17 @@ const DepositHeadCells: HeadCell<DepositData>[] = [
     needSort: false
   }
 ];
-// function createDepositData(
-//   depositToken: string,
-//   depositAmount: number,
-//   supplyApr: number,
-//   availableBalance: number,
-//   dailyEstProfit: number,
-//   collateral: boolean,
-//   action?: React.ReactNode
-// ): DepositData {
-//   return {
-//     key: depositToken,
-//     depositToken,
-//     depositAmount,
-//     supplyApr,
-//     availableBalance,
-//     dailyEstProfit,
-//     collateral,
-//     action
-//   };
-// }
 
-// const DepositRows = [
-//   createDepositData(
-//     'BTC',
-//     305,
-//     3.7,
-//     67,
-//     4.3,
-//     false,
-//     <div>1231231312313131</div>
-//   ),
-//   createDepositData(
-//     'ETH',
-//     452,
-//     25.0,
-//     51,
-//     4.9,
-//     false,
-
-//     <div>123</div>
-//   ),
-//   createDepositData('USDT', 262, 16.0, 24, 6.0, false, <div>123</div>),
-//   createDepositData(
-//     'OKB',
-//     159,
-//     6.0,
-//     24,
-//     4.0,
-//     false,
-
-//     <div>123</div>
-//   )
-// ];
 export interface BorrowData {
   key: string;
   symbol: string;
 
   underlying: string;
-  borrowValue: BigNumberish;
-  borrowApr: BigNumberish;
-  borrowLimit: BigNumberish;
-  dailyEstInterest: BigNumberish;
+  borrowValue: string;
+  borrowAmount: string;
+  borrowApr: string;
+  borrowLimit: string;
+  dailyEstInterest: string;
   action: React.ReactNode;
 }
 const BorrowHeadCells: HeadCell<BorrowData>[] = [
@@ -222,11 +166,11 @@ const Porfolio = () => {
   } = useStore();
 
   const { address } = useAccount();
-  const { data } = useContractReads({
-    // watch: true,
-    // cacheTime: 4_000,
+  useContractReads({
+    watch: true,
+    cacheTime: 4_000,
     onSuccess(data: PorfolioData) {
-      console.log('Success', data);
+      console.log('PorfolioContractData', data);
       computePorfolioData(data);
     },
     contracts: [
@@ -254,20 +198,144 @@ const Porfolio = () => {
           DepositHeadCells,
           userSuppliedList,
           DepositTableRows,
-          'depositAmount'
+          'depositValue'
         ];
       return [
         BorrowHeadCells,
         userBorrowedList,
         BorrowTableRows,
-        'borrowLimit'
+        'borrowValue'
       ];
-    }, [curTab, userSuppliedList, data, userBorrowedList]);
-  console.log('data', data);
+    }, [curTab, userSuppliedList, userBorrowedList]);
+  // const { config } = usePrepareContractWrite({
+  //   address: routerAddr,
+  //   abi: routerABI,
+  //   functionName: 'supply',
+  //   args: [
+  //     {
+  //       asset: '0x1f901fe9EF8bA33149f28Cafdbb4E5DcF4a9526E',
+  //       amount: '100000000000000000000',
+  //       to: '0x49f8948c60cE2b4180DEf540f03148540268C5B0'
+  //     },
+  //     true,
+  //     true
+  //   ]
+  // });
+
+  const {
+    tokenSymbol,
+    onCancel,
+    onConfirm,
+    openModalAction,
+    collateralStatus,
+    modalVisible
+  } = useCollateralModal();
+  const modalInfo = useMemo(() => {
+    return collateralStatus === 'openCollateral'
+      ? {
+          title: '开启抵押',
+          button: (
+            <Button
+              style={{
+                width: '130px',
+                height: '40px'
+              }}
+              sx={{
+                background: '#000000',
+                color: '#ffffff',
+                '&:hover': { background: '#000000' }
+              }}
+              onClick={() => {
+                //todo 上链 -> 切换按钮状态 成功后关闭
+                // setCollateralStatus(true);
+                onConfirm();
+              }}
+            >
+              Confirm
+            </Button>
+          ),
+          content: (
+            <div className="flex flex-col items-center justify-center min-w-85.75 min-h-47 text-3.5 leading-4">
+              {`请确定以${tokenSymbol}作为抵押品 作为抵押品的资产可以用于借贷`}
+            </div>
+          )
+        }
+      : {
+          title: '关闭抵押',
+          button: (
+            <div className={cls('grow flex justify-center')}>
+              <Button
+                style={{
+                  width: '130px',
+                  height: '40px',
+                  marginRight: '20px'
+                }}
+                sx={{
+                  border: '1px solid #000000',
+                  background: '#ffffff',
+                  color: '#000000',
+                  '&:hover': { background: '#ffffff' }
+                }}
+                onClick={() => {
+                  //todo 上链 -> 切换按钮状态 成功后关闭
+                  // setCollateralStatus(false);
+                  onConfirm();
+                }}
+              >
+                关闭抵押
+              </Button>
+              <Button
+                style={{
+                  width: '130px',
+                  height: '40px'
+                }}
+                sx={{
+                  background: '#000000',
+                  color: '#ffffff',
+                  '&:hover': { background: '#000000' }
+                }}
+                onClick={() => {
+                  onCancel();
+                }}
+              >
+                取 消
+              </Button>
+            </div>
+          ),
+          content: (
+            <div className="flex flex-col items-center justify-center min-w-85.75 min-h-47 text-3.5 leading-4">
+              <span>关闭按钮会增加您的资产清算风险，</span>
+              <div>若需关闭，建议存入更多资产或归还部分借款</div>
+            </div>
+          )
+        };
+  }, [collateralStatus, tokenSymbol, onCancel, onConfirm]);
+  // console.log('address', address);
+  // const { config } = usePrepareContractWrite({
+  //   address: configContractAddr,
+  //   abi: configABI,
+  //   functionName: 'setUsingAsCollateral',
+  //   args: [
+  //     '0x49f8948c60cE2b4180DEf540f03148540268C5B0',
+  //     '0x0b99A10c7EDdEDB735040a23a923A08248CE6f4f',
+  //     true
+  //   ],
+  //   onSettled(data, error) {
+  //     console.log('Settled', { data, error });
+  //   }
+  // });
+  // const { isLoading, isSuccess, write, data } = useContractWrite(config);
+  // console.log('data', data);
   return (
     <div className={cls(style.container)}>
       <div className={cls(style['container-head'])}>
-        <div>我的资产{netProfit}</div>
+        <div
+          onClick={() => {
+            // write?.();
+          }}
+        >
+          我的资产
+        </div>
         <Link to="/porfolio/liquidation" style={{ textDecoration: 'none' }}>
           <div className={cls('flex items-center cursor-pointer')}>
             <i
@@ -290,10 +358,12 @@ const Porfolio = () => {
         <EnhancedTable<any>
           headCells={curHeadCells}
           rows={curTableRow}
-          TableRows={renderCurTableRows}
+          TableRows={renderCurTableRows as any}
           defaultOrderBy={defaultOrderBy}
+          openCollateralModal={openModalAction}
         />
       </main>
+      <SmallDialog open={modalVisible} handleClose={onCancel} {...modalInfo} />
     </div>
   );
 };

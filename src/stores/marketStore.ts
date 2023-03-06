@@ -1,21 +1,22 @@
 import { queryHelperABI } from '@/constant';
+import { queryHelperContractAddr } from '@/constant/contract';
 import {
-  mockUSDTAddr,
-  priceOracleAddr,
-  queryHelperContractAddr,
-  routerAddr
-} from '@/constant/contract';
-import { formatContractData } from '@/utils/format';
-import { multicall } from '@wagmi/core';
-import { BigNumberish } from 'ethers';
+  formatContractData,
+  formatPercent,
+  rawToPercent,
+  rawToThousandCurrency,
+  thousandCurrency
+} from '@/utils/format';
+import { BigNumber, BigNumberish } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import { makeAutoObservable } from 'mobx';
-
+import { RootStore } from '.';
+import BN from 'bignumber.js';
 export const queryHelperContract = {
   address: queryHelperContractAddr as `0x${string}`,
   abi: queryHelperABI
 };
-export interface MarketCurrencyInfo {
+interface MarketCurrencyInfo {
   underlying: string;
   borrowRate: BigNumberish;
   supplyRate: BigNumberish;
@@ -24,79 +25,167 @@ export interface MarketCurrencyInfo {
   totalSupplied: BigNumberish;
 }
 interface BorrowAprInfo {
-  aaveBorrowRate: BigNumberish;
-  aggBorrowRate: BigNumberish;
-  compBorrowRate: BigNumberish;
+  aaveBorrowRate: BigNumber;
+  aggBorrowRate: BigNumber;
+  compBorrowRate: BigNumber;
 }
 interface SupplyAprInfo {
-  aaveSupplyRate: BigNumberish;
-  aggSupplyRate: BigNumberish;
-  compSupplyRate: BigNumberish;
+  aaveSupplyRate: BigNumber;
+  aggSupplyRate: BigNumber;
+  compSupplyRate: BigNumber;
 }
 
 export default class MarketStore {
-  totalAmount = '';
-  matchTotalAmount = '';
-  totalSupplyAmount = '';
-  totalBorrowAmount = '';
+  rootStore: RootStore;
 
-  supplyLendingPlatform = 'APR';
-  supplyAggregationPlatformApr = '';
-  supplyAaveApr = '';
-  supplyCompoundApr = '';
+  totalValue = '';
+  matchTotalValue = '';
+  totalSupplyValue = '';
+  totalBorrowValue = '';
 
-  borrowLendingPlatform = 'APY';
-  borrowAggregationPlatformApr = '';
-  borrowAaveApr = '';
-  borrowCompoundApr = '';
+  supplyAggregationPlatformApr = '--';
+  supplyAaveApr = '--';
+  supplyCompoundApr = '--';
+
+  borrowAggregationPlatformApr = '--';
+  borrowAaveApr = '--';
+  borrowCompoundApr = '--';
 
   marketTableList: MarketCurrencyInfo[] = [];
 
-  constructor() {
+  constructor(rootStore: RootStore) {
     makeAutoObservable(this, {}, { autoBind: true });
+    this.rootStore = rootStore;
   }
-  async setPlatformInfo(platFormInfo: any[]) {
-    console.log('platFormInfo', platFormInfo);
-    this.totalSupplyAmount = formatUnits(platFormInfo?.[0], 6);
-    this.totalBorrowAmount = formatUnits(platFormInfo?.[1], 6);
-    this.matchTotalAmount = formatUnits(platFormInfo?.[2], 6);
-    this.totalAmount = formatUnits(platFormInfo?.[0].add(platFormInfo?.[1]), 6);
-    console.log('this.totalSupplyAmount', this.totalSupplyAmount);
-    console.log('this.totalBorrowAmount', this.totalBorrowAmount);
-    console.log('this.matchTotalAmount', this.matchTotalAmount);
-    console.log('this.totalAmount', this.totalAmount);
-  }
+  // async setPlatformInfo(platFormInfo: any[]) {
+  //   this.totalSupplyValue = rawToThousandCurrency(platFormInfo?.[0], 6);
+  //   this.totalBorrowValue = rawToThousandCurrency(platFormInfo?.[1], 6);
+  //   this.matchTotalValue = rawToThousandCurrency(platFormInfo?.[2], 6);
+  //   this.totalValue = rawToThousandCurrency(
+  //     platFormInfo?.[0].add(platFormInfo?.[1]),
+  //     6
+  //   );
+  // }
   async setCurrentSupplyRates(supplyRates: SupplyAprInfo) {
-    this.supplyAaveApr = formatUnits(supplyRates.aaveSupplyRate, 6);
-    this.supplyCompoundApr = formatUnits(supplyRates.compSupplyRate, 6);
-    this.supplyAggregationPlatformApr = formatUnits(
-      supplyRates.aggSupplyRate,
+    this.supplyAaveApr = rawToPercent(supplyRates?.aaveSupplyRate, 6);
+    this.supplyCompoundApr = rawToPercent(supplyRates?.compSupplyRate, 6);
+    this.supplyAggregationPlatformApr = rawToPercent(
+      supplyRates?.aggSupplyRate,
       6
-    );
-    console.log('this.supplyAaveApr', this.supplyAaveApr);
-    console.log('this.supplyCompoundApr', this.supplyCompoundApr);
-    console.log(
-      'this.supplyAggregationPlatformApr',
-      this.supplyAggregationPlatformApr
     );
   }
   async setCurrentBorrowRates(borrowRates: BorrowAprInfo) {
-    this.borrowAaveApr = formatUnits(borrowRates.aaveBorrowRate, 6);
-    this.borrowCompoundApr = formatUnits(borrowRates.compBorrowRate, 6);
-    this.borrowAggregationPlatformApr = formatUnits(
-      borrowRates.aggBorrowRate,
+    this.borrowAaveApr = rawToPercent(borrowRates?.aaveBorrowRate, 6);
+    this.borrowCompoundApr = rawToPercent(borrowRates?.compBorrowRate, 6);
+    this.borrowAggregationPlatformApr = rawToPercent(
+      borrowRates?.aggBorrowRate,
       6
-    );
-    console.log('this.borrowAaveApr', this.borrowAaveApr);
-    console.log('this.borrowCompoundApr', this.borrowCompoundApr);
-    console.log(
-      'this.borrowAggregationPlatformApr',
-      this.borrowAggregationPlatformApr
     );
   }
   async setMarketsInfo(marketTableList: any[]) {
-    const res = marketTableList.map(formatContractData);
-    console.log('marketTableList', res);
-    this.marketTableList = res;
+    const { tokenMap } = this.rootStore.commonStore;
+    let totalSuppliedValue = new BN(0);
+    let totalBorrowedValue = new BN(0);
+    let totalMatchValue = new BN(0);
+    this.marketTableList = marketTableList
+      .map(formatContractData)
+      .map(
+        ({
+          underlying,
+          supplies,
+          supplyRate,
+          borrows,
+          borrowRate,
+          totalMatched
+        }) => {
+          const symbol = tokenMap[underlying.toLocaleLowerCase()]?.symbol;
+
+          const matchedAmount = new BN(totalMatched.toString());
+
+          const supplyAaveAmount = new BN(supplies[0].toString());
+          const supplyCompoundAmount = new BN(supplies[1].toString());
+          console.log(
+            symbol,
+            matchedAmount.toFixed(),
+            supplyAaveAmount.toFixed(),
+            supplyCompoundAmount.toFixed()
+          );
+          const supplyTotalAmount = supplyAaveAmount
+            .plus(supplyCompoundAmount)
+            .plus(matchedAmount);
+
+          const matchedSupplyPercentage = matchedAmount
+            .div(supplyTotalAmount)
+            .toFixed();
+          const aaveSupplyPercentage = supplyAaveAmount
+            .div(supplyTotalAmount)
+            .toFixed();
+          const compoundSupplyPercentage = supplyCompoundAmount
+            .div(supplyTotalAmount)
+            .toFixed();
+          console.log(
+            '1231313',
+            supplyTotalAmount.toFixed(),
+            matchedSupplyPercentage,
+            aaveSupplyPercentage,
+            compoundSupplyPercentage
+          );
+
+          const borrowAaveAmount = new BN(borrows[0].toString());
+          const borrowCompoundAmount = new BN(borrows[1].toString());
+          const borrowTotalAmount = borrowAaveAmount
+            .plus(borrowCompoundAmount)
+            .plus(matchedAmount);
+
+          const matchedBorrowPercentage = matchedAmount
+            .div(borrowTotalAmount)
+            .toFixed();
+          const aaveBorrowPercentage = borrowAaveAmount
+            .div(borrowTotalAmount)
+            .toFixed();
+          const compoundBorrowPercentage = borrowCompoundAmount
+            .div(borrowTotalAmount)
+            .toFixed();
+          totalSuppliedValue = totalSuppliedValue.plus(supplyTotalAmount);
+          totalBorrowedValue = totalBorrowedValue.plus(borrowTotalAmount);
+          totalMatchValue = totalMatchValue.plus(matchedAmount);
+
+          // const decimal = tokenMap[underlying.toLocaleLowerCase()]?.decimal;
+          return {
+            totalSupplied: formatUnits(supplyTotalAmount.toFixed(), 6),
+            supplyRate: formatUnits(supplyRate, 6),
+            totalBorrowed: formatUnits(borrowTotalAmount.toFixed(), 6),
+            borrowRate: formatUnits(borrowRate, 6),
+            totalMatched: formatUnits(totalMatched, 6),
+            symbol,
+            underlying,
+            matchedSupplyPercentage,
+            aaveSupplyPercentage,
+            compoundSupplyPercentage,
+            matchedBorrowPercentage,
+            aaveBorrowPercentage,
+            compoundBorrowPercentage
+          };
+        }
+      );
+    this.totalSupplyValue = thousandCurrency(
+      totalSuppliedValue.div(10 ** 6).toFixed(),
+      6
+    );
+    this.totalBorrowValue = thousandCurrency(
+      totalBorrowedValue.div(10 ** 6).toFixed(),
+      6
+    );
+    this.matchTotalValue = thousandCurrency(
+      totalMatchValue.div(10 ** 6).toFixed(),
+      6
+    );
+    this.totalValue = thousandCurrency(
+      totalSuppliedValue
+        .plus(totalBorrowedValue)
+        .div(10 ** 6)
+        .toFixed(),
+      6
+    );
   }
 }

@@ -3772,3 +3772,362 @@ export const sTokenABI = [
     type: 'function'
   }
 ];
+export const configABI = [
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address'
+      },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'maxLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'maxLiquidateRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateRewardRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'feeRate',
+            type: 'uint256'
+          }
+        ],
+        indexed: false,
+        internalType: 'struct Types.AssetConfig',
+        name: 'oldConfig',
+        type: 'tuple'
+      },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'maxLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'maxLiquidateRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateRewardRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'feeRate',
+            type: 'uint256'
+          }
+        ],
+        indexed: false,
+        internalType: 'struct Types.AssetConfig',
+        name: 'newConfig',
+        type: 'tuple'
+      }
+    ],
+    name: 'AssetConfigSet',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'previousOwner',
+        type: 'address'
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address'
+      }
+    ],
+    name: 'OwnershipTransferred',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'oldRouter',
+        type: 'address'
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'newRouter',
+        type: 'address'
+      }
+    ],
+    name: 'RouterSet',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'account',
+        type: 'address'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'oldUserDebtAndCollateral',
+        type: 'uint256'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'newUserDebtAndCollateral',
+        type: 'uint256'
+      }
+    ],
+    name: 'UserDebtAndCollateralSet',
+    type: 'event'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_token',
+        type: 'address'
+      }
+    ],
+    name: 'assetConfigs',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'maxLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'maxLiquidateRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateRewardRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'feeRate',
+            type: 'uint256'
+          }
+        ],
+        internalType: 'struct Types.AssetConfig',
+        name: '',
+        type: 'tuple'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'owner',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'router',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_token',
+        type: 'address'
+      },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'maxLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateLTV',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'maxLiquidateRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'liquidateRewardRatio',
+            type: 'uint256'
+          },
+          {
+            internalType: 'uint256',
+            name: 'feeRate',
+            type: 'uint256'
+          }
+        ],
+        internalType: 'struct Types.AssetConfig',
+        name: '_config',
+        type: 'tuple'
+      }
+    ],
+    name: 'setAssetConfig',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_account',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_underlying',
+        type: 'address'
+      },
+      {
+        internalType: 'bool',
+        name: '_borrowing',
+        type: 'bool'
+      }
+    ],
+    name: 'setBorrowing',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_router',
+        type: 'address'
+      }
+    ],
+    name: 'setRouter',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_account',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_underlying',
+        type: 'address'
+      },
+      {
+        internalType: 'bool',
+        name: '_usingAsCollateral',
+        type: 'bool'
+      }
+    ],
+    name: 'setUsingAsCollateral',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address'
+      }
+    ],
+    name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address'
+      }
+    ],
+    name: 'userDebtAndCollateral',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  }
+];
