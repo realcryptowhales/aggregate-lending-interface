@@ -20,16 +20,15 @@ function Infos({
   formValue
 }: InfosProps) {
   const { aprTitle, list } = aprInfo || {};
-  const maxLTVPercentPosition = BN(maxLTVPercent.replace('%', '')).isLessThan(
-    100
-  )
-    ? maxLTVPercent
-    : '100%';
-  const liquidationPercentPosition = BN(
-    liquidationPercent.replace('%', '')
-  ).isLessThan(100)
-    ? liquidationPercent
-    : '100%';
+  const getPosition = (percent: string) => {
+    return BN(percent.replace('%', '')).isLessThan(100) ? percent : '100%';
+  };
+  const maxLTVPercentPosition = getPosition(maxLTVPercent);
+  const liquidationPercentPosition = getPosition(liquidationPercent);
+  const willBecomeBorrowLimitPercentPosition = getPosition(
+    willBecomeBorrowLimitPercent
+  );
+  const usedBorrowLimitPercentPosition = getPosition(usedBorrowLimitPercent);
   return (
     <div className={styles.Infos}>
       <div className={styles.top}>
@@ -95,8 +94,8 @@ function Infos({
             style={{
               width:
                 type !== DialogTypeProps.deposit && formValue?.number
-                  ? willBecomeBorrowLimitPercent
-                  : usedBorrowLimitPercent
+                  ? willBecomeBorrowLimitPercentPosition
+                  : usedBorrowLimitPercentPosition
             }}
           />
           {showMaxLTV ? (
