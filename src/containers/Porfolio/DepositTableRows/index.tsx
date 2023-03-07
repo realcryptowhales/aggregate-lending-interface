@@ -130,7 +130,7 @@ export const DepositTableRows = observer(
             </div>
           </TableCell>
           <TableCell padding="none" align="left" sx={{ width: 140 }}>
-            <div>{thousandNumber(depositAmount)}</div>
+            <div>{thousandNumber(depositAmount, 4)}</div>
             <span className={style.font12}>
               {thousandCurrency(depositValue)}
             </span>
@@ -138,14 +138,13 @@ export const DepositTableRows = observer(
           <TableCell padding="none" align="left" sx={{ width: 163 }}>
             <div>{formatPercent(depositApr)}</div>
             <span className={style.font12}>
-              {`(${formatPercent(
-                matchedSupplyPercentage,
-                0
-              )}撮合+${formatPercent(protocolSupplyPercentage, 0)}底层协议)`}
+              {`(${formatPercent(matchedSupplyPercentage)}撮合+${formatPercent(
+                protocolSupplyPercentage
+              )}底层协议)`}
             </span>
           </TableCell>
           <TableCell padding="none" align="left" sx={{ width: 146 }}>
-            <div>{thousandNumber(availableBalance)}</div>
+            <div>{thousandNumber(availableBalance, 4)}</div>
           </TableCell>
           <TableCell padding="none" align="left" sx={{ width: 182 }}>
             <div>{thousandCurrency(dailyEstProfit)}</div>

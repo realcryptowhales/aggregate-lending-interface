@@ -109,15 +109,14 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
         </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 140 }}>
-        <div>{thousandNumber(borrowAmount)}</div>
+        <div>{thousandNumber(borrowAmount, 4)}</div>
         <span className={style.font12}>{thousandCurrency(borrowValue)}</span>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 163 }}>
         <div>{formatPercent(borrowApr)}</div>
         <span className={style.font12}>
-          {`(${formatPercent(matchedBorrowPercentage, 0)}撮合+${formatPercent(
-            protocolBorrowPercentage,
-            0
+          {`(${formatPercent(matchedBorrowPercentage)}撮合+${formatPercent(
+            protocolBorrowPercentage
           )}底层协议)`}
         </span>
       </TableCell>

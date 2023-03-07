@@ -124,12 +124,12 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
       <TableCell padding="none" align="left" sx={{ width: 140 }}>
         <div className={style.cell}>{thousandCurrency(totalSupplied)}</div>
       </TableCell>
-      <TableCell padding="none" align="left" sx={{ width: 163 }}>
+      <TableCell padding="none" align="left" sx={{ width: 185 }}>
         <div className={style.cell}>{formatPercent(supplyRate)}</div>
         <span className={style.font12}>
-          {`(${formatPercent(matchedSupplyPercentage, 0)}撮合+${formatPercent(
+          {`(${formatPercent(matchedSupplyPercentage, 2)}撮合+${formatPercent(
             protocolSupplyPercentage,
-            0
+            2
           )}底层协议)`}
         </span>
       </TableCell>
@@ -139,13 +139,13 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
       <TableCell padding="none" align="left" sx={{ width: 182 }}>
         <div>{formatPercent(borrowRate)}</div>
         <span className={style.font12}>
-          {`(${formatPercent(matchedBorrowPercentage, 0)}撮合+${formatPercent(
+          {`(${formatPercent(matchedBorrowPercentage, 2)}撮合+${formatPercent(
             protocolBorrowPercentage,
-            0
+            2
           )}底层协议)`}
         </span>
       </TableCell>
-      <TableCell padding="none" align="left" sx={{ width: 256 }}>
+      <TableCell padding="none" align="left" sx={{ width: 235 }}>
         <div>{thousandCurrency(totalMatched)}</div>
       </TableCell>
       <TableCell
