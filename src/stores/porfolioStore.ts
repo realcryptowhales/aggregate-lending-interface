@@ -195,8 +195,8 @@ export default class PorfolioStore {
       userInfo: UserInfo;
     // eslint-disable-next-line prefer-const
     [suppliedList = [], borrowedList = [], userInfo] = data;
-    this.setSuppliedList(suppliedList);
-    this.setBorrowedList(borrowedList);
+    this.setSuppliedList(suppliedList || []);
+    this.setBorrowedList(borrowedList || []);
     if (!this.userSuppliedList.length) {
       this.userTotalSupplied = '0';
       this.totalSuppliedApr = '0';
@@ -206,8 +206,10 @@ export default class PorfolioStore {
       this.userTotalBorrowed = '0';
       this.totalBorrowedApr = '0';
     }
-    suppliedList.length && this.computeTotalSupAprAndTotalSup(suppliedList);
-    borrowedList.length && this.computeTotalBorAprAndTotalBor(borrowedList);
+    suppliedList?.length &&
+      this.computeTotalSupAprAndTotalSup(suppliedList || []);
+    borrowedList?.length &&
+      this.computeTotalBorAprAndTotalBor(borrowedList || []);
     this.borrowLimit = formatUnits(userInfo?.borrowLimit ?? 0, 6);
     this.userTotalBorrowed = formatUnits(userInfo?.borrowingValue ?? 0, 6);
     this.collateralValue = formatUnits(userInfo?.collateralValue ?? 0, 6);
@@ -221,7 +223,7 @@ export default class PorfolioStore {
               )
             )
             .toString(10)
-        : '';
+        : '0';
   }
   computeTotalSupAprAndTotalSup(suppliedList: SuppliedInfo[] = []) {
     let totalSupplied = new BigNumber(0),

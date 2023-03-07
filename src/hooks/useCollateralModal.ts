@@ -31,13 +31,11 @@ export const useCollateralModal = (
     },
     onError(error) {
       console.log('Error', error);
-      alert(1);
     },
     onSettled(data, error) {
       console.log('Settled', { data, error });
     }
   });
-  console.log('config', config);
   const { isLoading, isSuccess, write } = useContractWrite({
     ...config,
     onSuccess(data) {
@@ -45,6 +43,7 @@ export const useCollateralModal = (
       successCall();
     },
     onError(error) {
+      console.log('error', error);
       errorCall();
     },
     onSettled(data, error) {
@@ -60,12 +59,10 @@ export const useCollateralModal = (
     },
     []
   );
-  console.log('isSuccess', isSuccess);
   const onCancel = useCallback(() => {
     setModalVisible(false);
   }, []);
   const onConfirm = useCallback(() => {
-    console.log('isLoading', isLoading, write);
     write?.();
   }, [write, isLoading]);
   return {

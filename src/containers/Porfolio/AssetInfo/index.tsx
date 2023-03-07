@@ -61,7 +61,7 @@ const AssetInfo: React.FC = ({}) => {
   } = useStore();
   const thousandCollateralValue = useMemo(() => {
     if (Number.isNaN(+collateralValue) || !collateralValue) return '--';
-    return thousandCurrency(+collateralValue, 4);
+    return thousandCurrency(collateralValue);
   }, [collateralValue]);
   const percentUsedRatio = useMemo(() => {
     if (Number.isNaN(+usedRatio)) return '0%';
@@ -69,29 +69,25 @@ const AssetInfo: React.FC = ({}) => {
   }, [usedRatio]);
   const thousandBorrowLimit = useMemo(() => {
     if (Number.isNaN(+borrowLimit) || !borrowLimit) return '--';
-    return thousandCurrency(+borrowLimit, 4);
+    return thousandCurrency(borrowLimit);
   }, [borrowLimit]);
   return (
     <div className={cls(style.container)}>
       <InfoItem
         title={'总存款金额'}
-        amount={
-          userTotalSupplied ? thousandCurrency(userTotalSupplied, 6) : '--'
-        }
+        amount={userTotalSupplied ? thousandCurrency(userTotalSupplied) : '--'}
         percentText={'总存款APR'}
         percent={totalSuppliedApr ? formatPercent(totalSuppliedApr) : '--'}
       />
       <InfoItem
         title={'总借款金额'}
-        amount={
-          userTotalBorrowed ? thousandCurrency(userTotalBorrowed, 6) : '--'
-        }
+        amount={userTotalBorrowed ? thousandCurrency(userTotalBorrowed) : '--'}
         percentText={'总借款APR'}
         percent={totalBorrowedApr ? formatPercent(totalBorrowedApr) : '--'}
       />
       <InfoItem
         title={'今日预估总收益'}
-        amount={dailyEstProfit ? thousandCurrency(dailyEstProfit, 6) : '--'}
+        amount={dailyEstProfit ? thousandCurrency(dailyEstProfit) : '--'}
         percentText="净收益率"
         percent={netProfit ? formatPercent(netProfit) : '--'}
         hasTips

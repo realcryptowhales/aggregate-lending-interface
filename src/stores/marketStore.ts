@@ -38,10 +38,10 @@ interface SupplyAprInfo {
 export default class MarketStore {
   rootStore: RootStore;
 
-  totalValue = '';
-  matchTotalValue = '';
-  totalSupplyValue = '';
-  totalBorrowValue = '';
+  totalValue = '--';
+  matchTotalValue = '--';
+  totalSupplyValue = '--';
+  totalBorrowValue = '--';
 
   supplyAggregationPlatformApr = '--';
   supplyAaveApr = '--';
@@ -185,23 +185,19 @@ export default class MarketStore {
         }
       );
     this.totalSupplyValue = thousandCurrency(
-      totalSuppliedValue.div(10 ** 6).toFixed(),
-      6
+      totalSuppliedValue.div(10 ** 6).toFixed()
     );
     this.totalBorrowValue = thousandCurrency(
-      totalBorrowedValue.div(10 ** 6).toFixed(),
-      6
+      totalBorrowedValue.div(10 ** 6).toFixed()
     );
     this.matchTotalValue = thousandCurrency(
-      totalMatchValue.div(10 ** 6).toFixed(),
-      6
+      totalMatchValue.div(10 ** 6).toFixed()
     );
     this.totalValue = thousandCurrency(
       totalSuppliedValue
         .plus(totalBorrowedValue)
         .div(10 ** 6)
-        .toFixed(),
-      6
+        .toFixed()
     );
   }
 }

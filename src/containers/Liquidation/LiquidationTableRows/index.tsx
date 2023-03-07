@@ -69,7 +69,7 @@ export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
         </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 152 }}>
-        {thousandNumber(redeemAmount)}
+        {thousandNumber(redeemAmount, 4)}
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 152 }}>
         <div className={cls('flex items-center')}>
@@ -85,7 +85,7 @@ export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
         </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 152 }}>
-        <div>{thousandNumber(repayedAmount)}</div>
+        <div>{thousandNumber(repayedAmount, 4)}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 86 }}>
         <div>{`${liquidateRewardRatio}%`}</div>
