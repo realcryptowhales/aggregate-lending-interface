@@ -63,3 +63,9 @@ export const formatCurrencyNumber = ({
 export const parseUnits = ({ num, decimal }: ParseUnitsProps) => {
   return num && decimal ? utils.parseUnits(num, decimal) : '0';
 };
+
+export const divide = (dividend: BigNumber, divisor: BigNumber) => {
+  return cutZero(
+    BN(formatRateNumber(dividend)).div(formatRateNumber(divisor)).toFixed(4, 1)
+  );
+};

@@ -233,4 +233,5 @@ export interface ParseUnitsProps {
 export interface UseTradeContractProps {
   activeCurrencyBaseInfo?: CurrencyBaseInfoProps;
   formValue: FormValuesProps;
+  activeCurrencyInfo?: CurrencyInfoProps;
 }

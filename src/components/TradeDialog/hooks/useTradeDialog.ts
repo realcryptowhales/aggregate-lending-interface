@@ -21,7 +21,8 @@ import {
   formatRatePercent,
   formatRateNumber,
   formatPriceNumber,
-  formatCurrencyNumber
+  formatCurrencyNumber,
+  divide
 } from '../utils';
 import useTradeContract from './useTradeContract';
 
@@ -128,9 +129,9 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
       }), // 借款数量
       depositAPRPercent: formatRatePercent(supplyRate), // 存款APR百分数
       depositAmount, // 存款余额
-      maxLTV: formatRateNumber(borrowLimit.mod(tatalCollateral)), // 最高抵押率
-      liquidation: formatRateNumber(liquidateThreashold.mod(tatalCollateral)), // 清算域值
-      usedBorrowLimit: formatRateNumber(borrowed.mod(tatalCollateral)), // 已用借款限额
+      maxLTV: divide(borrowLimit, tatalCollateral), // 最高抵押率
+      liquidation: divide(liquidateThreashold, tatalCollateral), // 清算域值
+      usedBorrowLimit: divide(borrowed, tatalCollateral), // 已用借款限额
       assetPrice: formatPriceNumber(assetPrice), // 资产价格
       usingAsCollateral,
       totalBorrowed: formatCurrencyNumber({
@@ -399,7 +400,11 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     onWithdraw,
     onBorrow,
     onRepay
-  } = useTradeContract({ activeCurrencyBaseInfo, formValue });
+  } = useTradeContract({
+    activeCurrencyBaseInfo,
+    formValue,
+    activeCurrencyInfo
+  });
 
   // 更新auth状态
   useEffect(() => {

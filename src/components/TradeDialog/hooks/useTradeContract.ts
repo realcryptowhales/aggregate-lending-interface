@@ -18,7 +18,8 @@ import { parseUnits } from '../utils';
 
 const useTradeContract = ({
   activeCurrencyBaseInfo,
-  formValue
+  formValue,
+  activeCurrencyInfo
 }: UseTradeContractProps) => {
   const [tipDialog, setTipDialog] = useState<TipDialogProps>({ open: false });
   const [snackbar, setSnackBar] = useState<SnackbarProps>({ open: false });
@@ -77,7 +78,8 @@ const useTradeContract = ({
     address: activeCurrencyBaseInfo?.address,
     abi: sTokenABI,
     functionName: 'approve',
-    args: [routerAddr, constants.MaxUint256]
+    args: [routerAddr, constants.MaxUint256],
+    enabled: !!routerAddr
   });
   const onApprove = useContractWrite(approveConfig.config);
 
@@ -139,7 +141,12 @@ const useTradeContract = ({
       },
       formValue.asCollateral,
       true
-    ]
+    ],
+    enabled:
+      formValue.number &&
+      formValue.number !== '0' &&
+      activeCurrencyBaseInfo?.address &&
+      address
   });
   const onDeposit = useContractWrite(depositConfig.config);
 
@@ -219,11 +226,35 @@ const useTradeContract = ({
         }),
         to: address
       },
-      formValue.asCollateral,
+      activeCurrencyInfo?.usingAsCollateral,
       true
-    ]
+    ],
+    enabled:
+      formValue.number &&
+      formValue.number !== '0' &&
+      activeCurrencyBaseInfo?.address &&
+      address
   });
   const onWithdraw = useContractWrite(withdrawConfig.config);
+
+  // const onWithdraw = useContractWrite({
+  //   mode: 'recklesslyUnprepared',
+  //   address: routerAddr,
+  //   abi: routerABI,
+  //   functionName: 'redeem',
+  //   args: [
+  //     {
+  //       asset: activeCurrencyBaseInfo?.address,
+  //       amount: parseUnits({
+  //         num: formValue.number,
+  //         decimal: activeCurrencyBaseInfo?.decimal
+  //       }),
+  //       to: address
+  //     },
+  //     activeCurrencyInfo?.usingAsCollateral,
+  //     true
+  //   ]
+  // });
 
   // 处理取款结果
   useEffect(() => {
@@ -302,7 +333,12 @@ const useTradeContract = ({
         to: address
       },
       true
-    ]
+    ],
+    enabled:
+      formValue.number &&
+      formValue.number !== '0' &&
+      activeCurrencyBaseInfo?.address &&
+      address
   });
   const onBorrow = useContractWrite(borrowConfig.config);
 
@@ -382,7 +418,12 @@ const useTradeContract = ({
         to: address
       },
       true
-    ]
+    ],
+    enabled:
+      formValue.number &&
+      formValue.number !== '0' &&
+      activeCurrencyBaseInfo?.address &&
+      address
   });
   const onRepay = useContractWrite(repayConfig.config);
 
