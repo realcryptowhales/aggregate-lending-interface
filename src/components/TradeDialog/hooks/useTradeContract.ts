@@ -26,6 +26,52 @@ const useTradeContract = ({
   // 获取用户钱包地址
   const { address } = useAccount();
 
+  const addToken = async () => {
+    try {
+      const { sToken, symbol, decimal, icon } = activeCurrencyBaseInfo || {};
+      const res = await window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            address: sToken,
+            symbol: symbol,
+            decimals: decimal,
+            image: icon
+          }
+        }
+      });
+      if (res) {
+        setSnackBar({
+          open: true,
+          message: `添加ib${activeCurrencyBaseInfo?.symbol}成功`,
+          onClose: () => {
+            setSnackBar({ open: false });
+          },
+          type: 'success'
+        });
+      } else {
+        setSnackBar({
+          open: true,
+          message: `添加ib${activeCurrencyBaseInfo?.symbol}失败`,
+          onClose: () => {
+            setSnackBar({ open: false });
+          },
+          type: 'error'
+        });
+      }
+    } catch (err) {
+      setSnackBar({
+        open: true,
+        message: `添加ib${activeCurrencyBaseInfo?.symbol}失败`,
+        onClose: () => {
+          setSnackBar({ open: false });
+        },
+        type: 'error'
+      });
+    }
+  };
+
   // 授权当前币种额度
   const approveConfig = usePrepareContractWrite({
     address: activeCurrencyBaseInfo?.address,
@@ -126,9 +172,9 @@ const useTradeContract = ({
         },
         onConfirm: () => {
           setTipDialog({ open: false });
-          write?.();
+          addToken();
         },
-        buttonText: '将ib{Token}添加进钱包'
+        buttonText: `将ib${activeCurrencyBaseInfo?.symbol}添加进钱包`
       });
     }
   }, [onDeposit.status]);
