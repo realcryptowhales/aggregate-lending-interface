@@ -26,7 +26,7 @@ const DialogInput = ({
     const item =
       currencyBaseInfoList &&
       currencyBaseInfoList.find((currency) => {
-        return currency.symbol === value;
+        return currency.symbol.toLowerCase() === value.toLowerCase();
       });
     const { symbol, icon } = item || {};
     return (

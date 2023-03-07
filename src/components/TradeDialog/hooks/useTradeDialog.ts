@@ -54,15 +54,10 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     maxLTV, // 最高抵押率
     liquidation, // 清算域值
     usedBorrowLimit, // 已用借款限额
-    assetPrice
+    assetPrice,
+    totalBorrowed,
+    tatalCollateral
   } = activeCurrencyInfo || {};
-
-  const handleFormChange = (obj: { [key: string]: any }) => {
-    setFormValues({
-      ...formValue,
-      ...obj
-    });
-  };
 
   // 获取币种的列表和一些基础的币种信息
   const currencyBaseInfoList = useCurrencyList();
@@ -137,7 +132,15 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
       liquidation: formatRateNumber(liquidateThreashold.mod(tatalCollateral)), // 清算域值
       usedBorrowLimit: formatRateNumber(borrowed.mod(tatalCollateral)), // 已用借款限额
       assetPrice: formatPriceNumber(assetPrice), // 资产价格
-      usingAsCollateral
+      usingAsCollateral,
+      totalBorrowed: formatCurrencyNumber({
+        big: totalBorrowed,
+        decimal: activeCurrencyBaseInfo?.decimal
+      }),
+      tatalCollateral: formatCurrencyNumber({
+        big: tatalCollateral,
+        decimal: activeCurrencyBaseInfo?.decimal
+      })
     });
   };
 
@@ -192,10 +195,16 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     }
   });
 
-  // 更新balance
-  const updateBalance = () => {
+  // 初始化balance
+  const initBalance = () => {
     setBalance('0');
-    // type === DialogTypeProps.deposit 通过 useBalance更新
+  };
+
+  const handleFormChange = (obj: { [key: string]: any }) => {
+    setFormValues({
+      ...formValue,
+      ...obj
+    });
   };
 
   const getBestApr = (num?: string) => {
@@ -344,39 +353,43 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   // 是否超出清算域值
   const isOverLiquidation = useMemo(() => {
     return (
-      Number(usedBorrowLimit) >= Number(liquidation) ||
+      (!!liquidation &&
+        !!usedBorrowLimit &&
+        BN(liquidation).isLessThan(usedBorrowLimit)) ||
       (!!willBecomeBorrowLimit &&
-        Number(willBecomeBorrowLimit) >= Number(liquidation))
+        !!liquidation &&
+        BN(liquidation).isLessThan(willBecomeBorrowLimit))
     );
   }, [usedBorrowLimit, willBecomeBorrowLimit]);
 
   // 最高抵押率百分比
   const maxLTVPercent = useMemo(() => {
-    return maxLTV ? toPercent(maxLTV) : '0%';
+    return toPercent(maxLTV);
   }, [maxLTV]);
 
   // 用户已用借款限额百分比
   const usedBorrowLimitPercent = useMemo(() => {
-    return usedBorrowLimit ? toPercent(usedBorrowLimit) : '0%';
+    return toPercent(usedBorrowLimit);
   }, [usedBorrowLimit]);
 
   // 清算域值百分比
   const liquidationPercent = useMemo(() => {
-    return liquidation ? toPercent(liquidation) : '0%';
+    return toPercent(liquidation);
   }, [liquidation]);
 
   // 用户将借款限额百分比
   const willBecomeBorrowLimitPercent = useMemo(() => {
-    return willBecomeBorrowLimit ? toPercent(willBecomeBorrowLimit) : '0%';
+    return toPercent(willBecomeBorrowLimit);
   }, [willBecomeBorrowLimit]);
 
   // 是否是高风险
   const isHighRisk = useMemo(() => {
     return (
       !!willBecomeBorrowLimit &&
-      Number(willBecomeBorrowLimit + 0.1) >= Number(liquidation)
+      !!maxLTV &&
+      BN(maxLTV).isLessThan(willBecomeBorrowLimit)
     );
-  }, [usedBorrowLimit, willBecomeBorrowLimit]);
+  }, [maxLTV, willBecomeBorrowLimit]);
 
   const {
     onApprove,
@@ -397,19 +410,32 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     }
   }, [allowance, formValue]);
 
+  // 计算新借款限额
+  const getWillBecomeBorrowLimit = () => {
+    if (formValue.number !== '0' && totalBorrowed && tatalCollateral) {
+      return cutZero(
+        BN(formValue.number)
+          .plus(totalBorrowed)
+          .div(tatalCollateral)
+          .toFixed(4, 1)
+      );
+    }
+    return '0';
+  };
+
   // 更新借款限额 和 美元价值
   useEffect(() => {
     formValue?.number &&
       assetPrice &&
       setDolors(cutZero(BN(formValue.number).times(assetPrice).toFixed(2, 1)));
-    setWillBecomeBorrowLimit('0.9');
+    setWillBecomeBorrowLimit(getWillBecomeBorrowLimit());
   }, [formValue.number]);
 
   // 更新ActiveCurrencyBaseInfo
   useEffect(() => {
     if (currencyBaseInfoList && activeCurrency) {
       const activeCurrencyBaseInfo = currencyBaseInfoList.find((item) => {
-        return item.symbol === activeCurrency;
+        return item.symbol.toLowerCase() === activeCurrency.toLowerCase();
       });
       setActiveCurrencyBaseInfo(activeCurrencyBaseInfo);
     }
@@ -417,9 +443,8 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
 
   // 启动弹窗后初始化
   useEffect(() => {
-    updateBalance();
+    initBalance();
     init();
-    // updateActiveCurrencyInfo();
   }, [type, activeCurrency]);
 
   return {

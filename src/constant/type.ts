@@ -48,6 +48,8 @@ export interface CurrencyInfoProps {
   usedBorrowLimit?: string; // 已用借款限额
   assetPrice?: string;
   usingAsCollateral?: boolean;
+  totalBorrowed?: string;
+  tatalCollateral?: string;
 }
 
 export interface UseTradeDialogProps {
@@ -78,7 +80,7 @@ export interface AprInfoProps {
 }
 
 export interface FormValuesProps {
-  number?: string;
+  number: string;
   asCollateral: boolean;
 }
 

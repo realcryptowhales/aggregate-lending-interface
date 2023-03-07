@@ -3,6 +3,7 @@ import { Tooltip } from '@mui/material';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
 import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
 import clsx from 'classnames';
+import BN from 'bignumber.js';
 import { DialogTypeProps, InfosProps } from '@/constant/type';
 import styles from './index.module.less';
 
@@ -19,6 +20,15 @@ function Infos({
   formValue
 }: InfosProps) {
   const { aprTitle, list } = aprInfo || {};
+  const getPosition = (percent: string) => {
+    return BN(percent.replace('%', '')).isLessThan(100) ? percent : '100%';
+  };
+  const maxLTVPercentPosition = getPosition(maxLTVPercent);
+  const liquidationPercentPosition = getPosition(liquidationPercent);
+  const willBecomeBorrowLimitPercentPosition = getPosition(
+    willBecomeBorrowLimitPercent
+  );
+  const usedBorrowLimitPercentPosition = getPosition(usedBorrowLimitPercent);
   return (
     <div className={styles.Infos}>
       <div className={styles.top}>
@@ -84,8 +94,8 @@ function Infos({
             style={{
               width:
                 type !== DialogTypeProps.deposit && formValue?.number
-                  ? willBecomeBorrowLimitPercent
-                  : usedBorrowLimitPercent
+                  ? willBecomeBorrowLimitPercentPosition
+                  : usedBorrowLimitPercentPosition
             }}
           />
           {showMaxLTV ? (
@@ -93,11 +103,11 @@ function Infos({
               <div className={styles.sliderMaxLTVText}>MAX LTV</div>
               <div
                 className={styles.sliderMaxLVTMark}
-                style={{ left: maxLTVPercent }}
+                style={{ left: maxLTVPercentPosition }}
               />
               <div
                 className={styles.sliderMaxLTVValue}
-                style={{ left: maxLTVPercent }}
+                style={{ left: maxLTVPercentPosition }}
               >
                 {maxLTVPercent}
               </div>
@@ -116,14 +126,14 @@ function Infos({
               styles.sliderLiquidationMark,
               showMaxLTV ? styles.showMaxLTVSlider : ''
             )}
-            style={{ left: liquidationPercent }}
+            style={{ left: liquidationPercentPosition }}
           />
           <div
             className={clsx(
               styles.sliderLiquidationValue,
               showMaxLTV ? styles.showMaxLTVSliderLiquidation : ''
             )}
-            style={{ left: liquidationPercent }}
+            style={{ left: liquidationPercentPosition }}
           >
             {liquidationPercent}
           </div>
