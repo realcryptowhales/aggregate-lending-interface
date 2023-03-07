@@ -3,6 +3,7 @@ import { Tooltip } from '@mui/material';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
 import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
 import clsx from 'classnames';
+import BN from 'bignumber.js';
 import { DialogTypeProps, InfosProps } from '@/constant/type';
 import styles from './index.module.less';
 
@@ -19,6 +20,16 @@ function Infos({
   formValue
 }: InfosProps) {
   const { aprTitle, list } = aprInfo || {};
+  const maxLTVPercentPosition = BN(maxLTVPercent.replace('%', '')).isLessThan(
+    100
+  )
+    ? maxLTVPercent
+    : '100%';
+  const liquidationPercentPosition = BN(
+    liquidationPercent.replace('%', '')
+  ).isLessThan(100)
+    ? liquidationPercent
+    : '100%';
   return (
     <div className={styles.Infos}>
       <div className={styles.top}>
@@ -93,11 +104,11 @@ function Infos({
               <div className={styles.sliderMaxLTVText}>MAX LTV</div>
               <div
                 className={styles.sliderMaxLVTMark}
-                style={{ left: maxLTVPercent }}
+                style={{ left: maxLTVPercentPosition }}
               />
               <div
                 className={styles.sliderMaxLTVValue}
-                style={{ left: maxLTVPercent }}
+                style={{ left: maxLTVPercentPosition }}
               >
                 {maxLTVPercent}
               </div>
@@ -116,14 +127,14 @@ function Infos({
               styles.sliderLiquidationMark,
               showMaxLTV ? styles.showMaxLTVSlider : ''
             )}
-            style={{ left: liquidationPercent }}
+            style={{ left: liquidationPercentPosition }}
           />
           <div
             className={clsx(
               styles.sliderLiquidationValue,
               showMaxLTV ? styles.showMaxLTVSliderLiquidation : ''
             )}
-            style={{ left: liquidationPercent }}
+            style={{ left: liquidationPercentPosition }}
           >
             {liquidationPercent}
           </div>
