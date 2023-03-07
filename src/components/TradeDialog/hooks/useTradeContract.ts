@@ -237,25 +237,6 @@ const useTradeContract = ({
   });
   const onWithdraw = useContractWrite(withdrawConfig.config);
 
-  // const onWithdraw = useContractWrite({
-  //   mode: 'recklesslyUnprepared',
-  //   address: routerAddr,
-  //   abi: routerABI,
-  //   functionName: 'redeem',
-  //   args: [
-  //     {
-  //       asset: activeCurrencyBaseInfo?.address,
-  //       amount: parseUnits({
-  //         num: formValue.number,
-  //         decimal: activeCurrencyBaseInfo?.decimal
-  //       }),
-  //       to: address
-  //     },
-  //     activeCurrencyInfo?.usingAsCollateral,
-  //     true
-  //   ]
-  // });
-
   // 处理取款结果
   useEffect(() => {
     const { isError, error, isSuccess, data, write } = onWithdraw;

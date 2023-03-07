@@ -198,7 +198,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
 
   // 初始化balance
   const initBalance = () => {
-    setBalance('0');
+    setBalance('');
   };
 
   const handleFormChange = (obj: { [key: string]: any }) => {

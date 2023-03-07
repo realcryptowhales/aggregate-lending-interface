@@ -89,7 +89,7 @@ const InfosBorrowOperation = ({
   willBecomeBorrowLimitPercent,
   balance
 }: OperationProps) => {
-  if (Number(balance) === 0) {
+  if (balance === '0') {
     return (
       <div className={styles.borrowTip}>
         <div>借款限额不足</div>

@@ -109,7 +109,7 @@ function BorrowButtons({
         variant="contained"
         className={clsx(styles.button, styles.lineButton)}
         color="blue"
-        disabled={!formValue.number && BN(balance || '0').comparedTo(0) === 1}
+        disabled={!formValue.number}
         onClick={() => {
           balance === '0'
             ? onChangeTab?.(DialogTypeProps.deposit)

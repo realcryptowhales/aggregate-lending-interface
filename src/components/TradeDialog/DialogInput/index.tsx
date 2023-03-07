@@ -50,7 +50,9 @@ const DialogInput = ({
       case DialogTypeProps.withdraw:
         return (
           <div className={styles.info}>
-            <div className={styles.balances}>可取数量&nbsp;{balance}</div>
+            <div className={styles.balances}>
+              可取数量&nbsp;{balance !== '' ? balance : '--'}
+            </div>
             <div className={styles.max} onClick={onClickMax}>
               Max
             </div>
@@ -59,7 +61,9 @@ const DialogInput = ({
       case DialogTypeProps.borrow:
         return (
           <div className={styles.info}>
-            <div className={styles.balances}>可借数量&nbsp;{balance}</div>
+            <div className={styles.balances}>
+              可借数量&nbsp;{balance !== '' ? balance : '--'}
+            </div>
             <div className={styles.max} onClick={onClickMax}>
               Max
             </div>
@@ -68,7 +72,9 @@ const DialogInput = ({
       default:
         return (
           <div className={styles.info}>
-            <div className={styles.balances}>余额&nbsp;{balance}</div>
+            <div className={styles.balances}>
+              余额&nbsp;{balance !== '' ? balance : '--'}
+            </div>
             <div className={styles.max} onClick={onClickMax}>
               Max
             </div>
