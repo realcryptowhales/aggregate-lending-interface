@@ -1,10 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import {
-  useAccount,
-  useContractReads,
-  useContractWrite,
-  usePrepareContractWrite
-} from 'wagmi';
+import { useAccount, useContractReads } from 'wagmi';
 import {
   DialogTypeProps,
   ContractsArgsProps,
@@ -14,16 +9,21 @@ import {
   InfosTopItemProps,
   tabsItemProps,
   AprInfoProps,
-  FormValuesProps,
-  TipDialogProps,
-  SnackbarProps
+  FormValuesProps
 } from '@/constant/type';
-import { utils, BigNumber, constants } from 'ethers';
 import BN from 'bignumber.js';
 import { routerAddr, queryHelperContractAddr } from '@/constant/contract';
-import { sTokenABI, routerABI, queryHelperABI } from '@/constant/abi';
+import { sTokenABI, queryHelperABI } from '@/constant/abi';
 import useCurrencyList from '@/hooks/useCurrencyList';
-import { TRANSACTION_DETAIL_URL } from '../constant';
+import {
+  toPercent,
+  cutZero,
+  formatRatePercent,
+  formatRateNumber,
+  formatPriceNumber,
+  formatCurrencyNumber
+} from '../utils';
+import useTradeContract from './useTradeContract';
 
 const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   const [activeCurrencyInfo, setActiveCurrencyInfo] =
@@ -56,8 +56,6 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     usedBorrowLimit, // 已用借款限额
     assetPrice
   } = activeCurrencyInfo || {};
-  const [tipDialog, setTipDialog] = useState<TipDialogProps>({ open: false });
-  const [snackbar, setSnackBar] = useState<SnackbarProps>({ open: false });
 
   const handleFormChange = (obj: { [key: string]: any }) => {
     setFormValues({
@@ -71,65 +69,6 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
 
   // 获取用户钱包地址
   const { address } = useAccount();
-
-  const toPercent = (num?: string) => {
-    return num ? `${BN(num).times(100)}%` : '0%';
-  };
-
-  const cutZero = (old: string) => {
-    //拷贝一份 返回去掉零的新串
-    let newStr = old;
-    //循环变量 小数部分长度
-    const leng = old.length - old.indexOf('.') - 1;
-    //判断是否有效数
-    if (old.indexOf('.') > -1) {
-      //循环小数部分
-      for (let i = leng; i > 0; i--) {
-        //如果newstr末尾有0
-        if (
-          newStr.lastIndexOf('0') > -1 &&
-          newStr.substr(newStr.length - 1, 1) === '0'
-        ) {
-          const k = newStr.lastIndexOf('0');
-          //如果小数点后只有一个0 去掉小数点
-          if (newStr.charAt(k - 1) == '.') {
-            return newStr.substring(0, k - 1);
-          } else {
-            //否则 去掉一个0
-            newStr = newStr.substring(0, k);
-          }
-        } else {
-          //如果末尾没有0
-          return newStr;
-        }
-      }
-    }
-    return old;
-  };
-
-  // bigNumber to percent
-  const formatRatePercent = (big: BigNumber) => {
-    return toPercent(BN(utils.formatUnits(big, 6)).toFixed(4, 1));
-  };
-
-  const formatRateNumber = (big: BigNumber) => {
-    return cutZero(BN(utils.formatUnits(big, 6)).toFixed(4, 1));
-  };
-
-  const formatPriceNumber = (big: BigNumber) => {
-    return cutZero(utils.formatUnits(big, 8));
-  };
-
-  // bigNumber to number
-  const formatCurrencyNumber = (big: BigNumber) => {
-    return cutZero(
-      BN(utils.formatUnits(big, activeCurrencyBaseInfo?.decimal)).toFixed(4, 1)
-    );
-  };
-
-  const parseUnits = (num?: string) => {
-    return num ? utils.parseUnits(num, activeCurrencyBaseInfo?.decimal) : '0';
-  };
 
   // 更新当前币种的详细信息
   const updateActiveCurrencyInfo = (info: { [key: string]: any }) => {
@@ -148,16 +87,29 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
       supplyRates, // 底层协议存款利率
       borrowRates // 底层协议借款利率
     } = info;
-    const depositAmount = formatCurrencyNumber(supplied); // 存款余额
+    const depositAmount = formatCurrencyNumber({
+      big: supplied,
+      decimal: activeCurrencyBaseInfo?.decimal
+    }); // 存款余额
     switch (type) {
       case DialogTypeProps.withdraw:
         setBalance(depositAmount);
         break;
       case DialogTypeProps.borrow:
-        setBalance(formatCurrencyNumber(borrowLimit));
+        setBalance(
+          formatCurrencyNumber({
+            big: borrowLimit,
+            decimal: activeCurrencyBaseInfo?.decimal
+          })
+        );
         break;
       default:
-        setBalance(formatCurrencyNumber(userBalance));
+        setBalance(
+          formatCurrencyNumber({
+            big: userBalance,
+            decimal: activeCurrencyBaseInfo?.decimal
+          })
+        );
         break;
     }
     const isWithdrawAndDeposit = [
@@ -175,13 +127,17 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
         isWithdrawAndDeposit ? supplyRates[1] : borrowRates[1]
       ), // Compound
       borrowAPRPercent: formatRatePercent(borrowRate), // 借款APR百分数
-      borrowAmount: formatCurrencyNumber(borrowed), // 借款数量
+      borrowAmount: formatCurrencyNumber({
+        big: borrowed,
+        decimal: activeCurrencyBaseInfo?.decimal
+      }), // 借款数量
       depositAPRPercent: formatRatePercent(supplyRate), // 存款APR百分数
       depositAmount, // 存款余额
       maxLTV: formatRateNumber(borrowLimit.mod(tatalCollateral)), // 最高抵押率
       liquidation: formatRateNumber(liquidateThreashold.mod(tatalCollateral)), // 清算域值
       usedBorrowLimit: formatRateNumber(borrowed.mod(tatalCollateral)), // 已用借款限额
-      assetPrice: formatPriceNumber(assetPrice) // 资产价格
+      assetPrice: formatPriceNumber(assetPrice), // 资产价格
+      usingAsCollateral
     });
   };
 
@@ -222,7 +178,12 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     onSuccess(data: any[]) {
       if (data && data.length) {
         if (data[0]) {
-          setAllowance(formatCurrencyNumber(data[0]));
+          setAllowance(
+            formatCurrencyNumber({
+              big: data[0],
+              decimal: activeCurrencyBaseInfo?.decimal
+            })
+          );
         }
         if (data[1]) {
           updateActiveCurrencyInfo(data[1]);
@@ -417,285 +378,15 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     );
   }, [usedBorrowLimit, willBecomeBorrowLimit]);
 
-  // 授权当前币种额度
-  const approveConfig = usePrepareContractWrite({
-    address: activeCurrencyBaseInfo?.address,
-    abi: sTokenABI,
-    functionName: 'approve',
-    args: [routerAddr, constants.MaxUint256]
-  });
-  const onApprove = useContractWrite(approveConfig.config);
-
-  // 处理授权结果
-  useEffect(() => {
-    const { isError, error, isSuccess, data } = onApprove;
-    const { message } = error || {};
-    console.log(data);
-    if (isError && message && message.indexOf('User rejected request') > -1) {
-      setSnackBar({
-        open: true,
-        message: `授权${activeCurrency}交易被拒绝`,
-        onClose: () => {
-          setSnackBar({ open: false });
-        },
-        type: 'error'
-      });
-
-      // setTipDialog({
-      //   open: true,
-      //   title: '交易已拒绝',
-      //   content: '你已在钱包内拒绝授权，请再次尝试',
-      //   onClose: () => {
-      //     setTipDialog({ open: false });
-      //   },
-      //   onConfirm: () => {
-      //     setTipDialog({ open: false });
-      //     write?.();
-      //   },
-      //   buttonText: '再次尝试',
-      // });
-    } else if (isSuccess) {
-      const { hash } = data;
-      setSnackBar({
-        open: true,
-        message: `授权${activeCurrency}交易已提交`,
-        onClose: () => {
-          setSnackBar({ open: false });
-        },
-        viewDetailUrl: `${TRANSACTION_DETAIL_URL}/${hash}`,
-        type: 'success'
-      });
-    }
-  }, [onApprove.status]);
-
-  // 存款
-  const depositConfig = usePrepareContractWrite({
-    address: routerAddr,
-    abi: routerABI,
-    functionName: 'supply',
-    args: [
-      {
-        asset: activeCurrencyBaseInfo?.address,
-        amount: parseUnits(formValue.number),
-        to: address
-      },
-      formValue.asCollateral,
-      true
-    ]
-  });
-  const onDeposit = useContractWrite(depositConfig.config);
-
-  // 处理存款结果
-  useEffect(() => {
-    const { isError, error, isSuccess, data, write } = onDeposit;
-    const { message } = error || {};
-    console.log(data);
-    if (isError && message && message.indexOf('User rejected request') > -1) {
-      setTipDialog({
-        open: true,
-        title: '交易已拒绝',
-        content: `你已在钱包内拒绝存款 ${formValue.number} ${activeCurrencyBaseInfo?.symbol} 请再次尝试`,
-        onClose: () => {
-          setTipDialog({ open: false });
-        },
-        onConfirm: () => {
-          setTipDialog({ open: false });
-          write?.();
-        },
-        buttonText: '再次尝试'
-      });
-    } else if (isSuccess) {
-      const { hash } = data;
-      setTipDialog({
-        open: true,
-        title: '交易已提交',
-        content: `${activeCurrencyBaseInfo?.symbol} 存款交易已提交上链，请等待交易结果`,
-        onClose: () => {
-          setTipDialog({ open: false });
-        },
-        onConfirm: () => {
-          setTipDialog({ open: false });
-          write?.();
-        },
-        buttonText: '将ib{Token}添加进钱包'
-      });
-    }
-  }, [onDeposit.status]);
-
-  // 取款
-  const withdrawConfig = usePrepareContractWrite({
-    address: routerAddr,
-    abi: routerABI,
-    functionName: 'redeem',
-    args: [
-      {
-        asset: activeCurrencyBaseInfo?.address,
-        amount: parseUnits(formValue.number),
-        to: address
-      },
-      formValue.asCollateral,
-      true
-    ]
-  });
-  const onWithdraw = useContractWrite(withdrawConfig.config);
-
-  // 处理取款结果
-  useEffect(() => {
-    const { isError, error, isSuccess, data, isLoading, status } = onWithdraw;
-    const { message } = error || {};
-    console.log('onWithdraw', data, isLoading, status);
-    if (isError && message && message.indexOf('User rejected request') > -1) {
-      setSnackBar({
-        open: true,
-        message: `授权${activeCurrency}交易被拒绝`,
-        onClose: () => {
-          setSnackBar({ open: false });
-        },
-        type: 'error'
-      });
-
-      // setTipDialog({
-      //   open: true,
-      //   title: '交易已拒绝',
-      //   content: '你已在钱包内拒绝授权，请再次尝试',
-      //   onClose: () => {
-      //     setTipDialog({ open: false });
-      //   },
-      //   onConfirm: () => {
-      //     setTipDialog({ open: false });
-      //     write?.();
-      //   },
-      //   buttonText: '再次尝试',
-      // });
-    } else if (isSuccess) {
-      const { hash } = data;
-      setSnackBar({
-        open: true,
-        message: `授权${activeCurrency}交易已提交`,
-        onClose: () => {
-          setSnackBar({ open: false });
-        },
-        viewDetailUrl: `${TRANSACTION_DETAIL_URL}/${hash}`,
-        type: 'success'
-      });
-    }
-  }, [onWithdraw.status]);
-
-  // 借款
-  const borrowConfig = usePrepareContractWrite({
-    address: routerAddr,
-    abi: routerABI,
-    functionName: 'borrow',
-    args: [
-      {
-        asset: activeCurrencyBaseInfo?.address,
-        amount: parseUnits(formValue.number),
-        to: address
-      },
-      true
-    ]
-  });
-  const onBorrow = useContractWrite(borrowConfig.config);
-
-  // 处理借款结果
-  useEffect(() => {
-    const { isError, error, isSuccess, data } = onBorrow;
-    const { message } = error || {};
-    console.log(data);
-    if (isError && message && message.indexOf('User rejected request') > -1) {
-      setSnackBar({
-        open: true,
-        message: `授权${activeCurrency}交易被拒绝`,
-        onClose: () => {
-          setSnackBar({ open: false });
-        },
-        type: 'error'
-      });
-
-      // setTipDialog({
-      //   open: true,
-      //   title: '交易已拒绝',
-      //   content: '你已在钱包内拒绝授权，请再次尝试',
-      //   onClose: () => {
-      //     setTipDialog({ open: false });
-      //   },
-      //   onConfirm: () => {
-      //     setTipDialog({ open: false });
-      //     write?.();
-      //   },
-      //   buttonText: '再次尝试',
-      // });
-    } else if (isSuccess) {
-      const { hash } = data;
-      setSnackBar({
-        open: true,
-        message: `授权${activeCurrency}交易已提交`,
-        onClose: () => {
-          setSnackBar({ open: false });
-        },
-        viewDetailUrl: `${TRANSACTION_DETAIL_URL}/${hash}`,
-        type: 'success'
-      });
-    }
-  }, [onBorrow.status]);
-
-  // 还款
-  const repayConfig = usePrepareContractWrite({
-    address: routerAddr,
-    abi: routerABI,
-    functionName: 'borrow',
-    args: [
-      {
-        asset: activeCurrencyBaseInfo?.address,
-        amount: parseUnits(formValue.number),
-        to: address
-      },
-      true
-    ]
-  });
-  const onRepay = useContractWrite(repayConfig.config);
-
-  // 处理还款结果
-  useEffect(() => {
-    const { isError, error, isSuccess, data } = onRepay;
-    const { message } = error || {};
-    console.log(data);
-    if (isError && message && message.indexOf('User rejected request') > -1) {
-      setSnackBar({
-        open: true,
-        message: `授权${activeCurrency}交易被拒绝`,
-        onClose: () => {
-          setSnackBar({ open: false });
-        },
-        type: 'error'
-      });
-
-      // setTipDialog({
-      //   open: true,
-      //   title: '交易已拒绝',
-      //   content: '你已在钱包内拒绝授权，请再次尝试',
-      //   onClose: () => {
-      //     setTipDialog({ open: false });
-      //   },
-      //   onConfirm: () => {
-      //     setTipDialog({ open: false });
-      //     write?.();
-      //   },
-      //   buttonText: '再次尝试',
-      // });
-    } else if (isSuccess) {
-      const { hash } = data;
-      setSnackBar({
-        open: true,
-        message: `授权${activeCurrency}交易已提交`,
-        onClose: () => {
-          setSnackBar({ open: false });
-        },
-        viewDetailUrl: `${TRANSACTION_DETAIL_URL}/${hash}`,
-        type: 'success'
-      });
-    }
-  }, [onRepay.status]);
+  const {
+    onApprove,
+    tipDialog,
+    snackbar,
+    onDeposit,
+    onWithdraw,
+    onBorrow,
+    onRepay
+  } = useTradeContract({ activeCurrencyBaseInfo, formValue });
 
   // 更新auth状态
   useEffect(() => {

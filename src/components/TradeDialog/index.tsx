@@ -122,7 +122,21 @@ function TradeDialog({
           </Button>
         }
         content={
-          <div className={styles.tipDialogContent}>{tipDialog?.content}</div>
+          <div className={styles.tipDialogContent}>
+            <div className={styles.tipDialogContentText}>
+              {tipDialog?.content}
+            </div>
+            {tipDialog.viewDetailUrl ? (
+              <a
+                href={snackbar.viewDetailUrl}
+                target="_blank"
+                className={styles.viewUrl}
+                rel="noreferrer"
+              >
+                查看详情
+              </a>
+            ) : null}
+          </div>
         }
       />
       <Snackbar
@@ -138,7 +152,7 @@ function TradeDialog({
               <a
                 href={snackbar.viewDetailUrl}
                 target="_blank"
-                className={styles.snackbarUrl}
+                className={styles.viewUrl}
                 rel="noreferrer"
               >
                 查看详情

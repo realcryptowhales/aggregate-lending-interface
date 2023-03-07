@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { BigNumber } from 'ethers';
 
 export enum DialogTypeProps {
   withdraw,
@@ -46,6 +47,7 @@ export interface CurrencyInfoProps {
   liquidation?: string; // 清算域值
   usedBorrowLimit?: string; // 已用借款限额
   assetPrice?: string;
+  usingAsCollateral?: boolean;
 }
 
 export interface UseTradeDialogProps {
@@ -87,6 +89,7 @@ export interface TipDialogProps {
   onConfirm?: () => void;
   buttonText?: string;
   open: boolean;
+  viewDetailUrl?: string;
 }
 
 export interface SnackbarProps {
@@ -213,4 +216,19 @@ export interface AssetProps {
   sToken: string;
   dToken: string;
   address: string;
+}
+
+export interface FormatCurrencyNumberProps {
+  big?: BigNumber;
+  decimal?: number;
+}
+
+export interface ParseUnitsProps {
+  num?: string;
+  decimal?: number;
+}
+
+export interface UseTradeContractProps {
+  activeCurrencyBaseInfo?: CurrencyBaseInfoProps;
+  formValue: FormValuesProps;
 }
