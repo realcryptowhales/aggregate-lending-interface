@@ -1,10 +1,5 @@
-import {
-  Select,
-  MenuItem,
-  SelectChangeEvent,
-  FormControl,
-  FormHelperText
-} from '@mui/material';
+import { Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import clsx from 'classnames';
 import styles from './index.module.less';
 import { DialogTypeProps, DialogInputType } from '@/constant/type';
 
@@ -16,8 +11,11 @@ const DialogInput = ({
   handleInputChange,
   balance,
   dolors,
-  type
+  type,
+  formStatus
 }: DialogInputType) => {
+  const { isError, errorMsg } = formStatus;
+
   const onChange = (e: SelectChangeEvent) => {
     onChangeActiveCurrency(e.target.value);
   };
@@ -26,7 +24,7 @@ const DialogInput = ({
     const item =
       currencyBaseInfoList &&
       currencyBaseInfoList.find((currency) => {
-        return currency.symbol.toLowerCase() === value.toLowerCase();
+        return currency?.symbol?.toLowerCase() === value.toLowerCase();
       });
     const { symbol, icon } = item || {};
     return (
@@ -84,48 +82,44 @@ const DialogInput = ({
   };
 
   return (
-    <form>
-      <FormControl>
-        <div className={styles.input}>
-          <div className={styles.top}>
-            <input
-              type="number"
-              name="number"
-              className={styles.number}
-              placeholder="0.00"
-              value={formValue?.number}
-              onChange={onInputChange}
-            />
-            <Select
-              value={activeCurrency}
-              onChange={onChange}
-              className={styles.select}
-              renderValue={getRenderValue}
-            >
-              {currencyBaseInfoList &&
-                currencyBaseInfoList.map((item) => {
-                  const { symbol, icon } = item;
-                  return (
-                    <MenuItem value={symbol} key={symbol}>
-                      <img src={icon} alt={symbol} className={styles.img} />
-                      <span className={styles.symbol}>{symbol}</span>
-                    </MenuItem>
-                  );
-                })}
-            </Select>
-          </div>
-          <div className={styles.bottom}>
-            <div className={styles.dolors}>$&nbsp;{dolors}</div>
-            <div className={styles.info}>
-              <OperationText />
-            </div>
+    <div>
+      <div className={clsx(styles.input, isError ? styles.errorInput : '')}>
+        <div className={styles.top}>
+          <input
+            type="number"
+            name="number"
+            className={styles.number}
+            placeholder="0.00"
+            value={formValue?.number}
+            onChange={onInputChange}
+          />
+          <Select
+            value={activeCurrency}
+            onChange={onChange}
+            className={styles.select}
+            renderValue={getRenderValue}
+          >
+            {currencyBaseInfoList &&
+              currencyBaseInfoList.map((item) => {
+                const { symbol, icon } = item;
+                return (
+                  <MenuItem value={symbol} key={symbol}>
+                    <img src={icon} alt={symbol} className={styles.img} />
+                    <span className={styles.symbol}>{symbol}</span>
+                  </MenuItem>
+                );
+              })}
+          </Select>
+        </div>
+        <div className={styles.bottom}>
+          <div className={styles.dolors}>$&nbsp;{dolors}</div>
+          <div className={styles.info}>
+            <OperationText />
           </div>
         </div>
-        <FormHelperText id="component-error-text" error={true}>
-          {}
-        </FormHelperText>
-      </FormControl>
-    </form>
+      </div>
+      {isError ? <div className={styles.errorMsg}>{errorMsg}</div> : null}
+    </div>
   );
 };
 

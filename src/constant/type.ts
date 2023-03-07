@@ -20,19 +20,19 @@ export interface ContractsArgsProps {
   args?: any[];
 }
 export interface CurrencyBaseInfoProps {
-  address: string;
-  configId: number;
-  decimal: number;
-  gmtCreate: string;
-  gmtModified: string;
-  icon: string;
-  name: string;
-  symbol: string;
-  index: number;
-  collateralable: boolean;
-  paused: boolean;
-  sToken: string;
-  dToken: string;
+  address?: string;
+  configId?: number;
+  decimal?: number;
+  gmtCreate?: string;
+  gmtModified?: string;
+  icon?: string;
+  name?: string;
+  symbol?: string;
+  index?: number;
+  collateralable?: boolean;
+  paused?: boolean;
+  sToken?: string;
+  dToken?: string;
 }
 
 export interface CurrencyInfoProps {
@@ -81,7 +81,6 @@ export interface AprInfoProps {
 
 export interface FormValuesProps {
   number: string;
-  asCollateral: boolean;
 }
 
 export interface TipDialogProps {
@@ -89,9 +88,11 @@ export interface TipDialogProps {
   title?: string;
   onClose?: () => void;
   onConfirm?: () => void;
-  buttonText?: string;
+  confirmButtonText?: string;
   open: boolean;
   viewDetailUrl?: string;
+  cancelButtonText?: string;
+  onCancel?: () => void;
 }
 
 export interface SnackbarProps {
@@ -128,6 +129,8 @@ export interface ButtonProps {
   onRepay?: UseContractWriteProps;
   onBorrow?: UseContractWriteProps;
   onChangeTab?: (dialogType: DialogTypeProps) => void;
+  formStatus: FormStatusProps;
+  setUsingAsCollateral?: UseContractWriteProps;
 }
 
 export interface DialogInputType {
@@ -139,6 +142,7 @@ export interface DialogInputType {
   balance?: string;
   dolors?: string;
   type: DialogTypeProps;
+  formStatus: FormStatusProps;
 }
 
 export interface UseContractWriteProps {
@@ -154,6 +158,12 @@ export interface UseContractWriteProps {
   status: 'idle' | 'error' | 'loading' | 'success';
 }
 
+export interface FormStatusProps {
+  disabled: boolean;
+  isError: boolean;
+  errorMsg: string;
+}
+
 export interface InfoDetailsProps {
   type: DialogTypeProps;
   activeCurrency: string;
@@ -161,7 +171,6 @@ export interface InfoDetailsProps {
   auth: boolean;
   maxLTVPercent: string;
   formValue: FormValuesProps;
-  handleFormChange: (obj: { [key: string]: any }) => void;
   isHighRisk: boolean;
   isOverLiquidation: boolean;
   willBecomeBorrowLimitPercent: string;
@@ -171,17 +180,21 @@ export interface InfoDetailsProps {
   onRepay?: UseContractWriteProps;
   onBorrow?: UseContractWriteProps;
   onChangeTab?: (dialogType: DialogTypeProps) => void;
+  formStatus: FormStatusProps;
+  isAsCollateral: boolean;
+  setUsingAsCollateral?: UseContractWriteProps;
 }
 
 export interface OperationProps {
   maxLTVPercent?: string;
   formValue?: FormValuesProps;
-  handleFormChange?: (obj: { [key: string]: any }) => void;
   isOverLiquidation?: boolean;
   type?: DialogTypeProps;
   isHighRisk?: boolean;
   willBecomeBorrowLimitPercent?: string;
   balance?: number | string;
+  isAsCollateral?: boolean;
+  setUsingAsCollateral?: UseContractWriteProps;
 }
 
 export interface UnAuthProps {
@@ -234,4 +247,24 @@ export interface UseTradeContractProps {
   activeCurrencyBaseInfo?: CurrencyBaseInfoProps;
   formValue: FormValuesProps;
   activeCurrencyInfo?: CurrencyInfoProps;
+  isHighRisk?: boolean;
+  willBecomeBorrowLimitPercent?: string;
+  liquidationPercent?: string;
+  willBecomeLTVPercent?: string;
+}
+
+export interface UserStatusProps {
+  assetPrice: BigNumber; // 资产价格
+  userBalance: BigNumber; // 用户余额
+  borrowed: BigNumber; // 借款数量
+  supplied: BigNumber; // 存款数量
+  totalBorrowed: BigNumber; //总借款
+  tatalCollateral: BigNumber; //总抵押
+  borrowLimit: BigNumber; // 借款上限
+  liquidateThreashold: BigNumber; // 清算阈值
+  usingAsCollateral: boolean; //是否用作抵押资产
+  supplyRate: BigNumber; // 存款利率
+  borrowRate: BigNumber; //借款利率
+  supplyRates: BigNumber[]; // 底层协议存款利率
+  borrowRates: BigNumber[]; // 底层协议借款利率
 }

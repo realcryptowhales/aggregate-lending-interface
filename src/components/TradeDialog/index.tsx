@@ -1,4 +1,5 @@
 import { Dialog, Snackbar, Alert } from '@mui/material';
+import clsx from 'classnames';
 import SmallDialog from '@/components/SmallDialog';
 import Button from '@mui/material/Button';
 import styles from './index.module.less';
@@ -40,7 +41,10 @@ function TradeDialog({
     onWithdraw,
     onRepay,
     onBorrow,
-    currencyBaseInfoList
+    currencyBaseInfoList,
+    isAsCollateral,
+    formStatus,
+    setUsingAsCollateral
   } = useTradeDialog({
     type,
     activeCurrency
@@ -48,8 +52,7 @@ function TradeDialog({
 
   const onDialogClose = () => {
     handleFormChange({
-      number: undefined,
-      asCollateral: true
+      number: undefined
     });
     onClose();
   };
@@ -69,18 +72,19 @@ function TradeDialog({
             currencyBaseInfoList={currencyBaseInfoList}
             activeCurrency={activeCurrency}
             dolors={dolors}
+            formStatus={formStatus}
             onChangeActiveCurrency={onChangeActiveCurrency}
           />
           <InfoDetails
             balance={balance}
             type={type}
             activeCurrency={activeCurrency}
+            isAsCollateral={isAsCollateral}
             maxLTVPercent={maxLTVPercent}
             isHighRisk={isHighRisk}
             isOverLiquidation={isOverLiquidation}
             formValue={formValue}
             willBecomeBorrowLimitPercent={willBecomeBorrowLimitPercent}
-            handleFormChange={handleFormChange}
             auth={auth}
             onApprove={onApprove}
             onDeposit={onDeposit}
@@ -88,6 +92,8 @@ function TradeDialog({
             onRepay={onRepay}
             onBorrow={onBorrow}
             onChangeTab={onChangeTab}
+            formStatus={formStatus}
+            setUsingAsCollateral={setUsingAsCollateral}
           />
         </section>
         <section className={styles.right}>
@@ -110,16 +116,35 @@ function TradeDialog({
         handleClose={tipDialog?.onClose}
         title={tipDialog?.title}
         button={
-          <Button
-            sx={{
-              background: '#000000',
-              color: '#ffffff',
-              '&:hover': { background: 'gray' }
-            }}
-            onClick={tipDialog?.onConfirm}
-          >
-            {tipDialog?.buttonText}
-          </Button>
+          <div className={styles.dialogButtons}>
+            {tipDialog?.cancelButtonText ? (
+              <Button
+                sx={{
+                  color: '#000000'
+                }}
+                className={styles.dialogButton}
+                onClick={tipDialog?.onCancel}
+                variant="outlined"
+              >
+                {tipDialog?.cancelButtonText}
+              </Button>
+            ) : null}
+            <Button
+              sx={{
+                background: '#000000',
+                color: '#ffffff',
+                '&:hover': { background: 'gray' }
+              }}
+              onClick={tipDialog?.onConfirm}
+              className={clsx(
+                tipDialog?.cancelButtonText
+                  ? styles.dialogButton
+                  : styles.longDialogButton
+              )}
+            >
+              {tipDialog?.confirmButtonText}
+            </Button>
+          </div>
         }
         content={
           <div className={styles.tipDialogContent}>

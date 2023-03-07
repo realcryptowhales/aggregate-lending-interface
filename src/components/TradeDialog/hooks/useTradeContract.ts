@@ -11,21 +11,47 @@ import {
   UseTradeContractProps
 } from '@/constant/type';
 import { constants } from 'ethers';
-import { routerAddr } from '@/constant/contract';
-import { sTokenABI, routerABI } from '@/constant/abi';
+import { routerAddr, configContractAddr } from '@/constant/contract';
+import { sTokenABI, routerABI, configABI } from '@/constant/abi';
 import { TRANSACTION_DETAIL_URL } from '../constant';
 import { parseUnits } from '../utils';
 
 const useTradeContract = ({
   activeCurrencyBaseInfo,
   formValue,
-  activeCurrencyInfo
+  activeCurrencyInfo,
+  isHighRisk,
+  willBecomeBorrowLimitPercent,
+  liquidationPercent,
+  willBecomeLTVPercent
 }: UseTradeContractProps) => {
   const [tipDialog, setTipDialog] = useState<TipDialogProps>({ open: false });
   const [snackbar, setSnackBar] = useState<SnackbarProps>({ open: false });
 
   // 获取用户钱包地址
   const { address } = useAccount();
+
+  // 高风险二次确认弹窗
+  const highRiskConfirmDialog = ({
+    content,
+    onCancel,
+    open
+  }: TipDialogProps) => {
+    setTipDialog({
+      open,
+      title: '风险提示',
+      content,
+      onClose: () => {
+        setTipDialog({ open: false });
+      },
+      onConfirm: () => {
+        setTipDialog({ open: false });
+      },
+      confirmButtonText: '取消',
+      cancelButtonText: '继续',
+      onCancel
+    });
+  };
 
   const addToken = async () => {
     try {
@@ -139,7 +165,7 @@ const useTradeContract = ({
         }),
         to: address
       },
-      formValue.asCollateral,
+      activeCurrencyInfo?.usingAsCollateral,
       true
     ],
     enabled:
@@ -166,7 +192,7 @@ const useTradeContract = ({
           setTipDialog({ open: false });
           write?.();
         },
-        buttonText: '再次尝试'
+        confirmButtonText: '再次尝试'
       });
     } else if (isSuccess) {
       setTipDialog({
@@ -181,7 +207,7 @@ const useTradeContract = ({
           setTipDialog({ open: false });
           addToken();
         },
-        buttonText: `将ib${activeCurrencyBaseInfo?.symbol}添加进钱包`
+        confirmButtonText: `将ib${activeCurrencyBaseInfo?.symbol}添加进钱包`
       });
     }
   }, [onDeposit.status]);
@@ -237,6 +263,18 @@ const useTradeContract = ({
   });
   const onWithdraw = useContractWrite(withdrawConfig.config);
 
+  // 高风险取款
+  const onHighRiskWithdraw = () => {
+    highRiskConfirmDialog({
+      open: true,
+      content: `取款后仓位质押率为${willBecomeLTVPercent}，清算阈值为${liquidationPercent} 清算风险较高，请合理规划取款。`,
+      onCancel: () => {
+        setTipDialog({ open: false });
+        onWithdraw?.write?.();
+      }
+    });
+  };
+
   // 处理取款结果
   useEffect(() => {
     const { isError, error, isSuccess, data, write } = onWithdraw;
@@ -253,7 +291,7 @@ const useTradeContract = ({
           setTipDialog({ open: false });
           write?.();
         },
-        buttonText: '再次尝试'
+        confirmButtonText: '再次尝试'
       });
     } else if (isSuccess) {
       const { hash } = data;
@@ -262,13 +300,13 @@ const useTradeContract = ({
         title: '交易已提交',
         content: `${activeCurrencyBaseInfo?.symbol} 取款交易已提交上链，请等待交易结果`,
         onClose: () => {
-          setSnackBar({ open: false });
+          setTipDialog({ open: false });
         },
         viewDetailUrl: `${TRANSACTION_DETAIL_URL}/${hash}`,
         onConfirm: () => {
           setTipDialog({ open: false });
         },
-        buttonText: '关闭'
+        confirmButtonText: '关闭'
       });
     }
   }, [onWithdraw.status]);
@@ -323,6 +361,18 @@ const useTradeContract = ({
   });
   const onBorrow = useContractWrite(borrowConfig.config);
 
+  // 高风险借款
+  const onHighRiskBorrow = () => {
+    highRiskConfirmDialog({
+      open: true,
+      content: `借款后已用借款限额为${willBecomeBorrowLimitPercent}，清算阀值为${liquidationPercent}，清算风险较高，请合理规划借款额或归还部分贷款。`,
+      onCancel: () => {
+        setTipDialog({ open: false });
+        onBorrow?.write?.();
+      }
+    });
+  };
+
   // 处理借款结果
   useEffect(() => {
     const { isError, error, isSuccess, data, write } = onBorrow;
@@ -339,7 +389,7 @@ const useTradeContract = ({
           setTipDialog({ open: false });
           write?.();
         },
-        buttonText: '再次尝试'
+        confirmButtonText: '再次尝试'
       });
     } else if (isSuccess) {
       setTipDialog({
@@ -353,7 +403,7 @@ const useTradeContract = ({
         onConfirm: () => {
           setTipDialog({ open: false });
         },
-        buttonText: '关闭'
+        confirmButtonText: '关闭'
       });
     }
   }, [onBorrow.status]);
@@ -424,7 +474,7 @@ const useTradeContract = ({
           setTipDialog({ open: false });
           write?.();
         },
-        buttonText: '再次尝试'
+        confirmButtonText: '再次尝试'
       });
     } else if (isSuccess) {
       const { hash } = data;
@@ -439,7 +489,7 @@ const useTradeContract = ({
         onConfirm: () => {
           setTipDialog({ open: false });
         },
-        buttonText: '关闭'
+        confirmButtonText: '关闭'
       });
     }
   }, [onRepay.status]);
@@ -470,6 +520,72 @@ const useTradeContract = ({
     }
   });
 
+  // 设置用户是否选择抵押指定资产
+  const usingAsCollateralConfig = usePrepareContractWrite({
+    address: configContractAddr,
+    abi: configABI,
+    functionName: 'setUsingAsCollateral',
+    args: [
+      address,
+      activeCurrencyBaseInfo?.address,
+      !activeCurrencyInfo?.usingAsCollateral
+    ],
+    enabled: activeCurrencyBaseInfo?.address && address
+  });
+
+  const setUsingAsCollateral = useContractWrite(usingAsCollateralConfig.config);
+
+  // 处理设置用户是否选择抵押指定资产结果
+  useEffect(() => {
+    const { isError, error, write } = setUsingAsCollateral;
+    const { message } = error || {};
+    if (isError && message && message.indexOf('User rejected request') > -1) {
+      setTipDialog({
+        open: true,
+        title: '交易已拒绝',
+        content: `你已在钱包拒绝 ${activeCurrencyBaseInfo?.symbol} 作为抵押品, 用作质押品的每项资产都会增加您的借款限额, 请再次尝试`,
+        onClose: () => {
+          setTipDialog({ open: false });
+        },
+        onConfirm: () => {
+          setTipDialog({ open: false });
+          write?.();
+        },
+        confirmButtonText: '再次尝试'
+      });
+    }
+  }, [setUsingAsCollateral.status]);
+
+  const waitForUsingAsCollateralTransaction = useWaitForTransaction({
+    hash: setUsingAsCollateral.data?.hash,
+    onSuccess(data: any) {
+      setSnackBar({
+        open: true,
+        message: activeCurrencyInfo?.usingAsCollateral
+          ? `已关闭 ${activeCurrencyBaseInfo?.symbol} 抵押开关 `
+          : `已打开 ${activeCurrencyBaseInfo?.symbol} 抵押开关 `,
+        onClose: () => {
+          setSnackBar({ open: false });
+        },
+        viewDetailUrl: `${TRANSACTION_DETAIL_URL}/${setUsingAsCollateral.data?.hash}`,
+        type: 'success'
+      });
+    },
+    onError(error: any) {
+      setSnackBar({
+        open: true,
+        message: activeCurrencyInfo?.usingAsCollateral
+          ? `关闭 ${activeCurrencyBaseInfo?.symbol} 抵押开关失败`
+          : `打开 ${activeCurrencyBaseInfo?.symbol} 抵押开关失败`,
+        onClose: () => {
+          setSnackBar({ open: false });
+        },
+        viewDetailUrl: `${TRANSACTION_DETAIL_URL}/${setUsingAsCollateral.data?.hash}`,
+        type: 'error'
+      });
+    }
+  });
+
   return {
     onApprove: {
       ...onApprove,
@@ -481,15 +597,23 @@ const useTradeContract = ({
     },
     onWithdraw: {
       ...onWithdraw,
+      write: isHighRisk ? onHighRiskWithdraw : onWithdraw.write,
       isLoading: onWithdraw.isLoading || waitForWithdrawTransaction.isLoading
     },
     onBorrow: {
       ...onBorrow,
+      write: isHighRisk ? onHighRiskBorrow : onBorrow.write,
       isLoading: onBorrow.isLoading || waitForBorrowTransaction.isLoading
     },
     onRepay: {
       ...onRepay,
       isLoading: onRepay.isLoading || waitForRepayTransaction.isLoading
+    },
+    setUsingAsCollateral: {
+      ...setUsingAsCollateral,
+      isLoading:
+        setUsingAsCollateral.isLoading ||
+        waitForUsingAsCollateralTransaction.isLoading
     },
     snackbar,
     tipDialog

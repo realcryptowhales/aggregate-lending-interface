@@ -42,7 +42,7 @@ export default function useCurrencyList() {
         const { address } = item;
         return {
           ...item,
-          ...obj[address]
+          ...obj[address!]
         };
       });
       setList(currencies);
