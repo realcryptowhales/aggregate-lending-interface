@@ -250,7 +250,6 @@ export interface UseTradeContractProps {
   isHighRisk?: boolean;
   willBecomeBorrowLimitPercent?: string;
   liquidationPercent?: string;
-  willBecomeLTVPercent?: string;
 }
 
 export interface UserStatusProps {

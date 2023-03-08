@@ -524,59 +524,6 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     type
   ]);
 
-  // 计算新抵押率
-  const willBecomeLTV = useMemo(() => {
-    if (formValue.number && formValue.number !== '0') {
-      switch (type) {
-        case DialogTypeProps.deposit:
-          return (
-            (totalBorrowed &&
-              tatalCollateral &&
-              divideString(
-                totalBorrowed,
-                BN(tatalCollateral).plus(formValue.number).toString()
-              )) ||
-            '0'
-          );
-        case DialogTypeProps.borrow:
-          return (
-            (totalBorrowed &&
-              tatalCollateral &&
-              divideString(
-                BN(formValue.number).plus(totalBorrowed).toString(),
-                tatalCollateral
-              )) ||
-            '0'
-          );
-        case DialogTypeProps.withdraw:
-          return (
-            (totalBorrowed &&
-              tatalCollateral &&
-              BN(formValue.number).isLessThan(tatalCollateral) &&
-              divideString(
-                totalBorrowed,
-                BN(tatalCollateral).minus(formValue.number).toString()
-              )) ||
-            '0'
-          );
-        case DialogTypeProps.repay:
-          return (
-            (totalBorrowed &&
-              tatalCollateral &&
-              BN(totalBorrowed).isLessThan(formValue.number) &&
-              divideString(
-                BN(formValue.number).minus(totalBorrowed).toString(),
-                tatalCollateral
-              )) ||
-            '0'
-          );
-        default:
-          return '0';
-      }
-    }
-    return '0';
-  }, [formValue.number, activeCurrency, totalBorrowed, type]);
-
   // 是否超出清算域值
   const isOverLiquidation = useMemo(() => {
     return (
@@ -608,11 +555,6 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   const willBecomeBorrowLimitPercent = useMemo(() => {
     return toPercent(willBecomeBorrowLimit);
   }, [willBecomeBorrowLimit]);
-
-  // 用户将抵押率百分比
-  const willBecomeLTVPercent = useMemo(() => {
-    return toPercent(willBecomeLTV);
-  }, [willBecomeLTV]);
 
   // 是否是高风险
   const isHighRisk = useMemo(() => {
@@ -737,8 +679,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     activeCurrencyInfo,
     isHighRisk,
     willBecomeBorrowLimitPercent,
-    liquidationPercent,
-    willBecomeLTVPercent
+    liquidationPercent
   });
 
   return {
