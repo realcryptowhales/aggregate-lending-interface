@@ -38,7 +38,7 @@ export default class PorfolioStore {
   borrowLimit = '';
   borrowingValue = '';
   collateralValue = ''; // 抵押品价值
-  usedRatio = '0'; // 已用比例
+  usedRatio = ''; // 已用比例
 
   userTotalSupplied = '';
   totalSuppliedApr = '';
@@ -214,16 +214,14 @@ export default class PorfolioStore {
     this.userTotalBorrowed = formatUnits(userInfo?.borrowingValue ?? 0, 6);
     this.collateralValue = formatUnits(userInfo?.collateralValue ?? 0, 6);
     //分母不能为0。分母为0返回NaN
-    this.usedRatio =
-      +this.borrowLimit > 0
-        ? new BigNumber(userInfo?.borrowingValue.toString())
-            .div(
-              new BigNumber(userInfo?.borrowingValue.toString()).plus(
-                new BigNumber(userInfo?.borrowLimit.toString())
-              )
-            )
-            .toString(10)
-        : '0';
+    const totalAvailableBorrow = new BigNumber(
+      userInfo?.borrowingValue?.toString() ?? 0
+    ).plus(new BigNumber(userInfo?.borrowLimit?.toString() ?? 0));
+    this.usedRatio = totalAvailableBorrow.isZero()
+      ? '0'
+      : new BigNumber(userInfo?.borrowingValue?.toString() ?? 0)
+          .div(totalAvailableBorrow)
+          .toString(10);
   }
   computeTotalSupAprAndTotalSup(suppliedList: SuppliedInfo[] = []) {
     let totalSupplied = new BigNumber(0),
@@ -269,12 +267,15 @@ export default class PorfolioStore {
   }
   // 净收益率
   get netProfit() {
-    if (!this.userSuppliedList.length) return '0';
+    if (this.userTotalSupplied === '') return '';
+    if (this.userTotalSupplied === '0') return '0';
+
     const netInterest = new BigNumber(this.dailyEstProfit).minus(
       new BigNumber(
         this.totalBorrowInterest ? this.totalBorrowInterest : '0'
       ).div(365)
     );
+
     return netInterest.div(this.userTotalSupplied).toFixed();
   }
 }

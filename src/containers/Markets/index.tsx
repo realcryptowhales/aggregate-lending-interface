@@ -98,7 +98,7 @@ const Markets: React.FC = () => {
       // computePorfolioData(data);
       setCurrentBorrowRates(data[0]);
       setCurrentSupplyRates(data[1]);
-      setMarketsInfo(data[2]);
+      setMarketsInfo(data[2] || []);
       // setPlatformInfo(data[3]);
     },
     contracts: [

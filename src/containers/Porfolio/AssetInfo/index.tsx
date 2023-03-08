@@ -64,14 +64,14 @@ const AssetInfo: React.FC = ({}) => {
     return thousandCurrency(collateralValue);
   }, [collateralValue]);
   const percentUsedRatio = useMemo(() => {
-    if (!usedRatio || Number.isNaN(+usedRatio)) return '0%';
-    return formatPercent(+usedRatio);
+    return usedRatio ? formatPercent(usedRatio) : '--';
   }, [usedRatio]);
   const thousandBorrowLimit = useMemo(() => {
     if (Number.isNaN(+borrowLimit) || !borrowLimit) return '--';
     return thousandCurrency(borrowLimit);
   }, [borrowLimit]);
   console.log('usedRatio', usedRatio);
+  console.log('netProfit', netProfit);
   return (
     <div className={cls(style.container)}>
       <InfoItem
@@ -88,9 +88,9 @@ const AssetInfo: React.FC = ({}) => {
       />
       <InfoItem
         title={'今日预估总收益'}
-        amount={dailyEstProfit ? thousandCurrency(dailyEstProfit, 6) : '--'}
+        amount={dailyEstProfit ? thousandCurrency(dailyEstProfit) : '--'}
         percentText="净收益率"
-        percent={netProfit ? formatPercent(netProfit, 6) : '--'}
+        percent={netProfit ? formatPercent(netProfit) : '--'}
         hasTips
       />
       <InfoItem title={'总抵押品价值'} amount={thousandCollateralValue} />
