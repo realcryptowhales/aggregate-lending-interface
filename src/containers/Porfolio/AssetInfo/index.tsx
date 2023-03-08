@@ -87,9 +87,9 @@ const AssetInfo: React.FC = ({}) => {
       />
       <InfoItem
         title={'今日预估总收益'}
-        amount={dailyEstProfit ? thousandCurrency(dailyEstProfit) : '--'}
+        amount={dailyEstProfit ? thousandCurrency(dailyEstProfit, 6) : '--'}
         percentText="净收益率"
-        percent={netProfit ? formatPercent(netProfit) : '--'}
+        percent={netProfit ? formatPercent(netProfit, 6) : '--'}
         hasTips
       />
       <InfoItem title={'总抵押品价值'} amount={thousandCollateralValue} />

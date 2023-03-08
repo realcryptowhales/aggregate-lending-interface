@@ -135,7 +135,7 @@ export const DepositTableRows = observer(
               {thousandCurrency(depositValue)}
             </span>
           </TableCell>
-          <TableCell padding="none" align="left" sx={{ width: 163 }}>
+          <TableCell padding="none" align="left" sx={{ width: 185 }}>
             <div>{formatPercent(depositApr)}</div>
             <span className={style.font12}>
               {`(${formatPercent(matchedSupplyPercentage)}撮合+${formatPercent(
@@ -149,7 +149,7 @@ export const DepositTableRows = observer(
           <TableCell padding="none" align="left" sx={{ width: 182 }}>
             <div>{thousandCurrency(dailyEstProfit)}</div>
           </TableCell>
-          <TableCell padding="none" align="left" sx={{ width: 254 }}>
+          <TableCell padding="none" align="left" sx={{ width: 232 }}>
             <BlueSwitch
               color="secondary"
               checked={collateral}

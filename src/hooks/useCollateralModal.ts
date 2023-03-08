@@ -13,7 +13,7 @@ export const useCollateralModal = (
   const [collateralStatus, setCollateralStatus] = useState<Action>(
     Action.closeCollateral
   );
-  const [tokenAddr, setTokenAddr] = useState(mockUSDTAddr);
+  const [tokenAddr, setTokenAddr] = useState('');
   const [tokenSymbol, setTokenSymbol] = useState('');
   const { address } = useAccount();
   const { config } = usePrepareContractWrite({
@@ -26,6 +26,7 @@ export const useCollateralModal = (
       collateralStatus === Action.closeCollateral ? false : true
     ],
     chainId: 66,
+    enabled: !!tokenAddr,
     onSuccess(data) {
       console.log('Success', data);
     },
