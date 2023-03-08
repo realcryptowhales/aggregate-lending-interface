@@ -38,7 +38,7 @@ export default class PorfolioStore {
   borrowLimit = '';
   borrowingValue = '';
   collateralValue = ''; // 抵押品价值
-  usedRatio = ''; // 已用比例
+  usedRatio = '0'; // 已用比例
 
   userTotalSupplied = '';
   totalSuppliedApr = '';

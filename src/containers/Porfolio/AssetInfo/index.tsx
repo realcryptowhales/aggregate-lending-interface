@@ -64,13 +64,14 @@ const AssetInfo: React.FC = ({}) => {
     return thousandCurrency(collateralValue);
   }, [collateralValue]);
   const percentUsedRatio = useMemo(() => {
-    if (Number.isNaN(+usedRatio)) return '0%';
+    if (!usedRatio || Number.isNaN(+usedRatio)) return '0%';
     return formatPercent(+usedRatio);
   }, [usedRatio]);
   const thousandBorrowLimit = useMemo(() => {
     if (Number.isNaN(+borrowLimit) || !borrowLimit) return '--';
     return thousandCurrency(borrowLimit);
   }, [borrowLimit]);
+  console.log('usedRatio', usedRatio);
   return (
     <div className={cls(style.container)}>
       <InfoItem
@@ -111,14 +112,14 @@ const AssetInfo: React.FC = ({}) => {
           <div
             style={{
               backgroundColor: '#424242',
-              width: percentUsedRatio,
+              width: `${+usedRatio * 100}%`,
               height: 4,
               borderRadius: '2px'
             }}
           ></div>
           <div
             className={style.arrow}
-            style={{ left: `calc(${percentUsedRatio} - 3px)`, top: '-6px' }}
+            style={{ left: `calc(${+usedRatio * 100}% - 3px)`, top: '-6px' }}
           ></div>
         </div>
         <div className={cls('flex justify-between', style.percent)}>

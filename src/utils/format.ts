@@ -18,6 +18,9 @@ export const thousandCurrency = (number: number | string, mantissa = 2) => {
   });
 };
 export const formatPercent = (number: number | string, mantissa = 2) => {
+  if (+number === 0) return '0.00%';
+
+  if (+number < 0.0001) return '<0.01%';
   return numbro(number).format({
     output: 'percent',
     thousandSeparated: true,
@@ -61,5 +64,8 @@ export const rawToThousandNumber = (raw: BigNumber, unit = 6, mantissa = 4) => {
 };
 export const rawToPercent = (raw: BigNumber, unit = 6, mantissa = 2) => {
   if (!(raw instanceof BigNumber)) return '--';
+  if (+raw.toString() < 0.0001) return '<0.01%';
+  if (+raw.toString() === 0) return '0.00%';
+
   return formatPercent(formatUnits(raw, unit), mantissa);
 };
