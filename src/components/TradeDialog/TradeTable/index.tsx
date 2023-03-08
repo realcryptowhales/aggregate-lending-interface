@@ -10,12 +10,12 @@ import styles from './index.module.less';
 function TradeTable({
   infosTop,
   aprInfo,
-  liquidationPercent,
-  usedBorrowLimitPercent,
-  maxLTVPercent,
+  totalLiquidationPercent,
+  totalCurrentLTVPercent,
+  willTotalCurrentLTVPercent,
+  totalMaxLTVPercent,
   showMaxLTV,
   isOverLiquidation,
-  willBecomeBorrowLimitPercent,
   type,
   formValue
 }: InfosProps) {
@@ -23,12 +23,12 @@ function TradeTable({
   const getPosition = (percent: string) => {
     return BN(percent.replace('%', '')).isLessThan(100) ? percent : '100%';
   };
-  const maxLTVPercentPosition = getPosition(maxLTVPercent);
-  const liquidationPercentPosition = getPosition(liquidationPercent);
+  const maxLTVPercentPosition = getPosition(totalMaxLTVPercent);
+  const liquidationPercentPosition = getPosition(totalLiquidationPercent);
   const willBecomeBorrowLimitPercentPosition = getPosition(
-    willBecomeBorrowLimitPercent
+    willTotalCurrentLTVPercent
   );
-  const usedBorrowLimitPercentPosition = getPosition(usedBorrowLimitPercent);
+  const usedBorrowLimitPercentPosition = getPosition(totalCurrentLTVPercent);
   return (
     <div className={styles.Infos}>
       <div className={styles.top}>
@@ -46,9 +46,11 @@ function TradeTable({
       <div className={styles.middle}>
         <div className={styles.limit}>
           <div className={styles.left}>
-            <div className={styles.tip}>已用借款限额</div>
+            <div className={styles.tip}>当前仓位抵押率</div>
             <Tooltip
-              title="已用借款限额代表你已用的最大借款 金额占你存入的质押品的价值占比。 如你的已用借款限额超过整体清算 阀值，你的资产可能会被清算。"
+              title={
+                '如果您的贷款价值超过清算阈值，您提供的抵押品可能会被清算。'
+              }
               arrow
               placement="top"
             >
@@ -61,7 +63,7 @@ function TradeTable({
             </Tooltip>
           </div>
           <div className={styles.num}>
-            {usedBorrowLimitPercent}
+            {totalCurrentLTVPercent}
             {formValue?.number ? (
               <div className={styles.willBecome}>
                 &nbsp;
@@ -71,7 +73,7 @@ function TradeTable({
                     color: '#000000'
                   }}
                 />
-                &nbsp;{willBecomeBorrowLimitPercent}
+                &nbsp;{willTotalCurrentLTVPercent}
               </div>
             ) : (
               ''
@@ -108,7 +110,7 @@ function TradeTable({
                 className={styles.sliderMaxLTVValue}
                 style={{ left: maxLTVPercentPosition }}
               >
-                {maxLTVPercent}
+                {totalMaxLTVPercent}
               </div>
             </Fragment>
           ) : null}
@@ -134,7 +136,7 @@ function TradeTable({
             )}
             style={{ left: liquidationPercentPosition }}
           >
-            {liquidationPercent}
+            {totalLiquidationPercent}
           </div>
           <div
             className={clsx(

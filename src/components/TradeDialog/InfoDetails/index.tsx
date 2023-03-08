@@ -8,12 +8,11 @@ import { InfoDetailsProps } from '@/constant/type';
 function InfoDetails({
   type,
   auth,
-  maxLTVPercent,
   activeCurrency,
   formValue,
   isHighRisk,
   isOverLiquidation,
-  willBecomeBorrowLimitPercent,
+  willTotalCurrentLTVPercent,
   balance,
   onApprove,
   onDeposit,
@@ -22,7 +21,8 @@ function InfoDetails({
   onBorrow,
   onChangeTab,
   formStatus,
-  handleFormChange
+  handleFormChange,
+  maxLTVPercent
 }: InfoDetailsProps) {
   return (
     <Fragment>
@@ -36,7 +36,7 @@ function InfoDetails({
           formValue={formValue}
           isOverLiquidation={isOverLiquidation}
           isHighRisk={isHighRisk}
-          willBecomeBorrowLimitPercent={willBecomeBorrowLimitPercent}
+          willTotalCurrentLTVPercent={willTotalCurrentLTVPercent}
           balance={balance}
           handleFormChange={handleFormChange}
         />

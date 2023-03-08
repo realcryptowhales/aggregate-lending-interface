@@ -22,8 +22,8 @@ const useTradeContract = ({
   formValue,
   activeCurrencyInfo,
   isHighRisk,
-  willBecomeBorrowLimitPercent,
-  liquidationPercent
+  willTotalCurrentLTVPercent,
+  totalLiquidationPercent
 }: UseTradeContractProps) => {
   const [tipDialog, setTipDialog] = useState<TipDialogProps>({ open: false });
   const [snackbar, setSnackBar] = useState<SnackbarProps>({ open: false });
@@ -268,7 +268,7 @@ const useTradeContract = ({
   const onHighRiskWithdraw = () => {
     highRiskConfirmDialog({
       open: true,
-      content: `取款后已用借款限额为${willBecomeBorrowLimitPercent}，清算阈值为${liquidationPercent} 清算风险较高，请合理规划取款。`,
+      content: `取款后仓位质押率为${willTotalCurrentLTVPercent}，清算阈值为${totalLiquidationPercent} 清算风险较高，请合理规划取款。`,
       onCancel: () => {
         setTipDialog({ open: false });
         onWithdraw?.write?.();
@@ -366,7 +366,7 @@ const useTradeContract = ({
   const onHighRiskBorrow = () => {
     highRiskConfirmDialog({
       open: true,
-      content: `借款后已用借款限额为${willBecomeBorrowLimitPercent}，清算阀值为${liquidationPercent}，清算风险较高，请合理规划借款额或归还部分贷款。`,
+      content: `借款后当前仓位质押率为${willTotalCurrentLTVPercent}，清算阀值为${totalLiquidationPercent}，清算风险较高，请合理规划借款额或归还部分贷款。`,
       onCancel: () => {
         setTipDialog({ open: false });
         onBorrow?.write?.();
