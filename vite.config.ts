@@ -19,16 +19,8 @@ export default defineConfig(({ mode }) => {
     base: '/aggregate-lending-web/',
     server: {
       proxy: {
-        '/liquidator/list': {
-          target: 'http://35.220.222.252/aggregate-lending',
-          changeOrigin: true
-        },
-        '/apr/calc': {
-          target: 'http://35.220.222.252/aggregate-lending',
-          changeOrigin: true
-        },
-        '/config/list': {
-          target: 'http://35.220.222.252/aggregate-lending',
+        '/aggregate-lending/*': {
+          target: 'http://35.220.222.252',
           changeOrigin: true
         }
       }
