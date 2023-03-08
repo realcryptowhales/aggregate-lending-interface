@@ -4,7 +4,7 @@ import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
 import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
 import clsx from 'classnames';
 import BN from 'bignumber.js';
-import { DialogTypeProps, InfosProps } from '@/constant/type';
+import { InfosProps } from '@/constant/type';
 import styles from './index.module.less';
 
 function TradeTable({
@@ -16,16 +16,18 @@ function TradeTable({
   totalMaxLTVPercent,
   showMaxLTV,
   isOverLiquidation,
-  type,
   formValue
 }: InfosProps) {
   const { aprTitle, list } = aprInfo || {};
-  const getPosition = (percent: string) => {
+  const getPosition = (percent?: string) => {
+    if (!percent) {
+      return '0%';
+    }
     return BN(percent.replace('%', '')).isLessThan(100) ? percent : '100%';
   };
-  const maxLTVPercentPosition = getPosition(totalMaxLTVPercent);
-  const liquidationPercentPosition = getPosition(totalLiquidationPercent);
-  const willBecomeBorrowLimitPercentPosition = getPosition(
+  const totalMaxLTVPercentPosition = getPosition(totalMaxLTVPercent);
+  const totalLiquidationPercentPosition = getPosition(totalLiquidationPercent);
+  const willTotalCurrentLTVPercentPosition = getPosition(
     willTotalCurrentLTVPercent
   );
   const usedBorrowLimitPercentPosition = getPosition(totalCurrentLTVPercent);
@@ -95,7 +97,7 @@ function TradeTable({
             )}
             style={{
               width: formValue?.number
-                ? willBecomeBorrowLimitPercentPosition
+                ? willTotalCurrentLTVPercentPosition
                 : usedBorrowLimitPercentPosition
             }}
           />
@@ -104,11 +106,11 @@ function TradeTable({
               <div className={styles.sliderMaxLTVText}>MAX LTV</div>
               <div
                 className={styles.sliderMaxLVTMark}
-                style={{ left: maxLTVPercentPosition }}
+                style={{ left: totalMaxLTVPercentPosition }}
               />
               <div
                 className={styles.sliderMaxLTVValue}
-                style={{ left: maxLTVPercentPosition }}
+                style={{ left: totalMaxLTVPercentPosition }}
               >
                 {totalMaxLTVPercent}
               </div>
@@ -127,14 +129,14 @@ function TradeTable({
               styles.sliderLiquidationMark,
               showMaxLTV ? styles.showMaxLTVSlider : ''
             )}
-            style={{ left: liquidationPercentPosition }}
+            style={{ left: totalLiquidationPercentPosition }}
           />
           <div
             className={clsx(
               styles.sliderLiquidationValue,
               showMaxLTV ? styles.showMaxLTVSliderLiquidation : ''
             )}
-            style={{ left: liquidationPercentPosition }}
+            style={{ left: totalLiquidationPercentPosition }}
           >
             {totalLiquidationPercent}
           </div>

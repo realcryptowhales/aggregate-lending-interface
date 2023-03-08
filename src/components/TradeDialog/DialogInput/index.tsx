@@ -36,7 +36,11 @@ const DialogInput = ({
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleInputChange({ number: e.target.value });
+    handleInputChange({
+      number: e.target.value
+        .replaceAll(/[^\d.-]/g, '')
+        .replace(/^(-)*(\d+)\.(\d\d\d\d).*$/, '$1$2.$3')
+    });
   };
 
   const onClickMax = () => {
