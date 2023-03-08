@@ -1106,6 +1106,38 @@ export const queryHelperABI = [
       {
         components: [
           {
+            components: [
+              {
+                internalType: 'uint256',
+                name: 'maxLTV',
+                type: 'uint256'
+              },
+              {
+                internalType: 'uint256',
+                name: 'liquidateLTV',
+                type: 'uint256'
+              },
+              {
+                internalType: 'uint256',
+                name: 'maxLiquidateRatio',
+                type: 'uint256'
+              },
+              {
+                internalType: 'uint256',
+                name: 'liquidateRewardRatio',
+                type: 'uint256'
+              },
+              {
+                internalType: 'uint256',
+                name: 'feeRate',
+                type: 'uint256'
+              }
+            ],
+            internalType: 'struct Types.AssetConfig',
+            name: 'assetConfig',
+            type: 'tuple'
+          },
+          {
             internalType: 'uint256',
             name: 'assetPrice',
             type: 'uint256'
