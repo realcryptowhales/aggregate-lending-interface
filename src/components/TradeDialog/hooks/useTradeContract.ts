@@ -438,7 +438,7 @@ const useTradeContract = ({
   const repayConfig = usePrepareContractWrite({
     address: routerAddr,
     abi: routerABI,
-    functionName: 'borrow',
+    functionName: 'repay',
     args: [
       {
         asset: activeCurrencyBaseInfo?.address,
@@ -530,7 +530,7 @@ const useTradeContract = ({
       activeCurrencyBaseInfo?.address,
       !activeCurrencyInfo?.usingAsCollateral
     ],
-    enabled: activeCurrencyBaseInfo?.address && address
+    enabled: typeof activeCurrencyBaseInfo?.address !== 'undefined' && address
   });
 
   const setUsingAsCollateral = useContractWrite(usingAsCollateralConfig.config);

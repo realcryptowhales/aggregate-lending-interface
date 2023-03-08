@@ -52,7 +52,7 @@ function TradeDialog({
 
   const onDialogClose = () => {
     handleFormChange({
-      number: undefined
+      number: ''
     });
     onClose();
   };
