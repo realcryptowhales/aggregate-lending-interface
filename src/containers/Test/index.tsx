@@ -32,22 +32,19 @@ const Markets = () => {
   };
 
   const onClickDeposit = () => {
-    openDialog({ type: DialogTypeProps.deposit, activeCurrency: 'USDT' });
+    openDialog({ type: DialogTypeProps.deposit, activeCurrency });
   };
 
   const onClickRepay = () => {
-    setOpen(true);
-    setType(DialogTypeProps.repay);
+    openDialog({ type: DialogTypeProps.repay, activeCurrency });
   };
 
   const onClickWithdraw = () => {
-    setOpen(true);
-    setType(DialogTypeProps.withdraw);
+    openDialog({ type: DialogTypeProps.withdraw, activeCurrency });
   };
 
   const onClickBorrow = () => {
-    setOpen(true);
-    setType(DialogTypeProps.borrow);
+    openDialog({ type: DialogTypeProps.borrow, activeCurrency });
   };
 
   const onChangeActiveCurrency = (symbol: string) => {
@@ -68,7 +65,7 @@ const Markets = () => {
 
   return (
     <div>
-      <Button variant="outlined" onClick={onClickDeposit}>
+      {/* <Button variant="outlined" onClick={onClickDeposit}>
         deposit
       </Button>
       <Button variant="outlined" onClick={onClickRepay}>
@@ -79,7 +76,7 @@ const Markets = () => {
       </Button>
       <Button variant="outlined" onClick={onClickBorrow}>
         borrow
-      </Button>
+      </Button> */}
       <TradeDialog
         open={open}
         onClose={onClose}

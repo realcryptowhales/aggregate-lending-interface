@@ -11,7 +11,6 @@ function InfoDetails({
   maxLTVPercent,
   activeCurrency,
   formValue,
-  handleFormChange,
   isHighRisk,
   isOverLiquidation,
   willBecomeBorrowLimitPercent,
@@ -21,7 +20,10 @@ function InfoDetails({
   onWithdraw,
   onRepay,
   onBorrow,
-  onChangeTab
+  onChangeTab,
+  formStatus,
+  isAsCollateral,
+  setUsingAsCollateral
 }: InfoDetailsProps) {
   return (
     <Fragment>
@@ -33,11 +35,12 @@ function InfoDetails({
           type={type}
           maxLTVPercent={maxLTVPercent}
           formValue={formValue}
-          handleFormChange={handleFormChange}
           isOverLiquidation={isOverLiquidation}
           isHighRisk={isHighRisk}
           willBecomeBorrowLimitPercent={willBecomeBorrowLimitPercent}
           balance={balance}
+          isAsCollateral={isAsCollateral}
+          setUsingAsCollateral={setUsingAsCollateral}
         />
       )}
       <Buttons
@@ -54,6 +57,8 @@ function InfoDetails({
         onRepay={onRepay}
         onBorrow={onBorrow}
         onChangeTab={onChangeTab}
+        formStatus={formStatus}
+        setUsingAsCollateral={setUsingAsCollateral}
       />
     </Fragment>
   );

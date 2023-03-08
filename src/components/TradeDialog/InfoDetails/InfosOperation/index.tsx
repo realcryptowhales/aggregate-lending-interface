@@ -1,4 +1,3 @@
-import React from 'react';
 import { Switch, Tooltip } from '@mui/material';
 import clsx from 'classnames';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
@@ -7,12 +6,11 @@ import styles from './index.module.less';
 
 const InfosDepositOperation = ({
   maxLTVPercent,
-  formValue,
-  handleFormChange
+  isAsCollateral,
+  setUsingAsCollateral
 }: OperationProps) => {
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleFormChange &&
-      handleFormChange({ asCollateral: event.target.checked });
+  const handleChange = () => {
+    setUsingAsCollateral?.write?.();
   };
 
   return (
@@ -34,7 +32,11 @@ const InfosDepositOperation = ({
             />
           </Tooltip>
         </div>
-        <Switch checked={formValue?.asCollateral} onChange={handleChange} />
+        <Switch
+          checked={isAsCollateral}
+          onChange={handleChange}
+          disabled={setUsingAsCollateral?.isLoading}
+        />
       </div>
       <div className={styles.operationItem}>
         <div className={styles.itemText}>最高抵押率</div>
@@ -89,7 +91,7 @@ const InfosBorrowOperation = ({
   willBecomeBorrowLimitPercent,
   balance
 }: OperationProps) => {
-  if (Number(balance) === 0) {
+  if (balance === '0') {
     return (
       <div className={styles.borrowTip}>
         <div>借款限额不足</div>
@@ -143,11 +145,12 @@ function InfosOperation({
   type,
   maxLTVPercent,
   formValue,
-  handleFormChange,
   isOverLiquidation,
   isHighRisk,
   willBecomeBorrowLimitPercent,
-  balance
+  balance,
+  isAsCollateral,
+  setUsingAsCollateral
 }: OperationProps) {
   switch (type) {
     case DialogTypeProps.deposit:
@@ -155,7 +158,8 @@ function InfosOperation({
         <InfosDepositOperation
           maxLTVPercent={maxLTVPercent}
           formValue={formValue}
-          handleFormChange={handleFormChange}
+          isAsCollateral={isAsCollateral}
+          setUsingAsCollateral={setUsingAsCollateral}
         />
       );
       break;

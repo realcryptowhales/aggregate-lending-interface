@@ -8,10 +8,27 @@ import styles from './index.module.less';
 function DepositButtons({
   activeCurrency,
   auth,
-  formValue,
   onApprove,
-  onDeposit
+  onDeposit,
+  formStatus,
+  setUsingAsCollateral
 }: ButtonProps) {
+  if (setUsingAsCollateral?.isLoading) {
+    return (
+      <div className={styles.buttons}>
+        <LoadingButton
+          variant="contained"
+          className={clsx(styles.button, styles.lineButton)}
+          color={'gray'}
+          disabled={true}
+          loading={true}
+          loadingPosition="start"
+        >
+          授权抵押物中
+        </LoadingButton>
+      </div>
+    );
+  }
   return (
     <div className={styles.buttons}>
       {!auth ? (
@@ -32,7 +49,7 @@ function DepositButtons({
         variant="contained"
         className={clsx(styles.button, auth ? styles.lineButton : '')}
         color={auth ? 'orange' : 'gray'}
-        disabled={!auth || !formValue.number}
+        disabled={formStatus.disabled}
         loading={onDeposit?.isLoading}
         onClick={() => {
           onDeposit?.write?.();
@@ -44,12 +61,7 @@ function DepositButtons({
   );
 }
 
-function WithdrawButtons({
-  isOverLiquidation,
-  formValue,
-  isHighRisk,
-  onWithdraw
-}: ButtonProps) {
+function WithdrawButtons({ isHighRisk, onWithdraw, formStatus }: ButtonProps) {
   return (
     <div
       className={clsx(
@@ -57,29 +69,29 @@ function WithdrawButtons({
         isHighRisk ? styles.shortButtonsMargin : styles.buttonsMargin
       )}
     >
-      <Button
+      <LoadingButton
         color="orange"
         variant="contained"
         className={clsx(styles.button, styles.lineButton)}
-        disabled={!formValue.number || isOverLiquidation}
+        disabled={formStatus.disabled}
+        loading={onWithdraw?.isLoading}
         onClick={() => {
           onWithdraw?.write?.();
         }}
       >
         取款
-      </Button>
+      </LoadingButton>
     </div>
   );
 }
 
 function BorrowButtons({
-  activeCurrency,
   balance,
   isHighRisk,
   isOverLiquidation,
-  formValue,
   onChangeTab,
-  onBorrow
+  onBorrow,
+  formStatus
 }: ButtonProps) {
   if (isOverLiquidation) {
     return (
@@ -105,11 +117,12 @@ function BorrowButtons({
           : styles.buttonsMargin
       )}
     >
-      <Button
+      <LoadingButton
         variant="contained"
         className={clsx(styles.button, styles.lineButton)}
         color="blue"
-        disabled={!formValue.number && BN(balance || '0').comparedTo(0) === 1}
+        loading={onBorrow?.isLoading}
+        disabled={formStatus.disabled}
         onClick={() => {
           balance === '0'
             ? onChangeTab?.(DialogTypeProps.deposit)
@@ -117,7 +130,7 @@ function BorrowButtons({
         }}
       >
         {balance === '0' ? '去存款' : '借款'}
-      </Button>
+      </LoadingButton>
     </div>
   );
 }
@@ -127,7 +140,8 @@ function RepayButtons({
   auth,
   formValue,
   onRepay,
-  onApprove
+  onApprove,
+  formStatus
 }: ButtonProps) {
   return (
     <div
@@ -150,17 +164,18 @@ function RepayButtons({
           授权 {activeCurrency}
         </LoadingButton>
       ) : null}
-      <Button
+      <LoadingButton
         variant="contained"
         className={clsx(styles.button, auth ? styles.lineButton : '')}
         color={auth ? 'blue' : 'gray'}
-        disabled={!auth || !formValue.number}
+        loading={onRepay?.isLoading}
+        disabled={formStatus.disabled}
         onClick={() => {
           onRepay?.write?.();
         }}
       >
         还款
-      </Button>
+      </LoadingButton>
     </div>
   );
 }
@@ -178,7 +193,9 @@ export default function Buttons({
   onWithdraw,
   onRepay,
   onBorrow,
-  onChangeTab
+  onChangeTab,
+  formStatus,
+  setUsingAsCollateral
 }: ButtonProps) {
   switch (type) {
     case DialogTypeProps.deposit:
@@ -189,9 +206,10 @@ export default function Buttons({
           formValue={formValue}
           onApprove={onApprove}
           onDeposit={onDeposit}
+          formStatus={formStatus}
+          setUsingAsCollateral={setUsingAsCollateral}
         />
       );
-      break;
     case DialogTypeProps.withdraw:
       return (
         <WithdrawButtons
@@ -201,9 +219,9 @@ export default function Buttons({
           isHighRisk={isHighRisk}
           isOverLiquidation={isOverLiquidation}
           onWithdraw={onWithdraw}
+          formStatus={formStatus}
         />
       );
-      break;
     case DialogTypeProps.borrow:
       return (
         <BorrowButtons
@@ -215,9 +233,9 @@ export default function Buttons({
           isOverLiquidation={isOverLiquidation}
           onBorrow={onBorrow}
           onChangeTab={onChangeTab}
+          formStatus={formStatus}
         />
       );
-      break;
     default:
       return (
         <RepayButtons
@@ -226,6 +244,7 @@ export default function Buttons({
           formValue={formValue}
           onRepay={onRepay}
           onApprove={onApprove}
+          formStatus={formStatus}
         />
       );
   }

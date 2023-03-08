@@ -7,7 +7,7 @@ import BN from 'bignumber.js';
 import { DialogTypeProps, InfosProps } from '@/constant/type';
 import styles from './index.module.less';
 
-function Infos({
+function TradeTable({
   infosTop,
   aprInfo,
   liquidationPercent,
@@ -62,7 +62,7 @@ function Infos({
           </div>
           <div className={styles.num}>
             {usedBorrowLimitPercent}
-            {type !== DialogTypeProps.deposit && formValue?.number ? (
+            {formValue?.number ? (
               <div className={styles.willBecome}>
                 &nbsp;
                 <TrendingFlatIcon
@@ -92,10 +92,9 @@ function Infos({
               showMaxLTV ? styles.showMaxLTVSlider : ''
             )}
             style={{
-              width:
-                type !== DialogTypeProps.deposit && formValue?.number
-                  ? willBecomeBorrowLimitPercentPosition
-                  : usedBorrowLimitPercentPosition
+              width: formValue?.number
+                ? willBecomeBorrowLimitPercentPosition
+                : usedBorrowLimitPercentPosition
             }}
           />
           {showMaxLTV ? (
@@ -168,4 +167,4 @@ function Infos({
   );
 }
 
-export default Infos;
+export default TradeTable;
