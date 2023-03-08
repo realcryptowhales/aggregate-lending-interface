@@ -11,7 +11,7 @@ function Layout() {
   } = useStore();
   const { data, isLoading } = useSWRImmutable(
     {
-      url: '/config/list'
+      url: '/aggregate-lending/config/list'
     },
     fetcher
   );

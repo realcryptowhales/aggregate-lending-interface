@@ -42,9 +42,7 @@ function TradeDialog({
     onRepay,
     onBorrow,
     currencyBaseInfoList,
-    isAsCollateral,
-    formStatus,
-    setUsingAsCollateral
+    formStatus
   } = useTradeDialog({
     type,
     activeCurrency
@@ -52,7 +50,8 @@ function TradeDialog({
 
   const onDialogClose = () => {
     handleFormChange({
-      number: undefined
+      number: '',
+      asCollateral: undefined
     });
     onClose();
   };
@@ -79,13 +78,13 @@ function TradeDialog({
             balance={balance}
             type={type}
             activeCurrency={activeCurrency}
-            isAsCollateral={isAsCollateral}
             maxLTVPercent={maxLTVPercent}
             isHighRisk={isHighRisk}
             isOverLiquidation={isOverLiquidation}
             formValue={formValue}
             willBecomeBorrowLimitPercent={willBecomeBorrowLimitPercent}
             auth={auth}
+            handleFormChange={handleFormChange}
             onApprove={onApprove}
             onDeposit={onDeposit}
             onWithdraw={onWithdraw}
@@ -93,7 +92,6 @@ function TradeDialog({
             onBorrow={onBorrow}
             onChangeTab={onChangeTab}
             formStatus={formStatus}
-            setUsingAsCollateral={setUsingAsCollateral}
           />
         </section>
         <section className={styles.right}>

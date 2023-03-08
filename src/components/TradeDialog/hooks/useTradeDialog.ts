@@ -32,7 +32,8 @@ import useTradeContract from './useTradeContract';
 const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   const [open, setOpen] = useState(true);
   const [formValue, setFormValues] = useState<FormValuesProps>({
-    number: ''
+    number: '',
+    asCollateral: undefined
   });
   const [userStatus, setUserStatus] = useState<UserStatusProps>();
   const [allowance, setAllowance] = useState<string>('0');
@@ -97,7 +98,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
         depositAmount, // 存款余额
         maxLTV: divideBigNumber(borrowLimit, tatalCollateral), // 最高抵押率
         liquidation: divideBigNumber(liquidateThreashold, tatalCollateral), // 清算域值
-        usedBorrowLimit: divideBigNumber(borrowed, tatalCollateral), // 已用借款限额
+        usedBorrowLimit: divideBigNumber(totalBorrowed, tatalCollateral), // 已用借款限额
         assetPrice: formatPriceNumber(assetPrice), // 资产价格
         usingAsCollateral,
         totalBorrowed: formatCurrencyNumber({
@@ -155,7 +156,8 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     usedBorrowLimit, // 已用借款限额
     assetPrice,
     totalBorrowed,
-    tatalCollateral
+    tatalCollateral,
+    usingAsCollateral
   } = activeCurrencyInfo || {};
 
   // 合约请求参数
@@ -192,6 +194,13 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     return res;
   }, [address, activeCurrencyBaseInfo]);
 
+  const handleFormChange = (obj: { [key: string]: any }) => {
+    setFormValues({
+      ...formValue,
+      ...obj
+    });
+  };
+
   // 获取当前active币种的授权数量 & 获取当前币种的详细数据
   useContractReads({
     contracts: contractsArgs,
@@ -208,17 +217,12 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
         }
         if (data[1]) {
           setUserStatus(data[1]);
+          formValue.asCollateral === undefined &&
+            handleFormChange({ asCollateral: data[1].usingAsCollateral });
         }
       }
     }
   });
-
-  const handleFormChange = (obj: { [key: string]: any }) => {
-    setFormValues({
-      ...formValue,
-      ...obj
-    });
-  };
 
   const getBestApr = (num?: string) => {
     if (num && optimization && aave && compound) {
@@ -384,63 +388,139 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     return type === DialogTypeProps.borrow;
   }, [type]);
 
+  // 计算存款新的借口限额
+  const depositWillBecomeBorrowLimit = () => {
+    // 原本是作为抵押物
+    if (usingAsCollateral) {
+      // 依然作为抵押物
+      if (formValue.asCollateral) {
+        return (
+          (totalBorrowed &&
+            tatalCollateral &&
+            divideString(
+              totalBorrowed,
+              BN(tatalCollateral).plus(formValue.number).toString()
+            )) ||
+          '0'
+        );
+      } else {
+        // 修改成不作为抵押物
+        return (
+          (totalBorrowed &&
+            tatalCollateral &&
+            borrowAmount &&
+            divideString(
+              totalBorrowed,
+              BN(tatalCollateral).minus(borrowAmount).toString()
+            )) ||
+          '0'
+        );
+      }
+    } else {
+      // 原本不作为抵押物
+      // 修改作为抵押物
+      if (formValue.asCollateral) {
+        return (
+          (totalBorrowed &&
+            tatalCollateral &&
+            borrowAmount &&
+            divideString(
+              totalBorrowed,
+              BN(tatalCollateral)
+                .plus(borrowAmount)
+                .plus(formValue.number)
+                .toString()
+            )) ||
+          '0'
+        );
+      } else {
+        // 依然不作为抵押物
+        return usedBorrowLimit || '0';
+      }
+    }
+  };
+
+  const withdrawWillBecomeBorrowLimit = () => {
+    // 原本是作为抵押物
+    if (usingAsCollateral) {
+      return (
+        (totalBorrowed &&
+          tatalCollateral &&
+          depositAmount &&
+          divideString(
+            totalBorrowed,
+            BN(tatalCollateral)
+              .minus(
+                BN(formValue.number).isLessThanOrEqualTo(depositAmount)
+                  ? formValue.number
+                  : depositAmount
+              )
+              .toString()
+          )) ||
+        '0'
+      );
+    } else {
+      // 原本不作为抵押物
+      return usedBorrowLimit || '0';
+    }
+  };
+
+  const borrowWillBecomeBorrowLimit = () => {
+    return (
+      (totalBorrowed &&
+        tatalCollateral &&
+        depositAmount &&
+        divideString(
+          BN(totalBorrowed).plus(formValue.number).toString(),
+          tatalCollateral
+        )) ||
+      '0'
+    );
+  };
+
+  const repayWillBecomeBorrowLimit = () => {
+    return (
+      (totalBorrowed &&
+        tatalCollateral &&
+        borrowAmount &&
+        divideString(
+          BN(totalBorrowed)
+            .minus(
+              BN(formValue.number).isLessThanOrEqualTo(borrowAmount)
+                ? formValue.number
+                : borrowAmount
+            )
+            .toString(),
+          tatalCollateral
+        )) ||
+      '0'
+    );
+  };
+
   // 计算新借款限额
   const willBecomeBorrowLimit = useMemo((): string => {
-    if (formValue.number && formValue.number !== '0') {
+    if (formValue.number && BN(formValue.number).isGreaterThanOrEqualTo(0)) {
       switch (type) {
         case DialogTypeProps.deposit:
-          return (
-            (borrowAmount &&
-              tatalCollateral &&
-              divideString(
-                borrowAmount,
-                BN(tatalCollateral).plus(formValue.number).toString()
-              )) ||
-            '0'
-          );
+          return depositWillBecomeBorrowLimit();
         case DialogTypeProps.borrow:
-          return (
-            (borrowAmount &&
-              tatalCollateral &&
-              divideString(
-                BN(formValue.number).plus(borrowAmount).toString(),
-                tatalCollateral
-              )) ||
-            '0'
-          );
+          return borrowWillBecomeBorrowLimit();
         case DialogTypeProps.withdraw:
-          return (
-            (borrowAmount &&
-              tatalCollateral &&
-              BN(formValue.number).isLessThan(tatalCollateral) &&
-              divideString(
-                borrowAmount,
-                BN(tatalCollateral).minus(formValue.number).toString()
-              )) ||
-            '0'
-          );
+          return withdrawWillBecomeBorrowLimit();
         case DialogTypeProps.repay:
-          return (
-            (borrowAmount &&
-              tatalCollateral &&
-              BN(formValue.number).isLessThan(borrowAmount) &&
-              divideString(
-                BN(borrowAmount).minus(formValue.number).toString(),
-                tatalCollateral
-              )) ||
-            '0'
-          );
+          return repayWillBecomeBorrowLimit();
         default:
           return '0';
       }
     }
     return '0';
   }, [
-    formValue.number,
+    formValue,
     activeCurrency,
     assetPrice,
     borrowAmount,
     tatalCollateral,
+    usingAsCollateral,
     type
   ]);
 
@@ -559,11 +639,6 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     return '0';
   }, [formValue.number, activeCurrency, assetPrice]);
 
-  // 获取是否作为抵押
-  const isAsCollateral = useMemo(() => {
-    return Boolean(activeCurrencyInfo?.usingAsCollateral);
-  }, [activeCurrencyInfo]);
-
   const getFormError = () => {
     const { number } = formValue;
     if (balance && BN(balance).isLessThan(number)) {
@@ -572,7 +647,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
         errorMsg: '输入值大于最大可输入值'
       };
     }
-    if (number === '0') {
+    if (BN(number).isLessThanOrEqualTo(0)) {
       return {
         isError: true,
         errorMsg: '输入值需大于最大0'
@@ -604,7 +679,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
             !auth ||
               !number ||
               (balance && BN(balance).isLessThan(number)) ||
-              number === '0'
+              BN(number).isLessThanOrEqualTo(0)
           ),
           ...getFormError()
         };
@@ -613,7 +688,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
           disabled: Boolean(
             !number ||
               isOverLiquidation ||
-              number === '0' ||
+              BN(number).isLessThanOrEqualTo(0) ||
               (balance && BN(balance).isLessThan(number))
           ),
           ...getFormError()
@@ -623,7 +698,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
           disabled: Boolean(
             !number ||
               isOverLiquidation ||
-              number === '0' ||
+              BN(number).isLessThanOrEqualTo(0) ||
               (balance && BN(balance).isLessThan(number))
           ),
           ...getFormError()
@@ -633,7 +708,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
           disabled: Boolean(
             !auth ||
               !number ||
-              number === '0' ||
+              BN(number).isLessThanOrEqualTo(0) ||
               (balance && BN(balance).isLessThan(number)) ||
               (borrowAmount && BN(borrowAmount).isLessThan(number))
           ),
@@ -655,8 +730,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     onDeposit,
     onWithdraw,
     onBorrow,
-    onRepay,
-    setUsingAsCollateral
+    onRepay
   } = useTradeContract({
     activeCurrencyBaseInfo,
     formValue,
@@ -694,9 +768,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     onRepay,
     onBorrow,
     currencyBaseInfoList,
-    formStatus,
-    isAsCollateral,
-    setUsingAsCollateral
+    formStatus
   };
 };
 

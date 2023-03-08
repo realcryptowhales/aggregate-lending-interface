@@ -15,7 +15,7 @@ export default function useCurrencyList() {
 
   const { data } = useSWRImmutable(
     {
-      url: '/config/list'
+      url: '/aggregate-lending/config/list'
     },
     fetcher
   );

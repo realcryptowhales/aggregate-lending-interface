@@ -69,3 +69,7 @@ export const rawToPercent = (raw: BigNumber, unit = 6, mantissa = 2) => {
 
   return formatPercent(formatUnits(raw, unit), mantissa);
 };
+export const rawToNumber = (raw: BigNumber, unit = 6) => {
+  if (!(raw instanceof BigNumber)) return '0';
+  return formatUnits(raw, unit);
+};

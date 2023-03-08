@@ -13,7 +13,8 @@ import {
   rawToThousandNumber,
   rawToPercent,
   formatDate,
-  formatPercent
+  formatPercent,
+  rawToNumber
 } from '@utils/format';
 // import useSWR from 'swr'; // set dedupingInterval to close cache
 import useSWRImmutable from 'swr/immutable'; // use cache for swr
@@ -37,7 +38,7 @@ function PorfolioItem() {
   // get token list
   const { data: currencyList } = useSWRImmutable(
     {
-      url: '/config/list'
+      url: '/aggregate-lending/config/list'
     },
     fetcher
   );
@@ -113,7 +114,7 @@ function PorfolioItem() {
   const { data: aggAPR } = useSWRImmutable(
     todayDate.current && lastThirtyDate.current && nowToken.configId
       ? {
-          url: '/apr/calc',
+          url: '/aggregate-lending/apr/calc',
           params: {
             configId: nowToken.configId, // token id
             operateType: isSupply ? 0 : 1, // 0:存款 1:借款
@@ -136,7 +137,7 @@ function PorfolioItem() {
   const { data: aaveAPR } = useSWRImmutable(
     todayDate.current && lastThirtyDate.current && nowToken.configId
       ? {
-          url: '/apr/calc',
+          url: '/aggregate-lending/apr/calc',
           params: {
             configId: nowToken.configId, // token id
             operateType: isSupply ? 0 : 1, // 0:存款 1:借款
@@ -159,7 +160,7 @@ function PorfolioItem() {
   const { data: compAPR } = useSWRImmutable(
     todayDate.current && lastThirtyDate.current && nowToken.configId
       ? {
-          url: '/apr/calc',
+          url: '/aggregate-lending/apr/calc',
           params: {
             configId: nowToken.configId, // token id
             operateType: isSupply ? 0 : 1, // 0:存款 1:借款
@@ -349,9 +350,9 @@ function PorfolioItem() {
     return [
       rawToThousandNumber(supplyAmount, nowToken.decimal, 4),
       rawToThousandNumber(supplyValue, nowToken.decimal, 2),
-      rawToThousandNumber(supplyMatchAmount, nowToken.decimal, 4),
-      rawToThousandNumber(supplyAaveAmount, nowToken.decimal, 4),
-      rawToThousandNumber(supplyCompoundAmount, nowToken.decimal, 4),
+      rawToNumber(supplyMatchAmount, nowToken.decimal),
+      rawToNumber(supplyAaveAmount, nowToken.decimal),
+      rawToNumber(supplyCompoundAmount, nowToken.decimal),
       supplyMatchPercent,
       supplyAavePercent,
       supplyCompoundPercent
@@ -421,9 +422,9 @@ function PorfolioItem() {
     return [
       rawToThousandNumber(borrowAmount, nowToken.decimal, 4),
       rawToThousandNumber(borrowValue, nowToken.decimal, 2),
-      rawToThousandNumber(borrowMatchAmount, nowToken.decimal, 4),
-      rawToThousandNumber(borrowAaveAmount, nowToken.decimal, 4),
-      rawToThousandNumber(borrowCompoundAmount, nowToken.decimal, 4),
+      rawToNumber(borrowMatchAmount, nowToken.decimal),
+      rawToNumber(borrowAaveAmount, nowToken.decimal),
+      rawToNumber(borrowCompoundAmount, nowToken.decimal),
       borrowMatchPercent,
       borrowAavePercent,
       borrowCompoundPercent

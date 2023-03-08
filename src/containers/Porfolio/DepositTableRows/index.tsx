@@ -103,7 +103,9 @@ export const DepositTableRows = observer(
           }}
           hover
           onClick={() => {
-            navigate(`/porfolio/token?address=${underlying}`);
+            navigate(
+              `/aggregate-lending-web/porfolio/token?address=${underlying}`
+            );
           }}
           tabIndex={-1}
           key={symbol}

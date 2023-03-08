@@ -16,18 +16,19 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   return {
     // root: path.join(__dirname, 'src'),
+    base: '/aggregate-lending-web/',
     server: {
       proxy: {
-        '/liquidator/list': {
-          target: 'http://35.220.222.252/aggregate-lending',
+        '/aggregate-lending/liquidator/list': {
+          target: 'http://35.220.222.252',
           changeOrigin: true
         },
-        '/apr/calc': {
-          target: 'http://35.220.222.252/aggregate-lending',
+        '/aggregate-lending/apr/calc': {
+          target: 'http://35.220.222.252',
           changeOrigin: true
         },
-        '/config/list': {
-          target: 'http://35.220.222.252/aggregate-lending',
+        '/aggregate-lending/config/list': {
+          target: 'http://35.220.222.252',
           changeOrigin: true
         }
       }

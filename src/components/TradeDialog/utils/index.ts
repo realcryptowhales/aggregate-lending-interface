@@ -3,7 +3,7 @@ import BN from 'bignumber.js';
 import { FormatCurrencyNumberProps, ParseUnitsProps } from '@/constant/type';
 
 export const toPercent = (num?: string) => {
-  return num ? `${BN(num).times(100)}%` : '0%';
+  return num ? `${BN(num).times(100)}%` : '';
 };
 
 export const cutZero = (old: string) => {
@@ -65,11 +65,17 @@ export const parseUnits = ({ num, decimal }: ParseUnitsProps) => {
 };
 
 export const divideBigNumber = (dividend: BigNumber, divisor: BigNumber) => {
+  if (BN(formatRateNumber(divisor)).isZero()) {
+    return '';
+  }
   return cutZero(
     BN(formatRateNumber(dividend)).div(formatRateNumber(divisor)).toFixed(4, 1)
   );
 };
 
 export const divideString = (dividend: string, divisor: string) => {
+  if (divisor === '0') {
+    return '';
+  }
   return cutZero(BN(dividend).div(divisor).toFixed(4, 1));
 };
