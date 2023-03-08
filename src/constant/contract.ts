@@ -1,5 +1,5 @@
 export const queryHelperContractAddr =
-  '0xB3B4263B6810C991F13F65674B84A5E78B41EFFa';
+  '0x78cc5a704466652017ec1Cc28a45C5D5bFD9373c';
 export const priceOracleAddr = '0x0b89Fcd90C2D6577Ad6f1C4AFEAa7b20eeD4eE3B';
 export const routerAddr = '0x84Bcf10D44a814802A88Cf0742dcEc975Acf6839';
 export const mockUSDTAddr = '0x0b99a10c7eddedb735040a23a923a08248ce6f4f';
