@@ -2,8 +2,6 @@ import * as React from 'react';
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Summary from '@components/Summary';
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-import Tooltip from '@mui/material/Tooltip';
 import Detail from '@/components/Detail';
 import { queryHelperContractAddr, queryHelperABI } from '@constant/index';
 import { useContractReads, useAccount, useContractRead } from 'wagmi';
@@ -261,11 +259,6 @@ function PorfolioItem() {
         title: (
           <div className="flex items-center">
             <span className="mr-4">最高抵押率</span>
-            <Tooltip title="hover的内容" arrow>
-              <ErrorOutlineOutlinedIcon
-                sx={{ width: '17px', height: '17px' }}
-              />
-            </Tooltip>
           </div>
         ),
         text: rawToPercent(maxLTV, 6, 2) || '--'
@@ -275,11 +268,6 @@ function PorfolioItem() {
         title: (
           <div className="flex items-center">
             <span className="mr-4">清算阈值</span>
-            <Tooltip title="hover的内容" arrow>
-              <ErrorOutlineOutlinedIcon
-                sx={{ width: '17px', height: '17px' }}
-              />
-            </Tooltip>
           </div>
         ),
         text: rawToPercent(liquidationThreshold, 6, 2) || '--'
