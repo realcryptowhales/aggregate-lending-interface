@@ -128,17 +128,19 @@ const Liquidation = () => {
         rows={result}
         TableRows={liquidationTableRows}
       />
-      <TablePagination
-        style={{ marginTop: '40px', marginBottom: '64px' }}
-        component="div"
-        count={totalNum}
-        rowsPerPage={8}
-        page={pageNo}
-        labelRowsPerPage="" //hidden select
-        SelectProps={{ sx: { display: 'none' } }} //hidden select
-        onPageChange={handleChangePage}
-        // onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      {!!totalNum && (
+        <TablePagination
+          style={{ marginTop: '40px', marginBottom: '64px' }}
+          component="div"
+          count={totalNum}
+          rowsPerPage={8}
+          page={pageNo}
+          labelRowsPerPage="" //hidden select
+          SelectProps={{ sx: { display: 'none' } }} //hidden select
+          onPageChange={handleChangePage}
+          // onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      )}
     </div>
   );
 };
