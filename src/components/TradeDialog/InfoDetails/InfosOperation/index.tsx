@@ -6,11 +6,12 @@ import styles from './index.module.less';
 
 const InfosDepositOperation = ({
   maxLTVPercent,
-  isAsCollateral,
-  setUsingAsCollateral
+  formValue,
+  handleFormChange
 }: OperationProps) => {
-  const handleChange = () => {
-    setUsingAsCollateral?.write?.();
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleFormChange &&
+      handleFormChange({ asCollateral: event.target.checked });
   };
 
   return (
@@ -33,9 +34,9 @@ const InfosDepositOperation = ({
           </Tooltip>
         </div>
         <Switch
-          checked={isAsCollateral}
+          checked={Boolean(formValue?.asCollateral)}
           onChange={handleChange}
-          disabled={setUsingAsCollateral?.isLoading}
+          disabled={formValue?.asCollateral === undefined}
         />
       </div>
       <div className={styles.operationItem}>
@@ -149,8 +150,7 @@ function InfosOperation({
   isHighRisk,
   willBecomeBorrowLimitPercent,
   balance,
-  isAsCollateral,
-  setUsingAsCollateral
+  handleFormChange
 }: OperationProps) {
   switch (type) {
     case DialogTypeProps.deposit:
@@ -158,8 +158,7 @@ function InfosOperation({
         <InfosDepositOperation
           maxLTVPercent={maxLTVPercent}
           formValue={formValue}
-          isAsCollateral={isAsCollateral}
-          setUsingAsCollateral={setUsingAsCollateral}
+          handleFormChange={handleFormChange}
         />
       );
       break;

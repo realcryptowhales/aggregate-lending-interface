@@ -10,9 +10,10 @@ import {
   SnackbarProps,
   UseTradeContractProps
 } from '@/constant/type';
+import BN from 'bignumber.js';
 import { constants } from 'ethers';
-import { routerAddr, configContractAddr } from '@/constant/contract';
-import { sTokenABI, routerABI, configABI } from '@/constant/abi';
+import { routerAddr } from '@/constant/contract';
+import { sTokenABI, routerABI } from '@/constant/abi';
 import { TRANSACTION_DETAIL_URL } from '../constant';
 import { parseUnits } from '../utils';
 
@@ -165,13 +166,14 @@ const useTradeContract = ({
         }),
         to: address
       },
-      activeCurrencyInfo?.usingAsCollateral,
+      formValue.asCollateral,
       true
     ],
     enabled:
       formValue.number &&
-      formValue.number !== '0' &&
+      BN(formValue.number).isGreaterThanOrEqualTo(0) &&
       activeCurrencyBaseInfo?.address &&
+      formValue.asCollateral !== undefined &&
       address
   });
   const onDeposit = useContractWrite(depositConfig.config);
@@ -257,7 +259,7 @@ const useTradeContract = ({
     ],
     enabled:
       formValue.number &&
-      formValue.number !== '0' &&
+      BN(formValue.number).isGreaterThanOrEqualTo(0) &&
       activeCurrencyBaseInfo?.address &&
       address
   });
@@ -355,7 +357,7 @@ const useTradeContract = ({
     ],
     enabled:
       formValue.number &&
-      formValue.number !== '0' &&
+      BN(formValue.number).isGreaterThanOrEqualTo(0) &&
       activeCurrencyBaseInfo?.address &&
       address
   });
@@ -452,7 +454,7 @@ const useTradeContract = ({
     ],
     enabled:
       formValue.number &&
-      formValue.number !== '0' &&
+      BN(formValue.number).isGreaterThanOrEqualTo(0) &&
       activeCurrencyBaseInfo?.address &&
       address
   });
@@ -520,72 +522,6 @@ const useTradeContract = ({
     }
   });
 
-  // 设置用户是否选择抵押指定资产
-  const usingAsCollateralConfig = usePrepareContractWrite({
-    address: configContractAddr,
-    abi: configABI,
-    functionName: 'setUsingAsCollateral',
-    args: [
-      address,
-      activeCurrencyBaseInfo?.address,
-      !activeCurrencyInfo?.usingAsCollateral
-    ],
-    enabled: typeof activeCurrencyBaseInfo?.address !== 'undefined' && address
-  });
-
-  const setUsingAsCollateral = useContractWrite(usingAsCollateralConfig.config);
-
-  // 处理设置用户是否选择抵押指定资产结果
-  useEffect(() => {
-    const { isError, error, write } = setUsingAsCollateral;
-    const { message } = error || {};
-    if (isError && message && message.indexOf('User rejected request') > -1) {
-      setTipDialog({
-        open: true,
-        title: '交易已拒绝',
-        content: `你已在钱包拒绝 ${activeCurrencyBaseInfo?.symbol} 作为抵押品, 用作质押品的每项资产都会增加您的借款限额, 请再次尝试`,
-        onClose: () => {
-          setTipDialog({ open: false });
-        },
-        onConfirm: () => {
-          setTipDialog({ open: false });
-          write?.();
-        },
-        confirmButtonText: '再次尝试'
-      });
-    }
-  }, [setUsingAsCollateral.status]);
-
-  const waitForUsingAsCollateralTransaction = useWaitForTransaction({
-    hash: setUsingAsCollateral.data?.hash,
-    onSuccess(data: any) {
-      setSnackBar({
-        open: true,
-        message: activeCurrencyInfo?.usingAsCollateral
-          ? `已关闭 ${activeCurrencyBaseInfo?.symbol} 抵押开关 `
-          : `已打开 ${activeCurrencyBaseInfo?.symbol} 抵押开关 `,
-        onClose: () => {
-          setSnackBar({ open: false });
-        },
-        viewDetailUrl: `${TRANSACTION_DETAIL_URL}/${setUsingAsCollateral.data?.hash}`,
-        type: 'success'
-      });
-    },
-    onError(error: any) {
-      setSnackBar({
-        open: true,
-        message: activeCurrencyInfo?.usingAsCollateral
-          ? `关闭 ${activeCurrencyBaseInfo?.symbol} 抵押开关失败`
-          : `打开 ${activeCurrencyBaseInfo?.symbol} 抵押开关失败`,
-        onClose: () => {
-          setSnackBar({ open: false });
-        },
-        viewDetailUrl: `${TRANSACTION_DETAIL_URL}/${setUsingAsCollateral.data?.hash}`,
-        type: 'error'
-      });
-    }
-  });
-
   return {
     onApprove: {
       ...onApprove,
@@ -608,12 +544,6 @@ const useTradeContract = ({
     onRepay: {
       ...onRepay,
       isLoading: onRepay.isLoading || waitForRepayTransaction.isLoading
-    },
-    setUsingAsCollateral: {
-      ...setUsingAsCollateral,
-      isLoading:
-        setUsingAsCollateral.isLoading ||
-        waitForUsingAsCollateralTransaction.isLoading
     },
     snackbar,
     tipDialog

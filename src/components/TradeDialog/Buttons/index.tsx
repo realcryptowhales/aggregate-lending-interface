@@ -10,25 +10,8 @@ function DepositButtons({
   auth,
   onApprove,
   onDeposit,
-  formStatus,
-  setUsingAsCollateral
+  formStatus
 }: ButtonProps) {
-  if (setUsingAsCollateral?.isLoading) {
-    return (
-      <div className={styles.buttons}>
-        <LoadingButton
-          variant="contained"
-          className={clsx(styles.button, styles.lineButton)}
-          color={'gray'}
-          disabled={true}
-          loading={true}
-          loadingPosition="start"
-        >
-          授权抵押物中
-        </LoadingButton>
-      </div>
-    );
-  }
   return (
     <div className={styles.buttons}>
       {!auth ? (
@@ -194,8 +177,7 @@ export default function Buttons({
   onRepay,
   onBorrow,
   onChangeTab,
-  formStatus,
-  setUsingAsCollateral
+  formStatus
 }: ButtonProps) {
   switch (type) {
     case DialogTypeProps.deposit:
@@ -207,7 +189,6 @@ export default function Buttons({
           onApprove={onApprove}
           onDeposit={onDeposit}
           formStatus={formStatus}
-          setUsingAsCollateral={setUsingAsCollateral}
         />
       );
     case DialogTypeProps.withdraw:

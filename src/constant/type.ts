@@ -81,6 +81,7 @@ export interface AprInfoProps {
 
 export interface FormValuesProps {
   number: string;
+  asCollateral?: boolean;
 }
 
 export interface TipDialogProps {
@@ -130,7 +131,6 @@ export interface ButtonProps {
   onBorrow?: UseContractWriteProps;
   onChangeTab?: (dialogType: DialogTypeProps) => void;
   formStatus: FormStatusProps;
-  setUsingAsCollateral?: UseContractWriteProps;
 }
 
 export interface DialogInputType {
@@ -164,6 +164,8 @@ export interface FormStatusProps {
   errorMsg: string;
 }
 
+export type HandleFormChangeProps = (obj: { [key: string]: any }) => void;
+
 export interface InfoDetailsProps {
   type: DialogTypeProps;
   activeCurrency: string;
@@ -181,8 +183,7 @@ export interface InfoDetailsProps {
   onBorrow?: UseContractWriteProps;
   onChangeTab?: (dialogType: DialogTypeProps) => void;
   formStatus: FormStatusProps;
-  isAsCollateral: boolean;
-  setUsingAsCollateral?: UseContractWriteProps;
+  handleFormChange: HandleFormChangeProps;
 }
 
 export interface OperationProps {
@@ -193,8 +194,7 @@ export interface OperationProps {
   isHighRisk?: boolean;
   willBecomeBorrowLimitPercent?: string;
   balance?: number | string;
-  isAsCollateral?: boolean;
-  setUsingAsCollateral?: UseContractWriteProps;
+  handleFormChange?: HandleFormChangeProps;
 }
 
 export interface UnAuthProps {

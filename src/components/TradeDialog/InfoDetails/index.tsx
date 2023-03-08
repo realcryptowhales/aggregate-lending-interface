@@ -22,8 +22,7 @@ function InfoDetails({
   onBorrow,
   onChangeTab,
   formStatus,
-  isAsCollateral,
-  setUsingAsCollateral
+  handleFormChange
 }: InfoDetailsProps) {
   return (
     <Fragment>
@@ -39,8 +38,7 @@ function InfoDetails({
           isHighRisk={isHighRisk}
           willBecomeBorrowLimitPercent={willBecomeBorrowLimitPercent}
           balance={balance}
-          isAsCollateral={isAsCollateral}
-          setUsingAsCollateral={setUsingAsCollateral}
+          handleFormChange={handleFormChange}
         />
       )}
       <Buttons
@@ -58,7 +56,6 @@ function InfoDetails({
         onBorrow={onBorrow}
         onChangeTab={onChangeTab}
         formStatus={formStatus}
-        setUsingAsCollateral={setUsingAsCollateral}
       />
     </Fragment>
   );
