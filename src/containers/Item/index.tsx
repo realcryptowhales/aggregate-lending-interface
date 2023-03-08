@@ -37,7 +37,7 @@ function PorfolioItem() {
   // get token list
   const { data: currencyList } = useSWRImmutable(
     {
-      url: '/config/list'
+      url: '/aggregate-lending/config/list'
     },
     fetcher
   );
@@ -113,7 +113,7 @@ function PorfolioItem() {
   const { data: aggAPR } = useSWRImmutable(
     todayDate.current && lastThirtyDate.current && nowToken.configId
       ? {
-          url: '/apr/calc',
+          url: '/aggregate-lending/apr/calc',
           params: {
             configId: nowToken.configId, // token id
             operateType: isSupply ? 0 : 1, // 0:存款 1:借款
@@ -136,7 +136,7 @@ function PorfolioItem() {
   const { data: aaveAPR } = useSWRImmutable(
     todayDate.current && lastThirtyDate.current && nowToken.configId
       ? {
-          url: '/apr/calc',
+          url: '/aggregate-lending/apr/calc',
           params: {
             configId: nowToken.configId, // token id
             operateType: isSupply ? 0 : 1, // 0:存款 1:借款
@@ -159,7 +159,7 @@ function PorfolioItem() {
   const { data: compAPR } = useSWRImmutable(
     todayDate.current && lastThirtyDate.current && nowToken.configId
       ? {
-          url: '/apr/calc',
+          url: '/aggregate-lending/apr/calc',
           params: {
             configId: nowToken.configId, // token id
             operateType: isSupply ? 0 : 1, // 0:存款 1:借款

@@ -16,6 +16,7 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   return {
     // root: path.join(__dirname, 'src'),
+    base: '/aggregate-lending-web/',
     server: {
       proxy: {
         '/liquidator/list': {

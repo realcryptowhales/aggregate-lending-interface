@@ -365,7 +365,10 @@ const Porfolio = () => {
           >
             我的资产
           </div>
-          <Link to="/porfolio/liquidation" style={{ textDecoration: 'none' }}>
+          <Link
+            to="/aggregate-lending-web/porfolio/liquidation"
+            style={{ textDecoration: 'none' }}
+          >
             <div className={cls('flex items-center cursor-pointer')}>
               <i
                 className={cls('iconfont icon-Records')}

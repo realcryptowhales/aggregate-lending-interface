@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Layout from '@/containers';
-// import MarketItem from '@/containers/Markets/MarketItem';
 import Item from './containers/Item';
 import Liquidation from './containers/Liquidation';
 import NoMatch from '@/components/NoMatch';
@@ -9,34 +8,35 @@ import type { RouteObject } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
 import Porfolio from './containers/Porfolio';
 import Markets from './containers/Markets';
-import Test from './containers/Test';
 
 const routes: RouteObject[] = [
   {
-    path: '/',
+    path: '/aggregate-lending-web',
     element: <Layout />,
     children: [
-      { index: true, element: <Redirect to="/markets" /> },
       {
-        path: '/markets',
+        index: true,
+        element: <Redirect to="/aggregate-lending-web/markets" />
+      },
+      {
+        path: '/aggregate-lending-web/markets',
         children: [
           { index: true, element: <Markets /> },
-          { path: '/markets/token', element: <Item /> }
+          { path: '/aggregate-lending-web/markets/token', element: <Item /> }
         ]
       },
       {
-        path: '/porfolio',
+        path: '/aggregate-lending-web/porfolio',
         children: [
           { index: true, element: <Porfolio /> },
-          { path: '/porfolio/liquidation', element: <Liquidation /> },
-          { path: '/porfolio/token', element: <Item /> }
+          {
+            path: '/aggregate-lending-web/porfolio/liquidation',
+            element: <Liquidation />
+          },
+          { path: '/aggregate-lending-web/porfolio/token', element: <Item /> }
         ]
       },
-      {
-        path: '/test',
-        children: [{ index: true, element: <Test /> }]
-      },
-      { path: '*', element: <NoMatch /> }
+      { path: '/aggregate-lending-web/*', element: <NoMatch /> }
       // { path: '*', element: <Redirect to="/markets" /> }
     ]
   }

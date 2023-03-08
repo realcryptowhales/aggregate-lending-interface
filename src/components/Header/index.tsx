@@ -17,8 +17,8 @@ const Header: React.FC = () => {
 
   const { pathname } = useLocation();
   const pathList = [
-    { path: '/markets', name: 'Markets' },
-    { path: '/porfolio', name: 'Porfolio' }
+    { path: '/aggregate-lending-web/markets', name: 'Markets' },
+    { path: '/aggregate-lending-web/porfolio', name: 'Porfolio' }
   ];
   return (
     <div

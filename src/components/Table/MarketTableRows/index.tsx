@@ -98,7 +98,9 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
       key={symbol}
       className={cls('cursor-pointer', style.row)}
       onClick={() => {
-        navigate(`/markets/token?address=${underlying.toLocaleLowerCase()}`);
+        navigate(
+          `/aggregate-lending-web/markets/token?address=${underlying.toLocaleLowerCase()}`
+        );
       }}
     >
       <TableCell
