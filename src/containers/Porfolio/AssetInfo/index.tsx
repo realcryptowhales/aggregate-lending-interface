@@ -56,10 +56,7 @@ const AssetInfo: React.FC = ({}) => {
       netProfit,
       collateralValue,
       usedRatio,
-      borrowLimit,
-      totalAvailableBorrow,
-      curLtv,
-      liquidateThreashold
+      borrowLimit
     }
   } = useStore();
   const thousandCollateralValue = useMemo(() => {
@@ -69,9 +66,6 @@ const AssetInfo: React.FC = ({}) => {
   const percentUsedRatio = useMemo(() => {
     return usedRatio ? formatPercent(usedRatio) : '--';
   }, [usedRatio]);
-  const percentCltv = useMemo(() => {
-    return curLtv ? formatPercent(curLtv) : '--';
-  }, [curLtv]);
   const thousandBorrowLimit = useMemo(() => {
     if (Number.isNaN(+borrowLimit) || !borrowLimit) return '--';
     return thousandCurrency(borrowLimit);
@@ -103,20 +97,8 @@ const AssetInfo: React.FC = ({}) => {
       <div className={style.limit}>
         <div className={style.title}>借款限额</div>
         <div className={cls('flex justify-between', style.percent)}>
-          <span>借款额度</span>
-          <span>
-            {totalAvailableBorrow
-              ? thousandCurrency(totalAvailableBorrow)
-              : '--'}
-          </span>
-        </div>
-        <div className={cls('flex justify-between', style.percent)}>
-          <span>剩余可借额度</span>
-          <span>{thousandBorrowLimit}</span>
-        </div>
-        <div className={cls('flex justify-between', style.percent)}>
-          <span>仓位当前抵押率</span>
-          <span>{percentCltv}</span>
+          <span>已用比例</span>
+          <span>{percentUsedRatio}</span>
         </div>
         <div
           style={{
@@ -130,26 +112,18 @@ const AssetInfo: React.FC = ({}) => {
           <div
             style={{
               backgroundColor: '#424242',
-              // width: `${+curLtv * 100}%`,
-              width: `${60}%`,
-
+              width: `${+usedRatio * 100}%`,
               height: 4,
               borderRadius: '2px'
             }}
           ></div>
           <div
             className={style.arrow}
-            // style={{ left: `calc(${+curLtv * 100}% - 3px)`, top: '-6px' }}
-            style={{ left: `calc(${60}% - 3px )`, top: '-6px' }}
-          ></div>
-          <div
-            className={style.liquidation}
-            // style={{ left: `calc(${+curLtv * 100}% - 3px)`, top: '-6px' }}
-            style={{ left: `calc(${90}% )` }}
+            style={{ left: `calc(${+usedRatio * 100}% - 3px)`, top: '-6px' }}
           ></div>
         </div>
         <div className={cls('flex justify-between', style.percent)}>
-          <span color="#dd1f16">Liauidation</span>
+          <span>最多可借</span>
           <span>{thousandBorrowLimit}</span>
         </div>
       </div>
