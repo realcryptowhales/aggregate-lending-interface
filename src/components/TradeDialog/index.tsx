@@ -22,10 +22,8 @@ function TradeDialog({
     tabs,
     infosTop,
     aprInfo,
-    showMaxLTV,
     isOverLiquidation,
     maxLTVPercent,
-    totalMaxLTVPercent,
     totalCurrentLTVPercent,
     totalLiquidationPercent,
     willTotalCurrentLTVPercent,
@@ -101,10 +99,9 @@ function TradeDialog({
             infosTop={infosTop}
             aprInfo={aprInfo}
             formValue={formValue}
-            showMaxLTV={showMaxLTV}
+            showMaxLTV={false}
             isOverLiquidation={isOverLiquidation}
             totalCurrentLTVPercent={totalCurrentLTVPercent}
-            totalMaxLTVPercent={totalMaxLTVPercent}
             totalLiquidationPercent={totalLiquidationPercent}
             willTotalCurrentLTVPercent={willTotalCurrentLTVPercent}
           />

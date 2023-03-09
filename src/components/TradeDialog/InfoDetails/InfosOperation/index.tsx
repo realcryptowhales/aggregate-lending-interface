@@ -34,6 +34,7 @@ const InfosDepositOperation = ({
           </Tooltip>
         </div>
         <Switch
+          color="blue"
           checked={Boolean(formValue?.asCollateral)}
           onChange={handleChange}
           disabled={formValue?.asCollateral === undefined}
