@@ -35,21 +35,40 @@ export interface CurrencyBaseInfoProps {
   dToken?: string;
 }
 
+// export interface CurrencyInfoProps {
+//   optimization?: string; // 内部撮合
+//   aave?: string; // AAVE
+//   compound?: string; // Compound
+//   borrowAPRPercent?: string; // 借款APR百分数
+//   borrowAmount?: string; // 借款数量
+//   depositAPRPercent?: string; // 存款APR百分数
+//   depositAmount?: string; // 存款余额
+//   totalMaxLTV?: string; // 总最高抵押率
+//   maxLTV?: string; // 当前币种的最高抵押率
+//   totalLiquidation?: string; // 清算域值
+//   assetPrice?: string;
+//   usingAsCollateral?: boolean;
+//   totalBorrowed?: string; // 总借款数量
+//   totalCollateral?: string; // 总抵押数量
+//   totalCurrentLTVPercent?: string; // 总当前抵押率
+// }
+
 export interface CurrencyInfoProps {
-  optimization?: string; // 内部撮合
-  aave?: string; // AAVE
-  compound?: string; // Compound
-  borrowAPRPercent?: string; // 借款APR百分数
-  borrowAmount?: string; // 借款数量
-  depositAPRPercent?: string; // 存款APR百分数
-  depositAmount?: string; // 存款余额
-  maxLTV?: string; // 最高抵押率
-  liquidation?: string; // 清算域值
-  usedBorrowLimit?: string; // 已用借款限额
-  assetPrice?: string;
-  usingAsCollateral?: boolean;
-  totalBorrowed?: string;
-  tatalCollateral?: string;
+  optimization: string; // 内部撮合
+  aave: string; // AAVE
+  compound: string; // Compound
+  borrowAPRPercent: string; // 借款APR百分数
+  borrowAmount: string; // 借款数量
+  depositAPRPercent: string; // 存款APR百分数
+  depositAmount: string; // 存款余额
+  totalMaxLTV: string; // 总最高抵押率
+  maxLTV: string; // 当前币种的最高抵押率
+  totalLiquidation: string; // 清算域值
+  assetPrice: string;
+  usingAsCollateral: boolean;
+  totalBorrowed: string; // 总借款数量
+  totalCollateral: string; // 总抵押数量
+  totalCurrentLTV: string; // 总当前抵押率
 }
 
 export interface UseTradeDialogProps {
@@ -175,7 +194,7 @@ export interface InfoDetailsProps {
   formValue: FormValuesProps;
   isHighRisk: boolean;
   isOverLiquidation: boolean;
-  willBecomeBorrowLimitPercent: string;
+  willTotalCurrentLTVPercent: string;
   onApprove?: UseContractWriteProps;
   onDeposit?: UseContractWriteProps;
   onWithdraw?: UseContractWriteProps;
@@ -192,7 +211,7 @@ export interface OperationProps {
   isOverLiquidation?: boolean;
   type?: DialogTypeProps;
   isHighRisk?: boolean;
-  willBecomeBorrowLimitPercent?: string;
+  willTotalCurrentLTVPercent?: string;
   balance?: number | string;
   handleFormChange?: HandleFormChangeProps;
 }
@@ -216,12 +235,12 @@ export interface InfosProps {
   aprInfo?: AprInfoProps;
   showMaxLTV: boolean;
   isOverLiquidation: boolean;
-  maxLTVPercent: string;
-  usedBorrowLimitPercent: string;
-  liquidationPercent: string;
-  willBecomeBorrowLimitPercent: string;
+  totalMaxLTVPercent: string;
+  totalLiquidationPercent: string;
+  willTotalCurrentLTVPercent: string;
   type: DialogTypeProps;
   formValue: FormValuesProps;
+  totalCurrentLTVPercent: string;
 }
 
 export interface AssetProps {
@@ -248,9 +267,8 @@ export interface UseTradeContractProps {
   formValue: FormValuesProps;
   activeCurrencyInfo?: CurrencyInfoProps;
   isHighRisk?: boolean;
-  willBecomeBorrowLimitPercent?: string;
-  liquidationPercent?: string;
-  willBecomeLTVPercent?: string;
+  willTotalCurrentLTVPercent?: string;
+  totalLiquidationPercent?: string;
 }
 
 export interface UserStatusProps {
@@ -267,4 +285,11 @@ export interface UserStatusProps {
   borrowRate: BigNumber; //借款利率
   supplyRates: BigNumber[]; // 底层协议存款利率
   borrowRates: BigNumber[]; // 底层协议借款利率
+  assetConfig: {
+    feeRate: BigNumber; // 手续费率
+    liquidateLTV: BigNumber; // 清算率
+    liquidateRewardRatio: BigNumber; // 最大清算比例
+    maxLTV: BigNumber; // 最大抵押率
+    maxLiquidateRatio: BigNumber; // 最大清算比例
+  };
 }

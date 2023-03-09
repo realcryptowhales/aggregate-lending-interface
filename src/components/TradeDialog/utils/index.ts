@@ -38,16 +38,16 @@ export const cutZero = (old: string) => {
 };
 
 // bigNumber to percent
-export const formatRatePercent = (big: BigNumber) => {
-  return toPercent(BN(utils.formatUnits(big, 6)).toFixed(4, 1));
+export const formatRatePercent = (big?: BigNumber) => {
+  return big ? toPercent(BN(utils.formatUnits(big, 6)).toFixed(4, 1)) : '';
 };
 
-export const formatRateNumber = (big: BigNumber) => {
-  return cutZero(BN(utils.formatUnits(big, 6)).toFixed(4, 1));
+export const formatRateNumber = (big?: BigNumber) => {
+  return big ? cutZero(BN(utils.formatUnits(big, 6)).toFixed(4, 1)) : '';
 };
 
-export const formatPriceNumber = (big: BigNumber) => {
-  return cutZero(utils.formatUnits(big, 8));
+export const formatPriceNumber = (big?: BigNumber) => {
+  return big ? cutZero(utils.formatUnits(big, 8)) : '';
 };
 
 // bigNumber to number
@@ -57,15 +57,15 @@ export const formatCurrencyNumber = ({
 }: FormatCurrencyNumberProps) => {
   return big && decimal
     ? cutZero(BN(utils.formatUnits(big, decimal)).toFixed(4, 1))
-    : '0';
+    : '';
 };
 
 export const parseUnits = ({ num, decimal }: ParseUnitsProps) => {
-  return num && decimal ? utils.parseUnits(num, decimal) : '0';
+  return num && decimal ? utils.parseUnits(num, decimal) : '';
 };
 
-export const divideBigNumber = (dividend: BigNumber, divisor: BigNumber) => {
-  if (BN(formatRateNumber(divisor)).isZero()) {
+export const divideBigNumber = (dividend?: BigNumber, divisor?: BigNumber) => {
+  if (!dividend || !divisor || BN(formatRateNumber(divisor)).isZero()) {
     return '';
   }
   return cutZero(
@@ -73,8 +73,8 @@ export const divideBigNumber = (dividend: BigNumber, divisor: BigNumber) => {
   );
 };
 
-export const divideString = (dividend: string, divisor: string) => {
-  if (divisor === '0') {
+export const divideString = (dividend?: string, divisor?: string) => {
+  if (!dividend || !divisor || BN(divisor).isZero()) {
     return '';
   }
   return cutZero(BN(dividend).div(divisor).toFixed(4, 1));

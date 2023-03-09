@@ -25,9 +25,10 @@ function TradeDialog({
     showMaxLTV,
     isOverLiquidation,
     maxLTVPercent,
-    usedBorrowLimitPercent,
-    liquidationPercent,
-    willBecomeBorrowLimitPercent,
+    totalMaxLTVPercent,
+    totalCurrentLTVPercent,
+    totalLiquidationPercent,
+    willTotalCurrentLTVPercent,
     formValue,
     handleFormChange,
     isHighRisk,
@@ -82,7 +83,7 @@ function TradeDialog({
             isHighRisk={isHighRisk}
             isOverLiquidation={isOverLiquidation}
             formValue={formValue}
-            willBecomeBorrowLimitPercent={willBecomeBorrowLimitPercent}
+            willTotalCurrentLTVPercent={willTotalCurrentLTVPercent}
             auth={auth}
             handleFormChange={handleFormChange}
             onApprove={onApprove}
@@ -102,10 +103,10 @@ function TradeDialog({
             formValue={formValue}
             showMaxLTV={showMaxLTV}
             isOverLiquidation={isOverLiquidation}
-            maxLTVPercent={maxLTVPercent}
-            usedBorrowLimitPercent={usedBorrowLimitPercent}
-            liquidationPercent={liquidationPercent}
-            willBecomeBorrowLimitPercent={willBecomeBorrowLimitPercent}
+            totalCurrentLTVPercent={totalCurrentLTVPercent}
+            totalMaxLTVPercent={totalMaxLTVPercent}
+            totalLiquidationPercent={totalLiquidationPercent}
+            willTotalCurrentLTVPercent={willTotalCurrentLTVPercent}
           />
         </section>
       </div>

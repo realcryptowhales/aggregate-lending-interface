@@ -5,8 +5,6 @@ import { DialogTypeProps } from '@constant/index';
 import { echarts } from '@utils/echart';
 import Tab from './Tab';
 import Button from '@mui/material/Button';
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-import Tooltip from '@mui/material/Tooltip';
 import moment from 'moment';
 
 const Detail: React.FC<any> = (props) => {
@@ -206,13 +204,7 @@ const Detail: React.FC<any> = (props) => {
               </div>
               <div className=" text-3.5 leading-4 mt-1.5">{summary.desc}</div>
             </div>
-            <div className="bg-#f9f9f9 rd-1 ml-8 px-4 py-4.5 color-#000000 text-3.5 leading-4 w-118.75 flex">
-              <Tooltip title="hover的内容" arrow>
-                <ErrorOutlineOutlinedIcon
-                  sx={{ width: '14px', height: '14px', marginRight: '10px' }}
-                />
-              </Tooltip>
-
+            <div className="bg-#f9f9f9 rd-1 ml-8 px-4 py-4.5 color-#000000 text-3.5 leading-5 w-118.75 flex">
               <div>
                 {detail.text1}
                 <br />

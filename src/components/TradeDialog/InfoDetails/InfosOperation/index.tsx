@@ -51,7 +51,7 @@ const InfosWithdrawOperation = ({
   isOverLiquidation,
   isHighRisk,
   formValue,
-  willBecomeBorrowLimitPercent
+  willTotalCurrentLTVPercent
 }: OperationProps) => {
   if (formValue?.number && isOverLiquidation) {
     return (
@@ -77,7 +77,7 @@ const InfosWithdrawOperation = ({
             color: '#51459D'
           }}
         />
-        取款后已用借款限额为{willBecomeBorrowLimitPercent}
+        取款后当前仓位抵押率为{willTotalCurrentLTVPercent}
         ，清算风险较高，请合理规划取款额或增加抵押物。
       </div>
     );
@@ -89,7 +89,7 @@ const InfosBorrowOperation = ({
   isOverLiquidation,
   isHighRisk,
   formValue,
-  willBecomeBorrowLimitPercent,
+  willTotalCurrentLTVPercent,
   balance
 }: OperationProps) => {
   if (balance === '0') {
@@ -119,7 +119,7 @@ const InfosBorrowOperation = ({
             color: '#51459D'
           }}
         />
-        借款后已用借款限额为&nbsp;{willBecomeBorrowLimitPercent}
+        借款后当前仓位抵押率为&nbsp;{willTotalCurrentLTVPercent}
         ，抵物不足，请降低借款额或者抵押更多资产。
       </div>
     );
@@ -134,7 +134,7 @@ const InfosBorrowOperation = ({
             color: '#51459D'
           }}
         />
-        借款后已用借款限额为{willBecomeBorrowLimitPercent}
+        借款后当前仓位抵押率为{willTotalCurrentLTVPercent}
         ，清算风险较高，请合理规划借款额或增加抵押物。
       </div>
     );
@@ -148,7 +148,7 @@ function InfosOperation({
   formValue,
   isOverLiquidation,
   isHighRisk,
-  willBecomeBorrowLimitPercent,
+  willTotalCurrentLTVPercent,
   balance,
   handleFormChange
 }: OperationProps) {
@@ -168,7 +168,7 @@ function InfosOperation({
           isOverLiquidation={isOverLiquidation}
           isHighRisk={isHighRisk}
           formValue={formValue}
-          willBecomeBorrowLimitPercent={willBecomeBorrowLimitPercent}
+          willTotalCurrentLTVPercent={willTotalCurrentLTVPercent}
         />
       );
       break;
@@ -178,7 +178,7 @@ function InfosOperation({
           isOverLiquidation={isOverLiquidation}
           isHighRisk={isHighRisk}
           formValue={formValue}
-          willBecomeBorrowLimitPercent={willBecomeBorrowLimitPercent}
+          willTotalCurrentLTVPercent={willTotalCurrentLTVPercent}
           balance={balance}
         />
       );
