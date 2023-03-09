@@ -52,6 +52,8 @@ export default class MarketStore {
   borrowCompoundApr = '--';
 
   marketTableList: MarketCurrencyInfo[] = [];
+  bestSupApr = '聚合平台';
+  bestBroApr = '聚合平台';
 
   constructor(rootStore: RootStore) {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -66,7 +68,26 @@ export default class MarketStore {
   //     6
   //   );
   // }
+  computeBestSupApr(aave: number, com: number, agg: number) {
+    const maxSupApr = Math.max(aave, com, agg);
+    if (agg === maxSupApr) return '聚合平台';
+    else if (aave === maxSupApr) return 'AAVE';
+    else if (com === maxSupApr) return 'Compound';
+    return '聚合平台';
+  }
+  computeBestBroApr(aave: number, com: number, agg: number) {
+    const minBroApr = Math.min(aave, com, agg);
+    if (agg === minBroApr) return '聚合平台';
+    else if (aave === minBroApr) return 'AAVE';
+    else if (com === minBroApr) return 'Compound';
+    return '聚合平台';
+  }
   async setCurrentSupplyRates(supplyRates: SupplyAprInfo) {
+    this.bestSupApr = this.computeBestSupApr(
+      +formatUnits(supplyRates?.aaveSupplyRate || 0, 6),
+      +formatUnits(supplyRates?.compSupplyRate || 0, 6),
+      +formatUnits(supplyRates?.aggSupplyRate || 0, 6)
+    );
     this.supplyAaveApr = rawToPercent(supplyRates?.aaveSupplyRate, 6);
     this.supplyCompoundApr = rawToPercent(supplyRates?.compSupplyRate, 6);
     this.supplyAggregationPlatformApr = rawToPercent(
@@ -75,6 +96,11 @@ export default class MarketStore {
     );
   }
   async setCurrentBorrowRates(borrowRates: BorrowAprInfo) {
+    this.bestBroApr = this.computeBestBroApr(
+      +formatUnits(borrowRates?.aaveBorrowRate || 0, 6),
+      +formatUnits(borrowRates?.compBorrowRate || 0, 6),
+      +formatUnits(borrowRates?.compBorrowRate || 0, 6)
+    );
     this.borrowAaveApr = rawToPercent(borrowRates?.aaveBorrowRate, 6);
     this.borrowCompoundApr = rawToPercent(borrowRates?.compBorrowRate, 6);
     this.borrowAggregationPlatformApr = rawToPercent(

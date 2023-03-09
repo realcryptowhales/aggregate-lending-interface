@@ -228,6 +228,8 @@ const Porfolio = () => {
   //     true
   //   ]
   // });
+  const [txStep, setTxStep] = useState<'submit' | 'onchain'>('submit');
+
   const [messageVisible, setMessageVisible] = useState(false);
   const [messageStatus, setMessagestatus] = useState<'success' | 'error'>(
     'success'
@@ -242,13 +244,24 @@ const Porfolio = () => {
     hash
   } = useCollateralModal(
     () => {
-      setMessageVisible(true);
       setMessagestatus('success');
+      setTxStep('submit');
+      setMessageVisible(true);
     },
     () => {
-      setMessageVisible(true);
-
       setMessagestatus('error');
+      setTxStep('submit');
+      setMessageVisible(true);
+    },
+    () => {
+      setMessagestatus('success');
+      setTxStep('onchain');
+      setMessageVisible(true);
+    },
+    () => {
+      setMessagestatus('error');
+      setTxStep('onchain');
+      setMessageVisible(true);
     }
   );
   const modalInfo = useMemo(() => {
@@ -338,7 +351,34 @@ const Porfolio = () => {
             error: `关闭${tokenSymbol}抵押开关失败，请重试`
           }
         };
-  }, [collateralStatus, tokenSymbol, onCancel, onConfirm]);
+  }, [collateralStatus, tokenSymbol, onCancel, onConfirm, txStep]);
+  const messageInfo = useMemo(() => {
+    if (collateralStatus === 'openCollateral') {
+      if (txStep === 'submit') {
+        return {
+          success: `开启${tokenSymbol}抵押交易已提交`,
+          error: `开启${tokenSymbol}抵押交易提交失败`
+        };
+      } else {
+        return {
+          success: `已开启${tokenSymbol}抵押开关`,
+          error: `开启${tokenSymbol}抵押开关失败，请重试`
+        };
+      }
+    } else {
+      if (txStep === 'submit') {
+        return {
+          success: `关闭${tokenSymbol}抵押交易已提交`,
+          error: `关闭${tokenSymbol}抵押交易提交失败`
+        };
+      } else {
+        return {
+          success: `已关闭${tokenSymbol}抵押开关`,
+          error: `关闭${tokenSymbol}抵押开关失败，请重试`
+        };
+      }
+    }
+  }, [collateralStatus, tokenSymbol, txStep]);
   // console.log('address', address);
   // const { config } = usePrepareContractWrite({
   //   address: configContractAddr,
@@ -355,7 +395,6 @@ const Porfolio = () => {
   // });
   // const { isLoading, isSuccess, write, data } = useContractWrite(config);
   // console.log('data', data);
-
   return (
     <>
       <div className={cls(style.container)}>
@@ -415,8 +454,8 @@ const Porfolio = () => {
           <div className={style.snackbarContent}>
             <div className={style.snackbarText}>
               {messageStatus === 'success'
-                ? modalInfo.message.success
-                : modalInfo.message.error}
+                ? messageInfo.success
+                : messageInfo.error}
             </div>
             {!!hash && (
               <a

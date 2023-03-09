@@ -1,11 +1,18 @@
 import { configContractAddr, configABI, mockUSDTAddr } from '@/constant';
 import { useCallback, useMemo, useState } from 'react';
-import { usePrepareContractWrite, useContractWrite, useAccount } from 'wagmi';
+import {
+  usePrepareContractWrite,
+  useContractWrite,
+  useAccount,
+  useWaitForTransaction
+} from 'wagmi';
 export enum Action {
   openCollateral = 'openCollateral',
   closeCollateral = 'closeCollateral'
 }
 export const useCollateralModal = (
+  submitSucCall: () => void,
+  submitErrCall: () => void,
   successCall: () => void,
   errorCall: () => void
 ) => {
@@ -41,16 +48,28 @@ export const useCollateralModal = (
     ...config,
     onSuccess(data) {
       console.log('Success', data);
-      successCall();
+      submitSucCall();
+      // successCall();
     },
     onError(error) {
       console.log('error', error);
-      errorCall();
+      submitErrCall();
+      // errorCall();
     },
     onSettled(data, error) {
       console.log('Settled', { data, error });
     }
   });
+  const waitForApproveTransaction = useWaitForTransaction({
+    hash: data?.hash,
+    onSuccess() {
+      successCall();
+    },
+    onError() {
+      errorCall();
+    }
+  });
+  console.log('waitForApproveTransaction', waitForApproveTransaction);
   const openModalAction = useCallback(
     (symbol: string, tokenAddress: string, action: string) => {
       setTokenSymbol(symbol);

@@ -82,7 +82,9 @@ const Markets: React.FC = () => {
       supplyAggregationPlatformApr,
       borrowAaveApr,
       borrowCompoundApr,
-      borrowAggregationPlatformApr
+      borrowAggregationPlatformApr,
+      bestSupApr,
+      bestBroApr
     },
     commonStore: { tokenList }
   } = useStore();
@@ -156,6 +158,7 @@ const Markets: React.FC = () => {
             AggregationPlatform={supplyAggregationPlatformApr}
             aave={supplyAaveApr}
             compound={supplyCompoundApr}
+            bestApr={bestSupApr}
           />
         </Card>
         <Card
@@ -171,10 +174,11 @@ const Markets: React.FC = () => {
         >
           {/* borrow */}
           <AprDataDisplay
-            lendingPlatform="APY"
+            lendingPlatform="APR"
             AggregationPlatform={borrowAggregationPlatformApr}
             aave={borrowAaveApr}
             compound={borrowCompoundApr}
+            bestApr={bestBroApr}
           />
         </Card>
       </div>

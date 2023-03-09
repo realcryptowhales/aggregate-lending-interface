@@ -197,9 +197,11 @@ export default function EnhancedTable<
                       />
                     );
                   })
-                : rows.map((row) => {
-                    return <TableRows key={row.gmtCreate} row={row} />;
-                  })}
+                : rows
+                    // .sort((a, b) => +a.gmtCreate - +b.gmtCreate)
+                    .map((row) => {
+                      return <TableRows key={row.transactionHash} row={row} />;
+                    })}
             </TableBody>
           </Table>
         </TableContainer>
