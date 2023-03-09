@@ -127,7 +127,7 @@ function PorfolioItem() {
   const aggAPRFormat = useMemo(() => {
     if (!aggAPR) return [];
     return aggAPR.map((item: any) => {
-      return [item.calcTime, Number(item.apr).toFixed(2)];
+      return [item.calcTime, (Number(item.apr) * 100).toFixed(2)];
     });
   }, [aggAPR]);
   // console.log(aggAPR, 'aggAPR');
@@ -150,7 +150,7 @@ function PorfolioItem() {
   const aaveAPRFormat = useMemo(() => {
     if (!aaveAPR) return [];
     return aaveAPR.map((item: any) => {
-      return [item.calcTime, Number(item.apr).toFixed(2)];
+      return [item.calcTime, (Number(item.apr) * 100).toFixed(2)];
     });
   }, [aaveAPR]);
   // console.log(aaveAPR, 'aaveAPR');
@@ -173,7 +173,7 @@ function PorfolioItem() {
   const compAPRFormat = useMemo(() => {
     if (!compAPR) return [];
     return compAPR.map((item: any) => {
-      return [item.calcTime, Number(item.apr).toFixed(2)];
+      return [item.calcTime, (Number(item.apr) * 100).toFixed(2)];
     });
   }, [compAPR]);
   // console.log(compAPR, 'compAPR');
