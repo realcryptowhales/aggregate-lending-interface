@@ -48,6 +48,7 @@ export default class PorfolioStore {
 
   dailyEstProfit = ''; //今日预估总收益率
   totalBorrowInterest = ''; // 借款利息
+  curLtv = '';
   constructor(rootStore: RootStore) {
     makeAutoObservable(this, {}, { autoBind: true });
     this.rootStore = rootStore;
@@ -213,6 +214,14 @@ export default class PorfolioStore {
     this.borrowLimit = formatUnits(userInfo?.borrowLimit ?? 0, 6);
     this.userTotalBorrowed = formatUnits(userInfo?.borrowingValue ?? 0, 6);
     this.collateralValue = formatUnits(userInfo?.collateralValue ?? 0, 6);
+    this.collateralValue = formatUnits(userInfo?.collateralValue ?? 0, 6);
+    this.curLtv =
+      +this.collateralValue === 0
+        ? '0'
+        : new BigNumber(this.userTotalBorrowed)
+            .div(new BigNumber(this.collateralValue))
+            .toFixed();
+    console.log('this.curLtv', this.curLtv);
     //分母不能为0。分母为0返回NaN
     const totalAvailableBorrow = new BigNumber(
       userInfo?.borrowingValue?.toString() ?? 0

@@ -1083,6 +1083,11 @@ export const queryHelperABI = [
         internalType: 'uint256',
         name: 'borrowLimit',
         type: 'uint256'
+      },
+      {
+        internalType: 'uint256',
+        name: 'liquidateThreashold',
+        type: 'uint256'
       }
     ],
     stateMutability: 'view',

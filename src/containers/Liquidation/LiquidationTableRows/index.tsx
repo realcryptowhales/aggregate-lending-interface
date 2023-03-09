@@ -3,7 +3,7 @@ import style from './index.module.less';
 import cls from 'classnames';
 import { LiquidationData } from '..';
 import { formatAddr } from '@/utils';
-import { formatDate, thousandNumber } from '@/utils/format';
+import { formatDate, formatPercent, thousandNumber } from '@/utils/format';
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -69,7 +69,7 @@ export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
         </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 152 }}>
-        {thousandNumber(redeemAmount, 4)}
+        {thousandNumber(redeemAmount)}
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 152 }}>
         <div className={cls('flex items-center')}>
@@ -85,10 +85,10 @@ export const liquidationTableRows = ({ row }: { row: LiquidationData }) => {
         </div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 152 }}>
-        <div>{thousandNumber(repayedAmount, 4)}</div>
+        <div>{thousandNumber(repayedAmount)}</div>
       </TableCell>
       <TableCell padding="none" align="left" sx={{ width: 86 }}>
-        <div>{`${liquidateRewardRatio}%`}</div>
+        <div>{formatPercent(liquidateRewardRatio)}</div>
       </TableCell>
 
       <TableCell padding="none" align="left" sx={{ width: 151 }}>

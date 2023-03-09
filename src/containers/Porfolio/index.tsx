@@ -16,6 +16,7 @@ import { PorfolioData } from '@/stores/porfolioStore';
 import { observer } from 'mobx-react-lite';
 import SmallDialog from '@/components/SmallDialog';
 import { useCollateralModal } from '@/hooks/useCollateralModal';
+import { TRANSACTION_DETAIL_URL } from '@/components/TradeDialog/constant';
 export interface DepositData {
   key: string;
   symbol: string;
@@ -62,12 +63,12 @@ const DepositHeadCells: HeadCell<DepositData>[] = [
     label: (
       <div className={cls('flex')}>
         今日预估收益
-        <Tooltip style={{ marginLeft: 6 }} title="Add" arrow>
+        {/* <Tooltip style={{ marginLeft: 6 }} title="Add" arrow>
           <i
             className={cls('iconfont icon-exclamation-circle-o cursor-pointer')}
             style={{ color: '#000000', fontSize: 15, marginLeft: 4 }}
           />
-        </Tooltip>
+        </Tooltip> */}
       </div>
     ),
     needSort: false
@@ -78,12 +79,12 @@ const DepositHeadCells: HeadCell<DepositData>[] = [
     label: (
       <div className={cls('flex')}>
         抵押开关
-        <Tooltip style={{ marginLeft: 6 }} title="Add" arrow>
+        {/* <Tooltip style={{ marginLeft: 6 }} title="Add" arrow>
           <i
             className={cls('iconfont icon-exclamation-circle-o cursor-pointer')}
             style={{ color: '#000000', fontSize: 15, marginLeft: 4 }}
           />
-        </Tooltip>
+        </Tooltip> */}
       </div>
     ),
     needSort: false
@@ -139,12 +140,12 @@ const BorrowHeadCells: HeadCell<BorrowData>[] = [
     label: (
       <div className={cls('flex')}>
         今日预估利息
-        <Tooltip style={{ marginLeft: 6 }} title="Add" arrow>
+        {/* <Tooltip style={{ marginLeft: 6 }} title="Add" arrow>
           <i
             className={cls('iconfont icon-exclamation-circle-o cursor-pointer')}
             style={{ color: '#000000', fontSize: 15, marginLeft: 4 }}
           />
-        </Tooltip>
+        </Tooltip> */}
       </div>
     ),
     needSort: false
@@ -237,7 +238,8 @@ const Porfolio = () => {
     onConfirm,
     openModalAction,
     collateralStatus,
-    modalVisible
+    modalVisible,
+    hash
   } = useCollateralModal(
     () => {
       setMessageVisible(true);
@@ -279,8 +281,8 @@ const Porfolio = () => {
             </div>
           ),
           message: {
-            success: '开启抵押成功',
-            error: '开启抵押失败'
+            success: `已开启${tokenSymbol}抵押开关`,
+            error: `开启${tokenSymbol}抵押开关失败，请重试`
           }
         }
       : {
@@ -332,8 +334,8 @@ const Porfolio = () => {
             </div>
           ),
           message: {
-            success: '关闭抵押成功',
-            error: '关闭抵押失败'
+            success: `已关闭${tokenSymbol}抵押开关`,
+            error: `关闭${tokenSymbol}抵押开关失败，请重试`
           }
         };
   }, [collateralStatus, tokenSymbol, onCancel, onConfirm]);
@@ -416,6 +418,16 @@ const Porfolio = () => {
                 ? modalInfo.message.success
                 : modalInfo.message.error}
             </div>
+            {!!hash && (
+              <a
+                href={`${TRANSACTION_DETAIL_URL}/${hash}`}
+                target="_blank"
+                className={style.viewUrl}
+                rel="noreferrer"
+              >
+                查看详情
+              </a>
+            )}
           </div>
         </Alert>
       </Snackbar>

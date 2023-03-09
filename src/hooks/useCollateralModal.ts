@@ -37,7 +37,7 @@ export const useCollateralModal = (
       console.log('Settled', { data, error });
     }
   });
-  const { isLoading, isSuccess, write } = useContractWrite({
+  const { isLoading, isSuccess, write, data } = useContractWrite({
     ...config,
     onSuccess(data) {
       console.log('Success', data);
@@ -72,6 +72,7 @@ export const useCollateralModal = (
     onConfirm,
     openModalAction,
     collateralStatus,
-    modalVisible
+    modalVisible,
+    hash: data?.hash
   };
 };
