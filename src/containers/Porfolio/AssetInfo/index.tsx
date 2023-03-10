@@ -61,7 +61,8 @@ const AssetInfo: React.FC = ({}) => {
       borrowLimit,
       totalAvailableBorrow,
       curLtv,
-      liquidateThreashold
+      liquidateThreashold,
+      maxLtv
     }
   } = useStore();
   const thousandCollateralValue = useMemo(() => {
@@ -119,16 +120,16 @@ const AssetInfo: React.FC = ({}) => {
         <InfoItem title={'总抵押品价值'} amount={thousandCollateralValue} />
         <div className={style.limit}>
           <div className={cls('flex justify-between', style.font14)}>
-            <span>借款额度</span>
+            <span>可借款额度</span>
+            <span>{thousandBorrowLimit}</span>
+          </div>
+          <div className={cls('flex justify-between', style.font14)}>
+            <span>剩余可借额度</span>
             <span>
               {totalAvailableBorrow
                 ? thousandCurrency(totalAvailableBorrow)
                 : '--'}
             </span>
-          </div>
-          <div className={cls('flex justify-between', style.font14)}>
-            <span>剩余可借额度</span>
-            <span>{thousandBorrowLimit}</span>
           </div>
         </div>
         <div className={style.wrap}>
@@ -137,6 +138,10 @@ const AssetInfo: React.FC = ({}) => {
             <span>{percentCltv}</span>
           </div>
           <div>
+            <div className={cls('flex justify-between', style.font14)}>
+              <span>Max Ltv</span>
+              <span>{maxLtv ? formatPercent(maxLtv) : '--'}</span>
+            </div>
             <div
               style={{
                 backgroundColor: '#EBEBEB',
@@ -157,7 +162,7 @@ const AssetInfo: React.FC = ({}) => {
               ></div>
               <div
                 className={style.arrow}
-                style={{ left: `calc(${+curLtv * 100}% - 3px)`, top: '-6px' }}
+                style={{ left: `calc(${+maxLtv * 100}% - 3px)`, top: '-6px' }}
               ></div>
               <div
                 className={style.liquidation}
@@ -168,7 +173,7 @@ const AssetInfo: React.FC = ({}) => {
             </div>
             <div className={cls('flex justify-between', style.font14)}>
               <span color="#dd1f16">Liauidation</span>
-              <span>
+              <span color="#DD1F16">
                 {liquidateThreashold
                   ? formatPercent(liquidateThreashold)
                   : '--'}

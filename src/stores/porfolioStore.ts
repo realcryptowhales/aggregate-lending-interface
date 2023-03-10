@@ -52,6 +52,8 @@ export default class PorfolioStore {
   curLtv = '';
   liquidateThreashold = '';
   totalAvailableBorrow = '';
+  availableBorrow = '';
+  maxLtv = '';
   constructor(rootStore: RootStore) {
     makeAutoObservable(this, {}, { autoBind: true });
     this.rootStore = rootStore;
@@ -217,8 +219,12 @@ export default class PorfolioStore {
     this.borrowLimit = formatUnits(userInfo?.borrowLimit ?? 0, 6);
     this.userTotalBorrowed = formatUnits(userInfo?.borrowingValue ?? 0, 6);
     this.totalAvailableBorrow = new BigNumber(this.borrowLimit)
-      .plus(new BigNumber(this.userTotalBorrowed))
-      .toFixed();
+      .minus(new BigNumber(this.userTotalBorrowed))
+      .lte(0)
+      ? '0'
+      : new BigNumber(this.borrowLimit)
+          .minus(new BigNumber(this.userTotalBorrowed))
+          .toFixed();
     this.collateralValue = formatUnits(userInfo?.collateralValue ?? 0, 6);
     this.liquidateThreashold =
       +this.collateralValue === 0
@@ -230,6 +236,12 @@ export default class PorfolioStore {
       +this.collateralValue === 0
         ? '0'
         : new BigNumber(this.userTotalBorrowed)
+            .div(new BigNumber(this.collateralValue))
+            .toFixed();
+    this.maxLtv =
+      +this.collateralValue === 0
+        ? '0'
+        : new BigNumber(this.borrowLimit)
             .div(new BigNumber(this.collateralValue))
             .toFixed();
     console.log('this.curLtv', this.curLtv);
