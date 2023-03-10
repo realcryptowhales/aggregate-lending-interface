@@ -99,7 +99,7 @@ export default class MarketStore {
     this.bestBroApr = this.computeBestBroApr(
       +formatUnits(borrowRates?.aaveBorrowRate || 0, 6),
       +formatUnits(borrowRates?.compBorrowRate || 0, 6),
-      +formatUnits(borrowRates?.compBorrowRate || 0, 6)
+      +formatUnits(borrowRates?.aggBorrowRate || 0, 6)
     );
     this.borrowAaveApr = rawToPercent(borrowRates?.aaveBorrowRate, 6);
     this.borrowCompoundApr = rawToPercent(borrowRates?.compBorrowRate, 6);
