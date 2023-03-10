@@ -4,6 +4,7 @@ import moment from 'moment';
 import numbro from 'numbro';
 
 export const thousandNumber = (number: number | string, mantissa = 4) => {
+  if (+number === 0) return '0.0000';
   if (+number < 0.0001) return '<0.0001';
 
   return numbro(number).format({
