@@ -144,14 +144,15 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
       case DialogTypeProps.borrow:
         return (
           borrowLimit &&
-          BN(
-            formatCurrencyNumber({
-              big: borrowLimit,
-              decimal: activeCurrencyBaseInfo?.decimal
-            })
-          )
-            .minus(totalBorrowed)
-            .toString()
+          BN.max(
+            BN(
+              formatCurrencyNumber({
+                big: borrowLimit,
+                decimal: activeCurrencyBaseInfo?.decimal
+              })
+            ).minus(totalBorrowed),
+            0
+          ).toString()
         );
       default:
         return userBalance
