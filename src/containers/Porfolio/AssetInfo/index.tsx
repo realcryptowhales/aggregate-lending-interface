@@ -139,7 +139,7 @@ const AssetInfo: React.FC = ({}) => {
           </div>
           <div>
             <div className={cls('flex justify-between', style.font14)}>
-              <span>Max Ltv</span>
+              <span>Max LTV</span>
               <span>{maxLtv ? formatPercent(maxLtv) : '--'}</span>
             </div>
             <div
