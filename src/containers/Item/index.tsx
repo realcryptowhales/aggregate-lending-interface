@@ -337,7 +337,7 @@ function PorfolioItem() {
 
     return [
       rawToThousandNumber(supplyAmount, nowToken.decimal, 4),
-      rawToThousandNumber(supplyValue, nowToken.decimal, 2),
+      rawToThousandNumber(supplyValue, 6, 2),
       rawToNumber(supplyMatchAmount, nowToken.decimal),
       rawToNumber(supplyAaveAmount, nowToken.decimal),
       rawToNumber(supplyCompoundAmount, nowToken.decimal),
@@ -409,7 +409,7 @@ function PorfolioItem() {
 
     return [
       rawToThousandNumber(borrowAmount, nowToken.decimal, 4),
-      rawToThousandNumber(borrowValue, nowToken.decimal, 2),
+      rawToThousandNumber(borrowValue, 6, 2),
       rawToNumber(borrowMatchAmount, nowToken.decimal),
       rawToNumber(borrowAaveAmount, nowToken.decimal),
       rawToNumber(borrowCompoundAmount, nowToken.decimal),
