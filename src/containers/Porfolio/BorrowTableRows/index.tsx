@@ -10,6 +10,8 @@ import {
 } from '@/utils/format';
 import { useStore } from '@/stores';
 import { DialogTypeProps } from '@/constant';
+import { useOpenTradeDialog } from '@hooks/useOpenTradeDialog';
+
 const StyledTableRow = styled(TableRow)(() => ({
   '& td,& th': {
     border: 0
@@ -52,6 +54,7 @@ export const PurpleButton = styled(Button)({
   }
 });
 export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
+  const openTrade = useOpenTradeDialog();
   const {
     commonStore: { tokenMap }
   } = useStore();
@@ -139,7 +142,7 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
             onClick={(e: any) => {
               e.stopPropagation();
 
-              window.aggregate.openDialog({
+              openTrade({
                 type: DialogTypeProps.borrow,
                 activeCurrency: symbol
               });
@@ -151,7 +154,7 @@ export const BorrowTableRows = ({ row }: { row: BorrowData }) => {
             sx={{ border: '1px solid #000000', color: '#3D3E3E' }}
             onClick={(e: any) => {
               e.stopPropagation();
-              window.aggregate.openDialog({
+              openTrade({
                 type: DialogTypeProps.repay,
                 activeCurrency: symbol
               });

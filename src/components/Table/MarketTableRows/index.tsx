@@ -7,6 +7,7 @@ import { PurpleButton } from '@/containers/Porfolio/BorrowTableRows';
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import { currencyList, DialogTypeProps, TOKENSYMBOL } from '@/constant';
+import { useOpenTradeDialog } from '@hooks/useOpenTradeDialog';
 
 import {
   formatPercent,
@@ -56,6 +57,7 @@ const StyledTableRow = styled(TableRow)(() => ({
 }));
 
 export const MarketTableRows = ({ row }: { row: Data }) => {
+  const openTrade = useOpenTradeDialog();
   const {
     underlying,
     totalBorrowed,
@@ -162,7 +164,7 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
             sx={{ mr: '12px', background: '#F98A6B' }}
             onClick={(e: any) => {
               e.stopPropagation();
-              window.aggregate.openDialog({
+              openTrade({
                 type: DialogTypeProps.deposit,
                 activeCurrency: symbol
               });
@@ -175,7 +177,7 @@ export const MarketTableRows = ({ row }: { row: Data }) => {
             sx={{ background: '#51459D' }}
             onClick={(e: any) => {
               e.stopPropagation();
-              window.aggregate.openDialog({
+              openTrade({
                 type: DialogTypeProps.borrow,
                 activeCurrency: symbol
               });

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import SmallDialog from '@/components/SmallDialog';
 import { observer } from 'mobx-react-lite';
 import { formatUnits } from 'ethers/lib/utils.js';
+import { useOpenTradeDialog } from '@hooks/useOpenTradeDialog';
 import {
   formatPercent,
   rawToPercent,
@@ -68,6 +69,7 @@ export const DepositTableRows = observer(
       action: string
     ) => void;
   }) => {
+    const openTrade = useOpenTradeDialog();
     const {
       underlying,
       depositValue,
@@ -173,7 +175,7 @@ export const DepositTableRows = observer(
                 sx={{ mr: '12px', background: '#F98A6B' }}
                 onClick={(e: any) => {
                   e.stopPropagation();
-                  window.aggregate.openDialog({
+                  openTrade({
                     type: DialogTypeProps.deposit,
                     activeCurrency: symbol
                   });
@@ -186,7 +188,7 @@ export const DepositTableRows = observer(
                 onClick={(e: any) => {
                   e.stopPropagation();
 
-                  window.aggregate.openDialog({
+                  openTrade({
                     type: DialogTypeProps.withdraw,
                     activeCurrency: symbol
                   });

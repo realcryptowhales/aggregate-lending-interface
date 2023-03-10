@@ -6,8 +6,10 @@ import { echarts } from '@utils/echart';
 import Tab from './Tab';
 import Button from '@mui/material/Button';
 import moment from 'moment';
+import { useOpenTradeDialog } from '@hooks/useOpenTradeDialog';
 
 const Detail: React.FC<any> = (props) => {
+  const openTrade = useOpenTradeDialog();
   const {
     isSupply,
     setIsSupply,
@@ -224,7 +226,7 @@ const Detail: React.FC<any> = (props) => {
                 }
               }}
               onClick={() => {
-                window.aggregate.openDialog({
+                openTrade({
                   type: isSupply
                     ? DialogTypeProps.deposit
                     : DialogTypeProps.borrow,
@@ -243,7 +245,7 @@ const Detail: React.FC<any> = (props) => {
                 borderColor: '#000'
               }}
               onClick={() => {
-                window.aggregate.openDialog({
+                openTrade({
                   type: isSupply
                     ? DialogTypeProps.withdraw
                     : DialogTypeProps.repay,
