@@ -80,6 +80,12 @@ declare module '@mui/material/Button' {
   }
 }
 
+declare module '@mui/material/Switch' {
+  interface SwitchPropsColorOverrides {
+    blue: true;
+  }
+}
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <WagmiConfig client={wagmiClient}>

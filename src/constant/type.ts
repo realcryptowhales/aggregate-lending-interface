@@ -61,7 +61,7 @@ export interface CurrencyInfoProps {
   borrowAmount: string; // 借款数量
   depositAPRPercent: string; // 存款APR百分数
   depositAmount: string; // 存款余额
-  totalMaxLTV: string; // 总最高抵押率
+  // totalMaxLTV: string; // 总最高抵押率
   maxLTV: string; // 当前币种的最高抵押率
   totalLiquidation: string; // 清算域值
   assetPrice: string;
@@ -235,7 +235,7 @@ export interface InfosProps {
   aprInfo?: AprInfoProps;
   showMaxLTV: boolean;
   isOverLiquidation: boolean;
-  totalMaxLTVPercent: string;
+  totalMaxLTVPercent?: string;
   totalLiquidationPercent: string;
   willTotalCurrentLTVPercent: string;
   type: DialogTypeProps;

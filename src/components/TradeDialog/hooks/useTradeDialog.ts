@@ -62,7 +62,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
       supplied, // 存款数量
       totalBorrowed, //总借款
       tatalCollateral, //总抵押
-      borrowLimit, // 借款上限
+      // borrowLimit, // 借款上限
       liquidateThreashold, // 清算阈值
       usingAsCollateral, //是否用作抵押资产
       supplyRate, // 存款利率
@@ -102,7 +102,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
       assetPrice: formatPriceNumber(assetPrice), // 资产价格
       usingAsCollateral: Boolean(usingAsCollateral),
       maxLTV: formatRateNumber(maxLTV),
-      totalMaxLTV: divideBigNumber(borrowLimit, tatalCollateral), // 总最高抵押率
+      // totalMaxLTV: divideBigNumber(borrowLimit, tatalCollateral), // 总最高抵押率
       totalLiquidation: divideBigNumber(liquidateThreashold, tatalCollateral), // 总清算域值
       totalCurrentLTV: divideBigNumber(totalBorrowed, tatalCollateral), // 总当前抵押率
       totalBorrowed: formatCurrencyNumber({
@@ -119,31 +119,38 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   const balance = useMemo(() => {
     const {
       userBalance, // 用户余额
-      supplied, // 存款数量
+      // supplied, // 存款数量
       borrowLimit // 借款上限
     } = userStatus || {};
-    if (userBalance) {
-      const depositAmount = formatCurrencyNumber({
-        big: supplied,
-        decimal: activeCurrencyBaseInfo?.decimal
-      }); // 存款余额
-      switch (type) {
-        case DialogTypeProps.withdraw:
-          return depositAmount;
-        case DialogTypeProps.borrow:
-          return formatCurrencyNumber({
-            big: borrowLimit,
-            decimal: activeCurrencyBaseInfo?.decimal
-          });
-        default:
-          return formatCurrencyNumber({
-            big: userBalance,
-            decimal: activeCurrencyBaseInfo?.decimal
-          });
-      }
+    const {
+      depositAmount, // 存款余额
+      borrowAmount // 借款数量
+    } = activeCurrencyInfo;
+
+    switch (type) {
+      case DialogTypeProps.withdraw:
+        return depositAmount;
+      case DialogTypeProps.borrow:
+        return (
+          borrowLimit &&
+          BN(
+            formatCurrencyNumber({
+              big: borrowLimit,
+              decimal: activeCurrencyBaseInfo?.decimal
+            })
+          )
+            .minus(borrowAmount)
+            .toString()
+        );
+      default:
+        return userBalance
+          ? formatCurrencyNumber({
+              big: userBalance,
+              decimal: activeCurrencyBaseInfo?.decimal
+            })
+          : '';
     }
-    return '';
-  }, [userStatus, type, activeCurrencyBaseInfo]);
+  }, [userStatus, type, activeCurrencyBaseInfo, activeCurrencyInfo]);
 
   const {
     optimization, // 内部撮合
@@ -154,7 +161,6 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     depositAPRPercent, // 存款APR百分数
     depositAmount, // 存款余额
     maxLTV, // 当前币种最高抵押率
-    totalMaxLTV, // 总最高抵押率
     totalCurrentLTV, // 总当前抵押率
     totalLiquidation, // 总清算域值
     assetPrice,
@@ -229,11 +235,11 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
 
   const getBestApr = (num?: string) => {
     if (num && optimization && aave && compound) {
-      const bigger = BN(compound).isGreaterThan(aave) ? compound : aave;
-      const biggest = BN(optimization).isGreaterThan(bigger)
-        ? optimization
-        : bigger;
-      return num === biggest;
+      const max = BN.max(optimization, compound, aave).toString();
+      const min = BN.min(optimization, compound, aave).toString();
+      return [DialogTypeProps.deposit, DialogTypeProps.withdraw].includes(type)
+        ? num === max
+        : num === min;
     }
     return false;
   };
@@ -345,11 +351,6 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
         ];
     }
   }, [type, activeCurrency]);
-
-  // 是否展示Max LTV
-  const showMaxLTV = useMemo(() => {
-    return type === DialogTypeProps.borrow;
-  }, [type]);
 
   // 计算存款新的总的抵押率
   const depositWillTotalCurrentLTV = () => {
@@ -504,11 +505,6 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     return toPercent(maxLTV);
   }, [maxLTV]);
 
-  // 总最高抵押率百分比
-  const totalMaxLTVPercent = useMemo(() => {
-    return toPercent(totalMaxLTV);
-  }, [totalMaxLTV]);
-
   // 用户总当前抵押率百分比
   const totalCurrentLTVPercent = useMemo(() => {
     return toPercent(totalCurrentLTV);
@@ -528,10 +524,10 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
   const isHighRisk = useMemo(() => {
     return (
       !!willTotalCurrentLTV &&
-      !!totalMaxLTV &&
-      BN(totalMaxLTV).isLessThan(willTotalCurrentLTV)
+      !!totalLiquidation &&
+      BN(totalLiquidation).isLessThan(willTotalCurrentLTV)
     );
-  }, [totalMaxLTV, willTotalCurrentLTV]);
+  }, [totalLiquidation, willTotalCurrentLTV]);
 
   // 更新auth状态
   const auth = useMemo((): boolean => {
@@ -657,10 +653,8 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
     activeCurrency,
     infosTop,
     aprInfo,
-    showMaxLTV,
     isOverLiquidation,
     maxLTVPercent,
-    totalMaxLTVPercent,
     totalCurrentLTVPercent,
     totalLiquidationPercent,
     willTotalCurrentLTVPercent,
