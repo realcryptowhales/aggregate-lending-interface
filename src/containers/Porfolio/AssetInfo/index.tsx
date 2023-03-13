@@ -88,8 +88,9 @@ const AssetInfo: React.FC = ({}) => {
     const v = new BigNumber(liquidateThreashold)
       .minus(new BigNumber(curLtv))
       .lte(0.1);
+    const neverBorrowed = new BigNumber(curLtv).isZero();
     console.log('hasClosedModal', hasClosedModal);
-    !hasClosedModal && setLiquidationModal(v);
+    !hasClosedModal && !neverBorrowed && setLiquidationModal(v);
   }, [liquidateThreashold, curLtv, hasClosedModal]);
   return (
     <>
