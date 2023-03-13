@@ -84,12 +84,12 @@ const AssetInfo: React.FC = ({}) => {
 
   const [liquidationModal, setLiquidationModal] = useState(false);
   const [hasClosedModal, setHasClosedModal] = useState(false);
+  // 获取用户钱包地址
   useEffect(() => {
     const v = new BigNumber(liquidateThreashold)
       .minus(new BigNumber(curLtv))
       .lte(0.1);
     const neverBorrowed = new BigNumber(curLtv).isZero();
-    console.log('hasClosedModal', hasClosedModal);
     !hasClosedModal && !neverBorrowed && setLiquidationModal(v);
   }, [liquidateThreashold, curLtv, hasClosedModal]);
   return (
