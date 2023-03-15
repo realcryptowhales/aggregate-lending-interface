@@ -6,7 +6,7 @@ interface Props {
   AggregationPlatform: string;
   aave: string;
   compound: string;
-  bestApr: string;
+  bestApr: string[];
 }
 const AprDataDisplay: React.FC<Props> = ({
   lendingPlatform,
@@ -24,7 +24,7 @@ const AprDataDisplay: React.FC<Props> = ({
       <div className={cls(style.containerList)}>
         <div>
           聚合平台
-          {bestApr === '聚合平台' && (
+          {bestApr.includes('聚合平台') && (
             <span className={cls(style.containerListBest)}>Best</span>
           )}
         </div>
@@ -33,7 +33,7 @@ const AprDataDisplay: React.FC<Props> = ({
       <div className={cls(style.containerList)}>
         <div>
           AAVE
-          {bestApr === 'AAVE' && (
+          {bestApr.includes('AAVE') && (
             <span className={cls(style.containerListBest)}>Best</span>
           )}
         </div>
@@ -42,7 +42,7 @@ const AprDataDisplay: React.FC<Props> = ({
       <div className={cls(style.containerList)}>
         <div>
           Compound
-          {bestApr === 'Compound' && (
+          {bestApr.includes('Compound') && (
             <span className={cls(style.containerListBest)}>Best</span>
           )}
         </div>

@@ -52,8 +52,8 @@ export default class MarketStore {
   borrowCompoundApr = '--';
 
   marketTableList: MarketCurrencyInfo[] = [];
-  bestSupApr = '聚合平台';
-  bestBroApr = '聚合平台';
+  bestSupApr = ['聚合平台'];
+  bestBroApr = ['聚合平台'];
 
   constructor(rootStore: RootStore) {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -69,18 +69,26 @@ export default class MarketStore {
   //   );
   // }
   computeBestSupApr(aave: number, com: number, agg: number) {
-    const maxSupApr = Math.max(aave, com, agg);
-    if (agg === maxSupApr) return '聚合平台';
-    else if (aave === maxSupApr) return 'AAVE';
-    else if (com === maxSupApr) return 'Compound';
-    return '聚合平台';
+    const tofixedAave = Number(aave.toFixed(4));
+    const tofixedCom = Number(com.toFixed(4));
+    const tofixedAgg = Number(agg.toFixed(4));
+    const maxSupApr = Math.max(tofixedAave, tofixedCom, tofixedAgg);
+    const result = [];
+    if (tofixedAgg === maxSupApr) result.push('聚合平台');
+    if (tofixedAave === maxSupApr) result.push('AAVE');
+    if (tofixedCom === maxSupApr) result.push('Compound');
+    return result;
   }
   computeBestBroApr(aave: number, com: number, agg: number) {
-    const minBroApr = Math.min(aave, com, agg);
-    if (agg === minBroApr) return '聚合平台';
-    else if (aave === minBroApr) return 'AAVE';
-    else if (com === minBroApr) return 'Compound';
-    return '聚合平台';
+    const tofixedAave = Number(aave.toFixed(4));
+    const tofixedCom = Number(com.toFixed(4));
+    const tofixedAgg = Number(agg.toFixed(4));
+    const minBroApr = Math.min(tofixedAave, tofixedCom, tofixedAgg);
+    const result = [];
+    if (tofixedAgg === minBroApr) result.push('聚合平台');
+    if (tofixedAave === minBroApr) result.push('AAVE');
+    if (tofixedCom === minBroApr) result.push('Compound');
+    return result;
   }
   async setCurrentSupplyRates(supplyRates: SupplyAprInfo) {
     this.bestSupApr = this.computeBestSupApr(
