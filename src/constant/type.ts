@@ -180,6 +180,7 @@ export interface UseContractWriteProps {
 export interface FormStatusProps {
   disabled: boolean;
   isError: boolean;
+  isTip?: boolean;
   errorMsg: string;
 }
 

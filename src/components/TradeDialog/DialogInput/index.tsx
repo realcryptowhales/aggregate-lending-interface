@@ -14,7 +14,7 @@ const DialogInput = ({
   type,
   formStatus
 }: DialogInputType) => {
-  const { isError, errorMsg } = formStatus;
+  const { isError, errorMsg, isTip } = formStatus;
 
   const onChange = (e: SelectChangeEvent) => {
     onChangeActiveCurrency(e.target.value);
@@ -122,7 +122,11 @@ const DialogInput = ({
           </div>
         </div>
       </div>
-      {isError ? <div className={styles.errorMsg}>{errorMsg}</div> : null}
+      {isError || isTip ? (
+        <div className={isTip ? styles.tipMsg : styles.errorMsg}>
+          {errorMsg}
+        </div>
+      ) : null}
     </div>
   );
 };

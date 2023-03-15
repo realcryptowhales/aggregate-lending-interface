@@ -54,7 +54,7 @@ const Title: React.FC<Props> = ({
             value={currency}
             onChange={handleChange as any}
           >
-            {currencyList.map(({ symbol, address }) => {
+            {currencyList?.map(({ symbol, address }) => {
               return (
                 <MenuItem
                   onClick={() => {

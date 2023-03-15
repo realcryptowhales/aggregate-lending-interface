@@ -640,8 +640,9 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
       BN(borrowAmount).isLessThan(number)
     ) {
       return {
-        isError: true,
-        errorMsg: '输入值需小于贷款余额'
+        isError: false,
+        isTip: true,
+        errorMsg: '还款金额大于贷款余额，多余还款会返回'
       };
     }
     return {
@@ -693,8 +694,7 @@ const useTradeDialog = ({ type, activeCurrency }: UseTradeDialogProps) => {
             !auth ||
               !number ||
               BN(number).isLessThanOrEqualTo(0) ||
-              (balance && BN(balance).isLessThan(number)) ||
-              (borrowAmount && BN(borrowAmount).isLessThan(number))
+              (balance && BN(balance).isLessThan(number))
           ),
           ...getFormError()
         };

@@ -121,7 +121,6 @@ function BorrowButtons({
 function RepayButtons({
   activeCurrency,
   auth,
-  formValue,
   onRepay,
   onApprove,
   formStatus
