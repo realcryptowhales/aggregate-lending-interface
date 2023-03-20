@@ -1,4 +1,25 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/09f7a550-fbbd-4f38-b9d3-c1d62f54e8fe/deploy-status)](https://app.netlify.com/sites/aggregate-lending-interface/deploys)
+
+## This is Aggregate Lending MVP.
+
+It aggregates compound and aave and provides internal aggregation to achieve the best rate for lending.
+
+Using aggregated lending, the deposit rate is always the highest and the borrowing rate is always the lowest
+
+
+## show
+
+![截屏2023-03-21 00 33 37](https://user-images.githubusercontent.com/46164858/226407888-cf14c3e7-9da8-4162-a393-858c9d50b51a.png)
+
+![截屏2023-03-21 00 33 48](https://user-images.githubusercontent.com/46164858/226407909-3d85deda-1c7b-45e4-b7a7-e971fa9157e7.png)
+
+![截屏2023-03-21 00 34 14](https://user-images.githubusercontent.com/46164858/226407945-fca647d5-f9df-4363-9209-85b3bc543aee.png)
+
+![截屏2023-03-21 00 34 31](https://user-images.githubusercontent.com/46164858/226407989-2af468ab-dd16-4db9-8255-23f57ed5933f.png)
+
+![截屏2023-03-21 00 34 40](https://user-images.githubusercontent.com/46164858/226408030-d9953ec6-31dd-47f7-8a27-b8c1977cde8e.png)
+
+
+## Tech
 
 ### Requirement
 
