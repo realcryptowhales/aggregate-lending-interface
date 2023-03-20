@@ -6,6 +6,13 @@ It aggregates compound and aave and provides internal aggregation to achieve the
 Using aggregated lending, the deposit rate is always the highest and the borrowing rate is always the lowest
 
 
+## preview
+
+http://35.220.222.252/aggregate-lending-web/markets 
+
+> Note that this is only mvp, so this link may be expired, you can clone it and run it locally after that. Of course, you need to deploy your own backend service and liquidation robot. Otherwise, when your apr exceeds the liquidation rate, the liquidation event will not be executed properly.
+
+
 ## show
 
 ![截屏2023-03-21 00 33 37](https://user-images.githubusercontent.com/46164858/226407888-cf14c3e7-9da8-4162-a393-858c9d50b51a.png)
@@ -82,6 +89,4 @@ https://github.com/sanyuan0704/vite-plugin-chunk-split/blob/HEAD/README-CN.md
 
 https://www.npmjs.com/package/@vitejs/plugin-legacy
 
-## preview
 
-https://aggregate-lending-interface.netlify.app
